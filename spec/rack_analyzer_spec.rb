@@ -5,7 +5,8 @@ RSpec.describe Rack::Analyzer do
     expect(Rack::Analyzer::VERSION).not_to be nil
   end
 
-  specify "magnus works" do
-    expect(HelloRust.hello('tmp')).to eq('Hello from Rust, tmp!')
+  specify "normalizer works" do
+    expect(Normalizer.normalize("SELECT a, b FROM table_a WHERE a IN (SELECT x FROM table_b) AND b = 'tmp'"))
+      .to eq("SELECT a, b FROM table_a WHERE a IN (SELECT x FROM table_b) AND b = ?")
   end
 end

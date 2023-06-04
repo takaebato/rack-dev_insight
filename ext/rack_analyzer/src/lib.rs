@@ -1,12 +1,12 @@
-use magnus::{define_module, function, prelude::*, Error};
+use magnus::{define_module, Error, function, prelude::*};
 
-fn hello(subject: String) -> String {
-    format!("Hello from Rust, {}!", subject)
-}
+use normalizer::Normalizer;
+
+mod normalizer;
 
 #[magnus::init]
 fn init() -> Result<(), Error> {
-    let module = define_module("RackAnalyzer")?;
-    module.define_singleton_method("hello", function!(hello, 1))?;
+    let module = define_module("Normalizer")?;
+    module.define_singleton_method("normalize", function!(Normalizer::normalize, 1))?;
     Ok(())
 }
