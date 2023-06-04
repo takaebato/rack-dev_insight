@@ -13,7 +13,7 @@ require "rb_sys/extensiontask"
 
 task build: :compile
 
-RbSys::ExtensionTask.new("rack-analyzer") do |ext|
+RbSys::ExtensionTask.new("rack_analyzer") do |ext|
   ext.lib_dir = "lib/rack/analyzer"
 end
 
