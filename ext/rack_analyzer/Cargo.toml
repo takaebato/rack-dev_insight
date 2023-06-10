@@ -12,3 +12,4 @@ crate-type = ["cdylib"]
 [dependencies]
 magnus = { version = "0.4" }
 sqlparser = { version = "0.34.0", features = ["visitor"] }
+tap = { version = "1.0.1" }
