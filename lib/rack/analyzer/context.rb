@@ -7,9 +7,7 @@ module Rack
         end
 
         def create_current(id)
-          new(id).instance_eval do
-            Thread.current[:rack_analyzer_context] = self
-          end
+          Thread.current[:rack_analyzer_context] = new(id)
         end
       end
 
