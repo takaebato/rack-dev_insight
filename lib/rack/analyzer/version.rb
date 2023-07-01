@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Rack
-  module Analyzer
+  class Analyzer
     VERSION = "0.1.0"
   end
 end

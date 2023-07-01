@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'spec_helper'
+require 'securerandom'
+
 RSpec.describe Rack::Analyzer::MemoryStore do
   let(:target) { described_class.new }
 
