@@ -7,6 +7,8 @@ require_relative 'result/sql'
 module Rack
   class Analyzer
     class Result
+      attr_reader :id
+
       def initialize(id)
         @id = id
         @request = Request.new

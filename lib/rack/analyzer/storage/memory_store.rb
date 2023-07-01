@@ -6,9 +6,9 @@ module Rack
         @cache = {}
       end
 
-      def write(data)
+      def write(result)
         @lock.synchronize do
-          @cache[data[:id]] = data
+          @cache[result.id] = result
         end
       end
 

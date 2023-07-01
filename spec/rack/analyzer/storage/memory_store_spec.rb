@@ -8,9 +8,8 @@ RSpec.describe Rack::Analyzer::MemoryStore do
 
   it 'can write and read data' do
     id = SecureRandom.uuid
-    target.write({ id: id, sample: 'sample_value' })
+    target.write(Rack::Analyzer::Result.new(id))
     res = target.read(id)
-    expect(res[:id]).to eq(id)
-    expect(res[:sample]).to eq('sample_value')
+    expect(res.to_h[:id]).to eq(id)
   end
 end

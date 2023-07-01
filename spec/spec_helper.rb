@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'rspec'
 require "rack/analyzer"
 
 RSpec.configure do |config|
