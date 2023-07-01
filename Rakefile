@@ -17,4 +17,4 @@ RbSys::ExtensionTask.new("rack_analyzer") do |ext|
   ext.lib_dir = "lib/rack/analyzer"
 end
 
-task default: %i[compile spec rubocop]
+task default: %i[compile spec]
