@@ -1,0 +1,13 @@
+{
+  "name": "Rack analyzer",
+  "description": "Sample Extension using Svelte and Tailwind",
+  "version": "1.0",
+  "manifest_version": 3,
+  "devtools_page": "src/devtools/index.html",
+  "action": {
+    "default_title": "Svelte Extension",
+    "default_icon": "favicon.png",
+    "default_popup": "src/popup/index.html"
+  },
+  "permissions": ["storage"]
+}

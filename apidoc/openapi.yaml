@@ -1,0 +1,342 @@
+openapi: 3.0.3
+info:
+  title: Rack Analyzer Internal API
+  description: |-
+    This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
+    Swagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
+    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
+    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
+
+    _If you're looking for the Swagger 2.0/OAS 2.0 version of Petstore, then click [here](https://editor.swagger.io/?url=https://petstore.swagger.io/v2/swagger.yaml). Alternatively, you can load via the `Edit > Load Petstore OAS 2.0` menu option!_
+    
+    Some useful links:
+    - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
+    - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: https://petstore3.swagger.io/api/v3
+tags:
+  - name: Result
+    description: Result of an analyzed rack request
+paths:
+  /rack-analyzer-results/{uuid}:
+    get:
+      tags:
+        - Result
+      summary: Fetches a rack analyzer result by UUID
+      description: Multiple status values can be provided with comma separated strings
+      operationId: getRackAnalyzerResult
+      parameters:
+        - in: path
+          name: uuid
+          description: Numeric ID of the user to get
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RackAnalyzerResult'
+        '400':
+          description: Invalid status value
+        '500':
+          description: Invalid status value
+components:
+  schemas:
+    RackAnalyzerResult:
+      type: object
+      required:
+        - id
+        - status
+        - method
+        - path
+        - duration
+        - sql
+        - api
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 123
+        status:
+          description: Http status code
+          type: integer
+          format: int32
+          example: 200
+        method:
+          description: Http method
+          type: string
+          example: GET
+        path:
+          description: Http path
+          type: string
+          example: /api/v1/users
+        duration:
+          description: Request duration in milliseconds
+          type: integer
+          format: int32
+          example: 10
+        sql:
+          $ref: '#/components/schemas/Sql'
+        apis:
+          description: Api requests and responses
+          type: array
+          items:
+            $ref: '#/components/schemas/Api'
+    Sql:
+      type: object
+      required:
+        - crudAggregations
+        - normalizedAggregations
+        - queries
+      properties:
+        crudAggregations:
+          type: array
+          items:
+            $ref: '#/components/schemas/CrudAggregation'
+          example:
+            - type: CREATE
+              table: users
+              count: 1
+              duration: 10
+              queryIds: [ 1 ]
+            - type: READ
+              table: users
+              count: 1
+              duration: 10
+              queryIds: [ 2 ]
+            - type: UPDATE
+              table: users
+              count: 1
+              duration: 10
+              queryIds: [ 3 ]
+            - type: DELETE
+              table: users
+              count: 2
+              duration: 10
+              queryIds: [ 4, 5 ]
+        normalizedAggregations:
+          type: array
+          items:
+            $ref: '#/components/schemas/NormalizedAggregation'
+          example:
+            - statement: INSERT INTO users (id, name) VALUES (?, ?)
+              count: 1
+              duration: 10
+              queryIds: [ 1 ]
+            - statement: SELECT * FROM users WHERE id = ?
+              count: 1
+              duration: 10
+              queryIds: [ 2 ]
+            - statement: UPDATE users SET name = ? WHERE id = ?
+              count: 1
+              duration: 10
+              queryIds: [ 3 ]
+            - statement: DELETE FROM users WHERE id = ?
+              count: 2
+              duration: 10
+              queryIds: [ 4, 5 ]
+        erroredQueries:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErroredQuery'
+          example:
+            - message: 'Parse error'
+              queryId: 6
+        queries:
+          type: array
+          items:
+            $ref: '#/components/schemas/Query'
+          example:
+            - id: 1
+              statement: INSERT INTO users (id, name) VALUES (1, 'John')
+              backtrace: [ 'app/models/user.rb:1', 'app/controllers/users_controller.rb:1' ]
+              duration: 10
+            - id: 2
+              statement: SELECT * FROM users WHERE id = 2
+              backtrace: [ 'app/models/user.rb:1', 'app/controllers/users_controller.rb:1' ]
+              duration: 10
+            - id: 3
+              statement: UPDATE users SET name  = 'Jack' WHERE id = 1
+              backtrace: [ 'app/models/user.rb:1', 'app/controllers/users_controller.rb:1' ]
+              duration: 10
+            - id: 4
+              statement: DELETE FROM users WHERE id = 1
+              backtrace: [ 'app/models/user.rb:1', 'app/controllers/users_controller.rb:1' ]
+              duration: 10
+            - id: 5
+              statement: DELETE FROM users WHERE id = 2
+              backtrace: [ 'app/models/user.rb:1', 'app/controllers/users_controller.rb:1' ]
+              duration: 10
+            - id: 6
+              statement: SELECT * FROM users WHERE id = 3
+              backtrace: [ 'app/models/user.rb:1', 'app/controllers/users_controller.rb:1' ]
+              duration: 10
+    CrudAggregation:
+      description: Aggregation of queries in terms of CRUD type and table
+      type: object
+      required:
+        - type
+        - table
+        - count
+        - duration
+        - queryIds
+      properties:
+        type:
+          description: CRUD type
+          type: string
+          enum:
+            - CREATE
+            - READ
+            - UPDATE
+            - DELETE
+        table:
+          description: Table name
+          type: string
+        count:
+          description: Number of queries
+          type: integer
+        duration:
+          description: Total duration in milliseconds
+          type: integer
+        queryIds:
+          description: Corresponding query ids
+          type: array
+          items:
+            type: integer
+            format: int32
+    NormalizedAggregation:
+      description: Aggregation of queries in terms of normalized sql statement
+      type: object
+      required:
+        - statement
+        - count
+        - duration
+        - queryIds
+      properties:
+        statement:
+          description: Normalized sql statement
+          type: string
+        count:
+          description: Number of queries
+          type: integer
+        duration:
+          description: Total duration in milliseconds
+          type: integer
+        queryIds:
+          description: Corresponding query ids
+          type: array
+          items:
+            type: integer
+    ErroredQuery:
+      description: Query errored on parsing
+      type: object
+      required:
+        - message
+        - queryId
+      properties:
+        message:
+          description: Error message
+          type: string
+        queryId:
+          type: integer
+    Query:
+      description: Single sql query
+      type: object
+      required:
+        - id
+        - statement
+        - backtrace
+        - duration
+      properties:
+        id:
+          type: integer
+          format: int32
+        statement:
+          description: Sql statement
+          type: string
+        backtrace:
+          description: Backtrace
+          type: array
+          items:
+            type: string
+        duration:
+          description: Query duration in milliseconds
+          type: integer
+    Api:
+      description: Api request and response
+      type: object
+      required:
+        - status
+        - method
+        - host
+        - path
+        - requestHeaders
+        - requestBody
+        - responseHeaders
+        - responseBody
+      properties:
+        status:
+          description: Http status code
+          type: integer
+          format: int32
+          example: 200
+        method:
+          description: Http method
+          type: string
+          example: GET
+        url:
+          description: Full url
+          type: string
+          example: https://example.com/api/v1/pets
+        requestHeaders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Header'
+          example:
+            - field: Content-Type
+              value: application/json
+            - field: Content-Length
+              value: 123
+            - field: Referer
+              value: https://example.com
+        requestBody:
+          type: string
+          example: '{"id": 1, "name": "doggie", "photoUrls": ["url1", "url2"]}'
+        responseHeaders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Header'
+          example:
+            - field: Content-Type
+              value: application/json
+            - field: Content-Length
+              value: 123
+            - field: Server
+              value: nginx/1.16.0
+        responseBody:
+          type: string
+          example: '{"id": 1, "name": "doggie", "photoUrls": ["url1", "url2"]}'
+    Header:
+      type: object
+      properties:
+        field:
+          type: string
+        value:
+          type: string
+      example:
+        field: Content-Type
+        value: application/json
+
