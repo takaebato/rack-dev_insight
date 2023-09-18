@@ -8,9 +8,9 @@ RSpec.describe Rack::Analyzer::Result do
   let(:id) { SecureRandom.uuid }
 
   it 'works' do
-    target.add_request(status: 200, method: 'GET', path: '/users', endpoint: 'UserController#index', duration: 100)
-    target.add_sql(name: 'User Load', statement: "SELECT * FROM users WHERE name like '%hoge' and birthday < '2000-01-01'", stack_trace: ['app/controllers/user_controller.rb:1:in `index`'], duration: 10, cached: false)
-    target.add_sql(name: 'User Load', statement: "SELECT * FROM users WHERE name like '%hoge' and birthday < '2000-01-01'", stack_trace: ['app/controllers/user_controller.rb:1:in `index`'], duration: 10, cached: true)
+    target.set_request_if_unset(status: 200, method: 'GET', path: '/users', endpoint: 'UserController#index', duration: 100)
+    target.add_sql(name: 'User Load', statement: "SELECT * FROM users WHERE name like '%hoge' and birthday < '2000-01-01'", backtrace: ['app/controllers/user_controller.rb:1:in `index`'], duration: 10, cached: false)
+    target.add_sql(name: 'User Load', statement: "SELECT * FROM users WHERE name like '%hoge' and birthday < '2000-01-01'", backtrace: ['app/controllers/user_controller.rb:1:in `index`'], duration: 10, cached: true)
     expect(target.to_h).to(
       eq({
            :id => id,
@@ -45,7 +45,7 @@ RSpec.describe Rack::Analyzer::Result do
                  :id => 1,
                  :name => "User Load",
                  :statement => "SELECT * FROM users WHERE name like '%hoge' and birthday < '2000-01-01'",
-                 :stack_trace => ["app/controllers/user_controller.rb:1:in `index`"],
+                 :backtrace => ["app/controllers/user_controller.rb:1:in `index`"],
                  :duration => 10,
                  :cached => false
                },
@@ -53,7 +53,7 @@ RSpec.describe Rack::Analyzer::Result do
                  :id => 2,
                  :name => "User Load",
                  :statement => "SELECT * FROM users WHERE name like '%hoge' and birthday < '2000-01-01'",
-                 :stack_trace => ["app/controllers/user_controller.rb:1:in `index`"],
+                 :backtrace => ["app/controllers/user_controller.rb:1:in `index`"],
                  :duration => 10,
                  :cached => true
                }

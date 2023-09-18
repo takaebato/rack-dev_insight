@@ -1,5 +1,9 @@
 # Frozen_string_literal: true
 
+require_relative '../rack_analyzer'
+require_relative '../ext/extractor'
+require_relative '../ext/normalizer'
+
 module Rack
   class Analyzer
     class Result
@@ -9,14 +13,15 @@ module Rack
             @data = {}
           end
 
-          def add(statement, duration, query_id)
-            crud_tables = Extractor.extract_crud_tables(statement)
-            [
-              ['C', crud_tables['create_tables']],
-              ['R', crud_tables['read_tables']],
-              ['U', crud_tables['update_tables']],
-              ['D', crud_tables['delete_tables']]
-            ].each do |type, tables|
+          def add(dialect_name, statement, duration, query_id)
+            crud_tables = begin
+                            Extractor::CrudTables.extract(dialect_name, statement)
+                          rescue ExternalError => error
+                            add_error(statement)
+                            return
+                          end
+
+            crud_tables.each do |type, tables|
               add_crud(type, tables, duration, query_id)
             end
           end
@@ -57,8 +62,8 @@ module Rack
             @data = {}
           end
 
-          def add(statement, duration, cached, query_id)
-            normalized_statement = Normalizer.normalize(statement)
+          def add(dialect_name, statement, duration, cached, query_id)
+            normalized_statement = Ext::Normalizer.normalize(dialect_name, statement)
 
             data = @data[normalized_statement] ||= init_data(normalized_statement)
             data[:count] += 1
@@ -92,12 +97,12 @@ module Rack
             @data = []
           end
 
-          def add(name, statement, stack_trace, duration, cached)
+          def add(name, statement, backtrace, duration, cached)
             @data << {
               id: @id += 1,
               name: name,
               statement: statement,
-              stack_trace: stack_trace,
+              backtrace: backtrace,
               duration: duration,
               cached: cached
             }
@@ -114,8 +119,8 @@ module Rack
           @queries = Queries.new
         end
 
-        def add(name, statement, stack_trace, duration, cached)
-          @queries.add(name, statement, stack_trace, duration, cached)
+        def add(name, statement, backtrace, duration, cached)
+          @queries.add(name, statement, backtrace, duration, cached)
           @crud.add(statement, duration, @queries.id)
           @normalized.add(statement, duration, cached, @queries.id)
         end

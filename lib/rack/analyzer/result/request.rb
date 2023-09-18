@@ -4,9 +4,10 @@ module Rack
       class Request
         def initialize
           @data = {}
+          @is_set = false
         end
 
-        def add(status, method, path, endpoint, duration)
+        def set(status, method, path, endpoint, duration)
           @data = {
             status: status,
             method: method,
@@ -14,6 +15,11 @@ module Rack
             endpoint: endpoint,
             duration: duration
           }
+          @is_set = true
+        end
+
+        def set?
+          @is_set
         end
 
         def to_h

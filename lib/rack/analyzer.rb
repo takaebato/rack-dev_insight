@@ -7,11 +7,14 @@ require_relative "analyzer/storage/memory_store"
 require_relative "analyzer/result"
 require_relative "analyzer/config"
 require_relative "analyzer/context"
+require_relative "analyzer/errors"
+
+if defined?(::Rails)
+  require_relative 'analyzer/rails/railtie'
+end
 
 module Rack
   class Analyzer
-    class Error < StandardError; end
-
     class << self
       def configure
         yield config
@@ -31,21 +34,34 @@ module Rack
     end
 
     def call(env)
-      id = env['PATH_INFO'][%r{/rack_analyzer_results/(.+)$}, 1]
-      if id
-        serve_result(id)
+      if (id = env['PATH_INFO'][%r{/rack_analyzer_results/(.+)$}, 1])
+        fetch_analyzed(id)
       else
-        status, headers, body = @app.call(env)
-        @storage.write(Context.current.result)
-        headers['X-RackAnalyzer-Id'] = Context.current.id
-        [status, headers, body]
+        analyzing(env) { @app.call(env) }
       end
     end
 
     private
 
-    def serve_result(id)
+    def fetch_analyzed(id)
       [200, { 'Content-Type' => 'application/json' }, @storage.read(id)&.to_json || '']
+    end
+
+    def analyzing(env)
+      request = Rack::Request.new(env)
+      started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      status, headers, body = yield
+      Context.current.result.set_request_if_unset(
+        status: status,
+        method: request.request_method,
+        path: request.path,
+        endpoint: '',
+        duration: Process.clock_gettime(Process::CLOCK_MONOTONIC) - started
+      )
+      @storage.write(Context.current.result)
+      headers['X-RackAnalyzer-Id'] = Context.current.id
+
+      [status, headers, body]
     end
   end
 end

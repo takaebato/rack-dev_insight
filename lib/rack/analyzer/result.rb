@@ -15,12 +15,12 @@ module Rack
         @sql = Sql.new
       end
 
-      def add_request(status:, method:, path:, endpoint:, duration:)
-        @request.add(status, method, path, endpoint, duration)
+      def set_request_if_unset(status:, method:, path:, endpoint:, duration:)
+        @request.set(status, method, path, endpoint, duration) unless @request.set?
       end
 
-      def add_sql(name:, statement:, stack_trace:, duration:, cached:)
-        @sql.add(name, statement, stack_trace, duration, cached)
+      def add_sql(name:, statement:, backtrace:, duration:, cached:)
+        @sql.add(name, statement, backtrace, duration, cached)
       end
 
       def to_h
