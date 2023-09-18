@@ -1,0 +1,13 @@
+default: &default
+  adapter: mysql2
+  encoding: utf8
+  username: root
+  password: password
+  host: mysql
+
+development:
+  <<: *default
+  database: development_rails_db
+test:
+  <<: *default
+  database: test_rails_db

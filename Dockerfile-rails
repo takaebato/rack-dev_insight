@@ -1,0 +1,43 @@
+ARG RUBY_VERSION
+FROM ruby:$RUBY_VERSION
+
+ARG RAILS_VERSION
+
+RUN mkdir /app /gem
+COPY ./ /gem/
+
+WORKDIR /gem
+ENV RUST_HOME /usr/local/lib/rust
+ENV RUSTUP_HOME ${RUST_HOME}/rustup
+ENV CARGO_HOME ${RUST_HOME}/cargo
+RUN mkdir /usr/local/lib/rust && \
+    chmod 0755 $RUST_HOME
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > ${RUST_HOME}/rustup.sh \
+    && chmod +x ${RUST_HOME}/rustup.sh \
+    && ${RUST_HOME}/rustup.sh -y
+ENV PATH $PATH:$CARGO_HOME/bin
+RUN apt update
+RUN apt install libclang-dev -y
+RUN bundle install
+RUN bundle exec rake compile
+
+WORKDIR /app
+RUN gem update --system
+RUN gem install rails -v $RAILS_VERSION
+RUN rails new . --minimal
+RUN bundle add rack-analyzer --path /gem
+RUN bundle add mysql2
+RUN bundle install
+
+COPY dummy_app/rails/ /app/tmp/dummy/
+RUN ln -sf tmp/dummy/app/controllers/users_controller.rb app/controllers/users_controller.rb
+RUN ln -sf tmp/dummy/app/models/user.rb app/models/user.rb
+RUN ln -sf tmp/dummy/config/routes.rb config/routes.rb
+RUN ln -sf tmp/dummy/config/database.yml config/database.yml
+RUN ln -sf tmp/dummy/db/schema.rb db/schema.rb
+RUN ln -sf tmp/dummy/test/rack_analyzer_test.rb test/rack_analyzer_test.rb
+
+#RUN bundle exec rails db:schema:load
+
+#CMD ["bin/rake"]
+ENTRYPOINT ["/bin/sh", "-c", "while :; do sleep 10; done"]
