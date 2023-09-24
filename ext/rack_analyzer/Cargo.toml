@@ -10,6 +10,15 @@ publish = false
 crate-type = ["cdylib"]
 
 [dependencies]
-magnus = { version = "0.5.4" }
-sqlparser = { version = "0.35.0", features = ["visitor"] }
+magnus = { version = "0.6.2" }
+sqlparser = { version = "0.38.0", features = ["visitor"] }
 tap = { version = "1.0.1" }
+#rb-sys = { version = "*", default-features = false, features = ["ruby-static"] }
+
+[dev-dependencies]
+magnus = { version = "0.6.2", features = ["embed"] }
+#rb-sys-env = { version = "0.1" }
+rb-sys-test-helpers = { version = "0.2" }
+
+#[build]
+#rustflags = ["-C", "link-dead-code=on"]

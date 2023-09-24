@@ -1,19 +1,16 @@
-use magnus::{class, define_class, define_error, define_module, Error, exception, function, method, prelude::*};
-use magnus::exception::standard_error;
-
+use magnus::{class, define_module, Error, function, method, prelude::*};
 use extractor::CrudTableExtractor;
 use extractor::CrudTables;
 use normalizer::Normalizer;
 
+mod errors;
 mod extractor;
 mod normalizer;
 
 #[magnus::init]
 fn init() -> Result<(), Error> {
     let rack_module = define_module("Rack").unwrap();
-    let analyzer_class = rack_module.define_class("Analyzer", Default::default()).unwrap();
-
-    analyzer_class.define_error("Err", standard_error());
+    let analyzer_class = rack_module.define_class("Analyzer", class::object()).unwrap();
 
     let normalizer_module = analyzer_class.define_module("Normalizer").unwrap();
     normalizer_module.define_singleton_method("_normalize", function!(Normalizer::normalize, 2))?;
