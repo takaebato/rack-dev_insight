@@ -2,7 +2,10 @@
 
 module Rack
   class Analyzer
-    class ExternalError < StandardError; end
+    # Definitions must be synced with ext/rack_analyzer/src/errors.rs
+    class Error < StandardError; end
+    class ExtError < Error; end
+    class ParserError < ExtError; end
   end
 end
 
