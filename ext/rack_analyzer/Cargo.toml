@@ -13,6 +13,7 @@ crate-type = ["cdylib"]
 magnus = { version = "0.6.2" }
 sqlparser = { version = "0.38.0", features = ["visitor"] }
 tap = { version = "1.0.1" }
+indoc = { version = "2" }
 #rb-sys = { version = "*", default-features = false, features = ["ruby-static"] }
 
 [dev-dependencies]

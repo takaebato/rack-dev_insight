@@ -10,6 +10,7 @@ require_relative "analyzer/recorder"
 require_relative "analyzer/config"
 require_relative "analyzer/context"
 require_relative "analyzer/errors"
+require_relative "analyzer/sql_dialects"
 require_relative 'analyzer/patches/sql/mysql2'
 require_relative 'analyzer/patches/sql/pg'
 require_relative 'analyzer/patches/sql/sqlite'
@@ -26,10 +27,6 @@ module Rack
         @config ||= Config.new
       end
     end
-
-    SQL_DIALECT_MYSQL = 'mysql'
-    SQL_DIALECT_POSTGRESQL = 'postgresql'
-    SQL_DIALECT_SQLITE = 'sqlite'
 
     def initialize(app)
       @app = app

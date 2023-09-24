@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DbHelper
   def setup_mysql
     around do |example|
@@ -12,8 +14,8 @@ module DbHelper
       c.query("DROP TABLE IF EXISTS #{db}.users")
       c.query(<<-"SQL"
         CREATE TABLE #{db}.users (
-          id INT AUTO_INCREMENT PRIMARY KEY, 
-          name VARCHAR(255) NOT NULL, 
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          name VARCHAR(255) NOT NULL,
           email VARCHAR(255) NOT NULL
         )
       SQL
@@ -99,5 +101,3 @@ module DbHelper
     SQLite3::Database.new 'rack_analyzer_test.db'
   end
 end
-
-include DbHelper
