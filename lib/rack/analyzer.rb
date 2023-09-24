@@ -4,6 +4,7 @@ require 'securerandom'
 require_relative "analyzer/version"
 require_relative "analyzer/rack_analyzer"
 require_relative "analyzer/storage/memory_store"
+require_relative "analyzer/storage/file_store"
 require_relative "analyzer/result"
 require_relative "analyzer/recorder"
 require_relative "analyzer/config"
