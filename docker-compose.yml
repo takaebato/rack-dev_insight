@@ -5,7 +5,18 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: password
     ports:
-      - "3406:3306"
+      - "3306:3306"
+  postgres:
+    image: "postgres:16"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+  mockserver:
+    image: kennethreitz/httpbin
+    ports:
+      - "8080:80"
   #  rubocop:
   #    build: .
   #    command: bundle exec rubocop

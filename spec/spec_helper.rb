@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
 require 'rspec'
+require 'rack'
 require "rack/analyzer"
+require 'rack/test'
+require 'committee'
+require 'db_helper'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

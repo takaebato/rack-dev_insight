@@ -5,13 +5,14 @@ require_relative "analyzer/version"
 require_relative "analyzer/rack_analyzer"
 require_relative "analyzer/storage/memory_store"
 require_relative "analyzer/result"
+require_relative "analyzer/recorder"
 require_relative "analyzer/config"
 require_relative "analyzer/context"
 require_relative "analyzer/errors"
-
-if defined?(::Rails)
-  require_relative 'analyzer/rails/railtie'
-end
+require_relative 'analyzer/patches/sql/mysql2'
+require_relative 'analyzer/patches/sql/pg'
+require_relative 'analyzer/patches/sql/sqlite'
+require_relative 'analyzer/patches/api/net_http'
 
 module Rack
   class Analyzer
@@ -25,6 +26,10 @@ module Rack
       end
     end
 
+    SQL_DIALECT_MYSQL = 'mysql'
+    SQL_DIALECT_POSTGRESQL = 'postgresql'
+    SQL_DIALECT_SQLITE = 'sqlite'
+
     def initialize(app)
       @app = app
       @config = Analyzer.config
@@ -34,30 +39,31 @@ module Rack
     end
 
     def call(env)
-      if (id = env['PATH_INFO'][%r{/rack_analyzer_results/(.+)$}, 1])
+      if (id = env['PATH_INFO'][%r{/rack-analyzer-results/(.+)$}, 1])
         fetch_analyzed(id)
       else
-        analyzing(env) { @app.call(env) }
+        analyze(env)
       end
     end
 
     private
 
     def fetch_analyzed(id)
-      [200, { 'Content-Type' => 'application/json' }, @storage.read(id)&.to_json || '']
+      header = { 'Content-Type' => 'application/json' }
+      if (result = @storage.read(id))
+        [200, header, result.to_response_json]
+      else
+        [404, header, { status: 404, message: "id: #{id} is not found" }.to_json]
+      end
+    rescue StandardError => e
+      [500, header, { status: 500, message: e.inspect }.to_json]
     end
 
-    def analyzing(env)
+    def analyze(env)
       request = Rack::Request.new(env)
-      started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-      status, headers, body = yield
-      Context.current.result.set_request_if_unset(
-        status: status,
-        method: request.request_method,
-        path: request.path,
-        endpoint: '',
-        duration: Process.clock_gettime(Process::CLOCK_MONOTONIC) - started
-      )
+      status, headers, body = Recorder.new.record_request(http_method: request.request_method, path: request.path) do
+        @app.call(env)
+      end
       @storage.write(Context.current.result)
       headers['X-RackAnalyzer-Id'] = Context.current.id
 

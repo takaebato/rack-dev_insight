@@ -8,88 +8,66 @@ module Rack
   class Analyzer
     class Result
       class Sql
-        class Crud
+        class CrudAggregations
+          CrudAggregation = Struct.new(:type, :table, :count, :duration, :query_ids)
+
           def initialize
-            @data = {}
+            @cached_data = {}
           end
 
-          def add(dialect_name, statement, duration, query_id)
+          def add(dialect_name, statement, duration, query_id, errored_queries)
             crud_tables = begin
                             Extractor::CrudTables.extract(dialect_name, statement)
-                          rescue ExternalError => error
-                            add_error(statement)
+                          rescue ExtError => e
+                            errored_queries << ErroredQuery.new(query_id, e.message)
                             return
                           end
 
             crud_tables.each do |type, tables|
-              add_crud(type, tables, duration, query_id)
+              tables.each do |table|
+                key = "#{type}_#{table.downcase}"
+                data = @cached_data[key] ||= CrudAggregation.new(type, table, 0, 0, [])
+                data.count += 1
+                data.duration += duration
+                data.query_ids << query_id
+              end
             end
           end
 
-          def to_h
-            @data
-          end
-
-          private
-
-          def add_crud(type, tables, duration, query_id)
-            tables.each do |table|
-              key = generate_key(type, table)
-              data = @data[key] ||= init_data(type, table)
-              data[:count] += 1
-              data[:duration] += duration
-              data[:query_ids] << query_id
-            end
-          end
-
-          def init_data(type, table)
-            {
-              type: type,
-              table: table,
-              count: 0,
-              duration: 0,
-              query_ids: []
-            }
-          end
-
-          def generate_key(type, table)
-            "#{type}_#{table.downcase}"
+          def to_a
+            @cached_data.values.map(&:to_h)
           end
         end
 
-        class Normalized
+        class NormalizedAggregations
+          NormalizedAggregation = Struct.new(:statement, :count, :duration, :query_ids)
+
           def initialize
-            @data = {}
+            @cached_data = {}
           end
 
-          def add(dialect_name, statement, duration, cached, query_id)
-            normalized_statement = Ext::Normalizer.normalize(dialect_name, statement)
+          def add(dialect_name, statement, duration, query_id, errored_queries)
+            normalized_statement = begin
+                                     Normalizer.normalize(dialect_name, statement)
+                                   rescue ExtError => e
+                                     errored_queries << ErroredQuery.new(query_id, e.message)
+                                     return
+                                   end
 
-            data = @data[normalized_statement] ||= init_data(normalized_statement)
-            data[:count] += 1
-            data[:duration] += duration
-            data[:cached] += 1 if cached
-            data[:query_ids] << query_id
+            data = @cached_data[normalized_statement] ||= NormalizedAggregation.new(normalized_statement, 0, 0, [])
+            data.count += 1
+            data.duration += duration
+            data.query_ids << query_id
           end
 
-          def to_h
-            @data
-          end
-
-          private
-
-          def init_data(statement)
-            {
-              statement: statement,
-              count: 0,
-              duration: 0,
-              cached: 0,
-              query_ids: []
-            }
+          def to_a
+            @cached_data.values.map(&:to_h)
           end
         end
 
         class Queries
+          Query = Struct.new(:id, :statement, :backtrace, :duration)
+
           attr_reader :id
 
           def initialize
@@ -97,39 +75,36 @@ module Rack
             @data = []
           end
 
-          def add(name, statement, backtrace, duration, cached)
-            @data << {
-              id: @id += 1,
-              name: name,
-              statement: statement,
-              backtrace: backtrace,
-              duration: duration,
-              cached: cached
-            }
+          def add(statement, backtrace, duration)
+            @data << Query.new(@id += 1, statement, backtrace, duration)
           end
 
-          def to_h
-            @data
+          def to_a
+            @data.map(&:to_h)
           end
         end
 
+        ErroredQuery = Struct.new(:query_id, :message)
+
         def initialize
-          @crud = Crud.new
-          @normalized = Normalized.new
+          @crud_aggregations = CrudAggregations.new
+          @normalized_aggregations = NormalizedAggregations.new
+          @errored_queries = []
           @queries = Queries.new
         end
 
-        def add(name, statement, backtrace, duration, cached)
-          @queries.add(name, statement, backtrace, duration, cached)
-          @crud.add(statement, duration, @queries.id)
-          @normalized.add(statement, duration, cached, @queries.id)
+        def add(dialect, statement, backtrace, duration)
+          @queries.add(statement, backtrace, duration)
+          @crud_aggregations.add(dialect, statement, duration, @queries.id, @errored_queries)
+          @normalized_aggregations.add(dialect, statement, duration, @queries.id, @errored_queries)
         end
 
         def to_h
           {
-            crud: @crud.to_h,
-            normalized: @normalized.to_h,
-            queries: @queries.to_h
+            crud_aggregations: @crud_aggregations.to_a,
+            normalized_aggregations: @normalized_aggregations.to_a,
+            errored_queries: @errored_queries.map(&:to_h).uniq,
+            queries: @queries.to_a
           }
         end
       end
