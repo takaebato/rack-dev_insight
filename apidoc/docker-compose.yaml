@@ -6,4 +6,4 @@ services:
     volumes:
       - ./openapi.yaml:/tmp/openapi.yaml:ro
     ports:
-      - '8080:4010'
+      - '8081:4010'

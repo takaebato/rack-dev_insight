@@ -7,9 +7,11 @@
   export let sql;
   export let sqlSubPanesHeight;
   export let openCrudRows;
-  export let toggleCrudRow;
   export let openNormalizedRows;
-  export let toggleNormalizedRow;
+
+  const crudSort = { key: 'id', direction: 1 };
+  const normalizedSort = { key: 'id', direction: 1 };
+  const allSort = { key: 'id', direction: 1 };
 </script>
 
 <TabItem open title='SQL' class='[&>button]:!p-3'>
@@ -18,17 +20,18 @@
       {sql}
       {sqlSubPanesHeight}
       {openCrudRows}
-      {toggleCrudRow}
+      {crudSort}
     />
     <NormalizedTabItem
       {sql}
       {sqlSubPanesHeight}
       {openNormalizedRows}
-      {toggleNormalizedRow}
+      {normalizedSort}
     />
     <AllTabItem
       {sql}
       {sqlSubPanesHeight}
+      {allSort}
     />
   </Tabs>
 </TabItem>

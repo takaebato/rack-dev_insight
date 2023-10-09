@@ -16,7 +16,7 @@ export const fetchResult = async (request) => {
 };
 
 export const fetchResultDebug = async (_request) => {
-  const MOCK_SERVER_ORIGIN = 'http://localhost:8080';
+  const MOCK_SERVER_ORIGIN = 'http://localhost:8081';
   const api = new Api({ baseUrl: MOCK_SERVER_ORIGIN });
   try {
     const response = await api.rackAnalyzerResults.getRackAnalyzerResult(uuidv4());
@@ -25,3 +25,4 @@ export const fetchResultDebug = async (_request) => {
     return { skip: false, response: e };
   }
 };
+

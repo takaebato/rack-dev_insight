@@ -1,8 +1,8 @@
 module Rack
   class Analyzer
     class FileStore
-      def initialize(dir_path)
-        @dir_path = dir_path
+      def initialize
+        @dir_path = Rack::Analyzer.config.file_store_dir_path
       end
 
       def write(result)

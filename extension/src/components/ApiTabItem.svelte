@@ -22,19 +22,19 @@
 <TabItem title='API' class='[&>button]:!p-3 overflow-hidden'>
   <Splitpanes style='height: {apiPanesHeight}'>
     <Pane class='!overflow-auto !bg-white'>
-      <Table hoverable>
+      <Table hoverable class='table-fixed  min-w-[30em]'>
         <TableHead>
-          <TableHeadCell>Status</TableHeadCell>
-          <TableHeadCell>Method</TableHeadCell>
-          <TableHeadCell>Url</TableHeadCell>
+          <TableHeadCell class='w-3/12'>Status</TableHeadCell>
+          <TableHeadCell class='w-3/12'>Method</TableHeadCell>
+          <TableHeadCell class='w-6/12'>Url</TableHeadCell>
         </TableHead>
         <TableBody>
           {#if apis !== undefined}
             {#each apis as api, idx}
               <TableBodyRow on:click={() => selectApiRow(idx)}>
-                <TableBodyCell>{api.status}</TableBodyCell>
-                <TableBodyCell>{api.method}</TableBodyCell>
-                <TableBodyCell>{api.url}</TableBodyCell>
+                  <TableBodyCell class='whitespace-normal break-words'>{api.status}</TableBodyCell>
+                  <TableBodyCell class='whitespace-normal break-words'>{api.method}</TableBodyCell>
+                  <TableBodyCell class='whitespace-normal break-words'>{api.url}</TableBodyCell>
               </TableBodyRow>
             {/each}
           {/if}
@@ -44,7 +44,7 @@
     <Pane class='!overflow-auto !bg-white'>
       <Accordion
         multiple
-        class='text-gray-900 text-sm'
+        class='text-gray-900 text-sm min-w-[20em]'
         classActive='bg-gray-50 focus:ring-0'
         inactiveClass='bg-gray-50 text-gray-900'
       >

@@ -31,24 +31,16 @@
   let openRequestRow;
   const selectRequestRow = (idx) => {
     if (openRequestRow === idx) return;
-    openCrudRows = new Set();
-    openNormalizedRows = new Set();
+    openCrudRows = {};
+    openNormalizedRows = {};
     openApiRow = undefined;
     openRequestRow = idx;
   };
-  let openCrudRows = new Set();
-  const toggleCrudRow = (idx) => {
-    openCrudRows.has(idx) ? openCrudRows.delete(idx) : openCrudRows.add(idx);
-    openCrudRows = new Set(openCrudRows);
-  };
-  let openNormalizedRows = new Set();
-  const toggleNormalizedRow = (idx) => {
-    openNormalizedRows.has(idx) ? openNormalizedRows.delete(idx) : openNormalizedRows.add(idx);
-    openNormalizedRows = new Set(openNormalizedRows);
-  };
+  let openCrudRows = {};
+  let openNormalizedRows = {};
   let openApiRow;
   const API_DETAILS_COUNT = 4;
-  let openApiDetails = new Array(API_DETAILS_COUNT).fill(true);
+  const openApiDetails = new Array(API_DETAILS_COUNT).fill(true);
   const selectApiRow = (idx) => openApiRow = idx;
 
   onMount(() => {
@@ -72,20 +64,20 @@
 <div class='[&_td]:border [&_td]:text-xs [&_td]:p-2 [&_th]:border [&_th]:normal-case [&_th]:text-sm [&_th]:p-3'>
   <Splitpanes horizontal={isNarrowViewport} class='!h-screen !bg-white' on:resize={handlePanesResize}>
     <Pane size={DEFAULT_REQUEST_PANE_SIZE} class='!overflow-auto !bg-white'>
-      <Table hoverable>
+      <Table hoverable class='table-fixed  min-w-[40em]'>
         <TableHead>
-          <TableHeadCell>Status</TableHeadCell>
-          <TableHeadCell>Method</TableHeadCell>
-          <TableHeadCell>Path</TableHeadCell>
-          <TableHeadCell>Duration(ms)</TableHeadCell>
+          <TableHeadCell class='w-2/12'>Status</TableHeadCell>
+          <TableHeadCell class='w-2/12'>Method</TableHeadCell>
+          <TableHeadCell class='w-4/12'>Path</TableHeadCell>
+          <TableHeadCell class='w-2/12'>Duration</TableHeadCell>
         </TableHead>
         <TableBody>
           {#each results as result, idx}
             <TableBodyRow on:click={() => selectRequestRow(idx)}>
-              <TableBodyCell>{result.status}</TableBodyCell>
-              <TableBodyCell>{result.method}</TableBodyCell>
-              <TableBodyCell>{result.path}</TableBodyCell>
-              <TableBodyCell>{result.duration}</TableBodyCell>
+              <TableBodyCell class='whitespace-normal break-words'>{result.status}</TableBodyCell>
+              <TableBodyCell class='whitespace-normal break-words'>{result.method}</TableBodyCell>
+              <TableBodyCell class='whitespace-normal break-words'>{result.path}</TableBodyCell>
+              <TableBodyCell class='whitespace-normal break-words'>{result.duration}</TableBodyCell>
             </TableBodyRow>
           {/each}
         </TableBody>
@@ -97,9 +89,7 @@
           sql={results?.[openRequestRow]?.sql}
           {sqlSubPanesHeight}
           {openCrudRows}
-          {toggleCrudRow}
           {openNormalizedRows}
-          {toggleNormalizedRow}
         />
         <ApiTabItem
           apis={results?.[openRequestRow]?.apis}
