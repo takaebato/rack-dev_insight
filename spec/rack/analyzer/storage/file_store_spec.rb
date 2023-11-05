@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe Rack::Analyzer::FileStore do
   Result = Struct.new(:id, :value)
 
-  let(:file_store) { described_class.new('tmp/test/') }
+  let(:file_store) { described_class.new }
 
   it 'can write and read data' do
     result = Result.new(1, 'hoge')

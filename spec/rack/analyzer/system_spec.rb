@@ -51,6 +51,12 @@ RSpec.describe Rack::Analyzer do
     [last_response.status, last_response.headers, last_response.body]
   end
 
+  before do
+    Rack::Analyzer.configure do |config|
+      config.storage = Rack::Analyzer::FileStore
+    end
+  end
+
   it 'records and returns analyzed result' do
     get '/app'
     expect(last_response.status).to eq(200)

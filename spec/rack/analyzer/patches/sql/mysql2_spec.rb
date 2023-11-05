@@ -17,7 +17,7 @@ RSpec.describe 'Patch mysql2' do
     res = c.query('SELECT * FROM users WHERE id = 1')
     expect(res).to be_kind_of(Mysql2::Result)
     expect(res.count).to eq(1)
-    expect(Rack::Analyzer::Context.current.result.to_h[:sql][:queries].size).to eq(2)
+    expect(Rack::Analyzer::Context.current.result.attributes[:sql][:queries].size).to eq(2)
     c.close
   end
 end

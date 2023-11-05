@@ -16,7 +16,7 @@ RSpec.describe 'Patch sqlite' do
     db.execute("INSERT INTO users (name, email) VALUES ('foo', 'bar@example.com')")
     res = db.execute('SELECT * FROM users WHERE id = 1')
     expect(res.count).to eq(1)
-    expect(Rack::Analyzer::Context.current.result.to_h[:sql][:queries].size).to eq(2)
+    expect(Rack::Analyzer::Context.current.result.attributes[:sql][:queries].size).to eq(2)
     db.close
   end
 end

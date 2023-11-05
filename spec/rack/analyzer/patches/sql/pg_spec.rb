@@ -17,7 +17,7 @@ RSpec.describe 'Patch pg' do
     res = conn.exec('SELECT * FROM users WHERE id = 1')
     expect(res).to be_kind_of(PG::Result)
     expect(res.count).to eq(1)
-    expect(Rack::Analyzer::Context.current.result.to_h[:sql][:queries].size).to eq(2)
+    expect(Rack::Analyzer::Context.current.result.attributes[:sql][:queries].size).to eq(2)
     conn.close
   end
 end

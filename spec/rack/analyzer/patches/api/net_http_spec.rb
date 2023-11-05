@@ -13,6 +13,6 @@ RSpec.describe 'Patch net/http' do
     uri = URI('http://localhost:8080/get')
     response = Net::HTTP.get_response(uri)
     expect(response).to be_kind_of(Net::HTTPResponse)
-    expect(Rack::Analyzer::Context.current.result.to_h[:apis].size).to eq(1)
+    expect(Rack::Analyzer::Context.current.result.attributes[:apis].size).to eq(1)
   end
 end
