@@ -1,4 +1,4 @@
-<script>
+<script lang='ts'>
   import {
     Accordion,
     AccordionItem, TabItem,
@@ -11,12 +11,14 @@
   } from 'flowbite-svelte';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
   import JsonViewer from './JsonViewer.svelte';
+  import TraceInfo from './TraceInfo.svelte';
+  import type { ApiSchema } from '../api/Api';
 
-  export let apis;
-  export let apiPanesHeight;
-  export let openApiRow;
-  export let openApiDetails;
-  export let selectApiRow;
+  export let apis: ApiSchema[];
+  export let apiPanesHeight: string;
+  export let openApiRow: number;
+  export let openApiDetails: boolean[];
+  export let selectApiRow: (idx: number) => void;
 </script>
 
 <TabItem title='API' class='[&>button]:!p-3 overflow-hidden'>
@@ -29,15 +31,13 @@
           <TableHeadCell class='w-6/12'>Url</TableHeadCell>
         </TableHead>
         <TableBody>
-          {#if apis !== undefined}
-            {#each apis as api, idx}
-              <TableBodyRow on:click={() => selectApiRow(idx)}>
-                  <TableBodyCell class='whitespace-normal break-words'>{api.status}</TableBodyCell>
-                  <TableBodyCell class='whitespace-normal break-words'>{api.method}</TableBodyCell>
-                  <TableBodyCell class='whitespace-normal break-words'>{api.url}</TableBodyCell>
-              </TableBodyRow>
-            {/each}
-          {/if}
+          {#each apis as api, idx}
+            <TableBodyRow on:click={() => selectApiRow(idx)}>
+              <TableBodyCell class='whitespace-normal break-words'>{api.status}</TableBodyCell>
+              <TableBodyCell class='whitespace-normal break-words'>{api.method}</TableBodyCell>
+              <TableBodyCell class='whitespace-normal break-words'>{api.url}</TableBodyCell>
+            </TableBodyRow>
+          {/each}
         </TableBody>
       </Table>
     </Pane>
@@ -55,7 +55,7 @@
           class='group-first:rounded-none'
         >
           <span slot='header'>Request Headers</span>
-          {#if apis !== undefined && openApiRow !== undefined}
+          {#if openApiRow >= 0}
             {#each apis[openApiRow].requestHeaders as header}
               <p class='p-0.5'>{header.field}: {header.value}</p>
             {/each}
@@ -68,8 +68,8 @@
           class='group-first:rounded-none'
         >
           <span slot='header'>Request Body</span>
-          {#if apis !== undefined && openApiRow !== undefined}
-            <JsonViewer data={apis[openApiRow].requestBody} />
+          {#if openApiRow >= 0}
+            <JsonViewer data={apis[openApiRow].requestBody || ''} />
           {/if}
         </AccordionItem>
         <AccordionItem
@@ -79,7 +79,7 @@
           class='group-first:rounded-none'
         >
           <span slot='header'>Response Headers</span>
-          {#if apis !== undefined && openApiRow !== undefined}
+          {#if openApiRow >= 0}
             {#each apis[openApiRow].responseHeaders as header}
               <p class='p-0.5'>{header.field}: {header.value}</p>
             {/each}
@@ -92,8 +92,21 @@
           bind:open={openApiDetails[3]}
         >
           <span slot='header'>Response Body</span>
-          {#if apis !== undefined && openApiRow !== undefined}
-            <JsonViewer data={apis[openApiRow].responseBody} />
+          {#if openApiRow >= 0}
+            <JsonViewer data={apis[openApiRow].responseBody || ''} />
+          {/if}
+        </AccordionItem>
+        <AccordionItem
+          class='group-first:rounded-none'
+          transitionParams={{ duration: 0 }}
+          paddingDefault='p-2'
+          bind:open={openApiDetails[4]}
+        >
+          <span slot='header'>Backtrace</span>
+          {#if openApiRow >= 0}
+            {#each apis[openApiRow].backtrace as traceInfo}
+              <TraceInfo {traceInfo} />
+            {/each}
           {/if}
         </AccordionItem>
       </Accordion>

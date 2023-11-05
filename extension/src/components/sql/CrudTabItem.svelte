@@ -1,47 +1,18 @@
-<script>
+<script lang='ts'>
   import { TabItem, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell } from 'flowbite-svelte';
   import QueryTable from './QueryTable.svelte';
+  import type { CrudAggregationSchema, SqlSchema } from '../../api/Api';
+  import type { OpenRowsType, SortType } from '../../types';
+  import { compFunc } from '../../utils/sort';
 
-  export let sql;
-  export let sqlSubPanesHeight;
-  export let openCrudRows;
-  export let crudSort;
+  export let sql: SqlSchema | undefined;
+  export let sqlSubPanesHeight: string;
+  export let openCrudRows: OpenRowsType;
+  export let setOpenCrudRows: (id: number) => (key?: string) => void;
+  export let crudSort: SortType;
+  export let setCrudSort: (key: string) => void;
 
-  const setOpenCrudRows = (id) => (key) => {
-    if (key) {
-      if (key === openCrudRows[id].sortKey) {
-        if (openCrudRows[id].sortDirection === 1) {
-          openCrudRows[id].sortDirection = -1;
-        } else {
-          openCrudRows[id].sortKey = 'id';
-          openCrudRows[id].sortDirection = 1;
-        }
-      } else {
-        openCrudRows[id].sortKey = key;
-        openCrudRows[id].sortDirection = 1;
-      }
-    } else {
-      openCrudRows.hasOwnProperty(id) ? delete openCrudRows[id] : openCrudRows[id] = { sortKey: 'id', sortDirection: 1 };
-    }
-    openCrudRows = openCrudRows;
-  };
-
-  const setCrudSort = (key) => {
-    if (key === crudSort.key) {
-      if (crudSort.direction === 1) {
-        crudSort.direction = -1;
-      } else {
-        crudSort.key = 'id';
-        crudSort.direction = 1;
-      }
-    } else {
-      crudSort.key = key;
-      crudSort.direction = 1;
-    }
-    crudSort = crudSort;
-  };
-
-  const extractQueries = (sql, crud, sortKey, sortDirection) =>
+  const extractQueries = (sql: SqlSchema, crud: CrudAggregationSchema, sortKey: string, sortDirection: number) =>
     sql.queries
       .filter((query) => crud.queryIds.includes(query.id))
       .sort((a, b) => a[sortKey] > b[sortKey] ? sortDirection : -sortDirection);
@@ -58,7 +29,7 @@
       </TableHead>
       <TableBody>
         {#if sql !== undefined}
-          {#each sql.crudAggregations.sort((a, b) => a[crudSort.key] > b[crudSort.key] ? crudSort.direction : -crudSort.direction) as crud}
+          {#each sql.crudAggregations.sort(compFunc(crudSort)) as crud}
             <TableBodyRow on:click={() => setOpenCrudRows(crud.id)()}>
               <TableBodyCell class='whitespace-normal break-words'>{crud.type}</TableBodyCell>
               <TableBodyCell class='whitespace-normal break-words'>{crud.table}</TableBodyCell>
@@ -70,7 +41,7 @@
                 <TableBodyCell colspan='4' class='p-2'>
                   <QueryTable
                     setSort={setOpenCrudRows(crud.id)}
-                    queries={extractQueries(sql, crud, openCrudRows[crud.id].sortKey, openCrudRows[crud.id].sortDirection)}
+                    queries={extractQueries(sql, crud, openCrudRows[crud.id].key, openCrudRows[crud.id].direction)}
                   />
                 </TableBodyCell>
               </TableBodyRow>

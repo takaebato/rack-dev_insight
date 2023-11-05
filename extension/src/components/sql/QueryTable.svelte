@@ -1,8 +1,10 @@
 <script lang='ts'>
   import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell } from 'flowbite-svelte';
+  import TraceInfo from '../TraceInfo.svelte';
+  import type { QuerySchema } from '../../api/Api';
 
-  export let setSort;
-  export let queries;
+  export let setSort: (key: string) => void;
+  export let queries: QuerySchema[];
 </script>
 <Table class='table-fixed  min-w-[50em]'>
   <TableHead>
@@ -15,8 +17,8 @@
       <TableBodyRow>
         <TableBodyCell class='whitespace-normal break-words'>{query.statement}</TableBodyCell>
         <TableBodyCell class='whitespace-normal break-words'>
-          {#each query.backtrace as line}
-            <a href={line} target='_blank' class='hover:text-gray-500'>{line}</a><br />
+          {#each query.backtrace as traceInfo}
+            <TraceInfo {traceInfo} />
           {/each}
         </TableBodyCell>
         <TableBodyCell class='whitespace-normal break-words'>{query.duration}</TableBodyCell>

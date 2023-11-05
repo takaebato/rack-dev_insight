@@ -6,14 +6,14 @@ const config = {
   darkMode: 'class',
 
   theme: {
-    fontSize: {
-      xs: ['0.65rem', '0.65rem'],
-      sm: ['0.7rem', '0.7rem'],
-    },
     fontFamily: {
       pre: ['system-ui', 'Hiragino Kaku Gothic ProN', 'sans-serif'],
     },
     extend: {
+      fontSize: {
+        xs: ['0.65rem', '0.65rem'],
+        sm: ['0.7rem', '0.7rem'],
+      },
       colors: {
         primary: {
           50: '#FFF5F2',

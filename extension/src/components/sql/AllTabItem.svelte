@@ -1,31 +1,20 @@
-<script>
+<script lang='ts'>
   import { TabItem } from 'flowbite-svelte';
   import QueryTable from './QueryTable.svelte';
+  import { compFunc } from '../../utils/sort';
+  import type { SqlSchema } from '../../api/Api';
+  import type { SortType } from '../../types';
 
-  export let sql;
-  export let sqlSubPanesHeight;
-  export let allSort;
-
-  const setAllSort = (key) => {
-    if (key === allSort.key) {
-      if (allSort.direction === 1) {
-        allSort.direction = -1;
-      } else {
-        allSort.key = 'id';
-        allSort.direction = 1;
-      }
-    } else {
-      allSort.key = key;
-      allSort.direction = 1;
-    }
-    allSort = allSort;
-  };
+  export let sql: SqlSchema | undefined;
+  export let sqlSubPanesHeight: string;
+  export let allSort: SortType;
+  export let setAllSort: (key: string) => void;
 </script>
 <TabItem title='ALL' class='[&>button]:!p-3'>
   <div class='overflow-auto' style='height: {sqlSubPanesHeight}'>
     <QueryTable
       setSort={setAllSort}
-      queries={sql ? sql.queries.sort((a, b) => a[allSort.key] > b[allSort.key] ? allSort.direction : -allSort.direction) : []}
+      queries={sql ? sql.queries.sort(compFunc(allSort)) : []}
     />
   </div>
 </TabItem>

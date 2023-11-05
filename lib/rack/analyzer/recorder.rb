@@ -53,6 +53,11 @@ module Rack
         Kernel.caller
               .reject { |line| Rack::Analyzer.config.backtrace_exclusion_patterns.any? { |regex| line =~ regex } }
               .first(Rack::Analyzer.config.backtrace_depth)
+              .map { |line|
+                if (match = line.match(/\A(?<path>.*):(?<line>\d+)\z/))
+                  { original: line, path: match[:path], line: match[:line].to_i }
+                end
+              }.compact
       end
     end
   end

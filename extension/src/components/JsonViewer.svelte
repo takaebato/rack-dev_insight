@@ -1,12 +1,12 @@
 <script lang='ts'>
   import JSONTree from 'svelte-json-tree';
 
-  export let data;
+  export let data: string;
 
   type ViewMode = 'parsed' | 'source' | 'formatted';
   let mode: ViewMode = 'parsed';
 
-  const isValidJson = (raw) => {
+  const isValidJson = (raw: string): boolean => {
     try {
       JSON.parse(raw);
       return true;
