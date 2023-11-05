@@ -6,8 +6,7 @@
   "devtools_page": "src/devtools/index.html",
   "action": {
     "default_title": "Svelte Extension",
-    "default_icon": "logo.png",
-    "default_popup": "src/popup/index.html"
+    "default_icon": "logo.png"
   },
   "permissions": [
     "storage"

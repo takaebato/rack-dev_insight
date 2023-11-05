@@ -66,8 +66,6 @@
     openNormalizedRows = {};
     openApiRow = -1;
   };
-  let isConfigOpen = false;
-  const handleConfigOpen = () => isConfigOpen = !isConfigOpen;
 
   onMount(() => {
     chrome.devtools.network.onRequestFinished.addListener(async (request) => {
