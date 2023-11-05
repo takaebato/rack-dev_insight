@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module DbHelper
+  # create database and users table
   def setup_mysql
     around do |example|
       c = Mysql2::Client.new(
@@ -38,6 +39,7 @@ module DbHelper
     )
   end
 
+  # create database and users table
   def setup_postgresql
     around do |example|
       conn = PG.connect(
@@ -77,9 +79,10 @@ module DbHelper
     )
   end
 
+  # create database and users table
   def setup_sqlite
     around do |example|
-      db = SQLite3::Database.new 'rack_analyzer_test.db'
+      db = sqlite_client
       db.execute("DROP TABLE IF EXISTS users")
       db.execute(<<-SQL
         CREATE TABLE IF NOT EXISTS users (
@@ -98,6 +101,6 @@ module DbHelper
   end
 
   def sqlite_client
-    SQLite3::Database.new 'rack_analyzer_test.db'
+    SQLite3::Database.new 'tmp/rack_analyzer_test.db'
   end
 end
