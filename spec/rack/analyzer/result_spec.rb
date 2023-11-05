@@ -51,7 +51,7 @@ RSpec.describe Rack::Analyzer::Result do
   end
 
   it 'constructs result' do
-    res = result.to_h
+    res = result.attributes
     expect(res[:sql][:crud_aggregations].count).to eq(2)
     expect(res[:sql][:normalized_aggregations].count).to eq(3)
     expect(res[:apis].count).to eq(1)

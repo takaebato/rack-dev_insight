@@ -65,15 +65,13 @@
       {allSort}
       {setAllSort}
     />
-    {#if sql !== undefined}
-      {#if sql.erroredQueries.length > 0 }
-        <ErroredTabItem
-          {sql}
-          {sqlSubPanesHeight}
-          {erroredSort}
-          {setErroredSort}
-        />
-      {/if}
+    {#if sql !== undefined && sql.erroredQueries.length > 0 }
+      <ErroredTabItem
+        {sql}
+        {sqlSubPanesHeight}
+        {erroredSort}
+        {setErroredSort}
+      />
     {/if}
   </Tabs>
 </TabItem>
