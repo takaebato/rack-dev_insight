@@ -79,6 +79,7 @@ impl Visitor for CrudTableExtractor {
             Statement::Delete {
                 tables,
                 from,
+                using,
                 ..
             } => {
                 if !tables.is_empty() {
@@ -94,6 +95,10 @@ impl Visitor for CrudTableExtractor {
                         } = &table_with_joins.relation {
                             self.delete_tables.push(name.0[0].value.clone());
                             self.to_subtract_from_read.push(name.0[0].value.clone());
+                            // subtract again since using contains the same table
+                            if using.is_some() {
+                                self.to_subtract_from_read.push(name.0[0].value.clone());
+                            }
                         }
                     }
                 }
