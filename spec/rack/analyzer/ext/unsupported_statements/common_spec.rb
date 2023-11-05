@@ -1,19 +1,11 @@
 require 'spec_helper'
+require 'rack/analyzer/ext/extractor/extractor_helper'
 
 RSpec.describe 'List unsupported statements' do
+  include ExtractorHelper
+
   # use CrudTables extractor to parse statements
   subject { Rack::Analyzer::Extractor::CrudTables.extract(dialect, statement) }
-
-  shared_examples :extracts_tables do |create:, read:, update:, delete:|
-    it 'returns crud tables hash' do
-      expect(subject).to eq({
-                              'CREATE' => create,
-                              'READ' => read,
-                              'UPDATE' => update,
-                              'DELETE' => delete
-                            })
-    end
-  end
 
   shared_examples :not_parseable do
     it 'raises parser error' do
@@ -21,9 +13,15 @@ RSpec.describe 'List unsupported statements' do
     end
   end
 
-  describe 'mysql' do
-    let(:dialect) { 'mysql' }
+  where(:dialect) {
+    [
+      Rack::Analyzer::SqlDialects::MYSQL,
+      Rack::Analyzer::SqlDialects::POSTGRESQL,
+      Rack::Analyzer::SqlDialects::SQLITE
+    ]
+  }
 
+  with_them do
     context 'SELECT' do
       context 'SUB QUERY with COMPARISON and ALL' do
         let(:statement) { 'SELECT a FROM t1 WHERE b > ALL (SELECT b FROM t2)' }

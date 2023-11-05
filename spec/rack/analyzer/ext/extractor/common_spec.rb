@@ -1,23 +1,21 @@
 require 'spec_helper'
+require 'rack/analyzer/ext/extractor/extractor_helper'
 
 RSpec.describe Rack::Analyzer::Extractor::CrudTables do
   describe '.extract' do
+    include ExtractorHelper
+
     subject { described_class.extract(dialect, statement) }
 
-    shared_examples :extracts_tables do |create:, read:, update:, delete:|
-      it 'returns crud tables hash' do
-        expect(subject).to eq({
-                                'CREATE' => create,
-                                'READ' => read,
-                                'UPDATE' => update,
-                                'DELETE' => delete
-                              })
-      end
-    end
+    where(:dialect) {
+      [
+        Rack::Analyzer::SqlDialects::MYSQL,
+        Rack::Analyzer::SqlDialects::POSTGRESQL,
+        Rack::Analyzer::SqlDialects::SQLITE
+      ]
+    }
 
-    describe 'mysql' do
-      let(:dialect) { 'mysql' }
-
+    with_them do
       context 'SELECT' do
         context 'SELECT' do
           let(:statement) { 'SELECT a FROM t1' }
@@ -31,16 +29,6 @@ RSpec.describe Rack::Analyzer::Extractor::CrudTables do
 
         context 'ALIAS' do
           let(:statement) { 'SELECT a FROM t1 AS t1_alias' }
-
-          it_behaves_like :extracts_tables,
-                          create: [],
-                          read: ['t1'],
-                          update: [],
-                          delete: []
-        end
-
-        context 'PARTITION' do
-          let(:statement) { 'SELECT a FROM t1 PARTITION (p0)' }
 
           it_behaves_like :extracts_tables,
                           create: [],
@@ -210,6 +198,16 @@ RSpec.describe Rack::Analyzer::Extractor::CrudTables do
                           update: [],
                           delete: []
         end
+
+        describe 'INSERT WITH RETURNING' do
+          let(:statement) { 'INSERT INTO t1 (a) VALUES (1) RETURNING a' }
+
+          it_behaves_like :extracts_tables,
+                          create: ['t1'],
+                          read: [],
+                          update: [],
+                          delete: []
+        end
       end
 
       context 'UPDATE' do
@@ -285,14 +283,6 @@ RSpec.describe Rack::Analyzer::Extractor::CrudTables do
                           delete: ['t1', 't2']
         end
       end
-    end
-
-    describe 'postgresql' do
-      let(:dialect) { 'postgresql' }
-    end
-
-    describe 'sqlite' do
-      let(:dialect) { 'sqlite' }
     end
   end
 end

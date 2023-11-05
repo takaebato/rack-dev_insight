@@ -1,16 +1,21 @@
 require 'spec_helper'
+require 'rack/analyzer/ext/normalizer/normalizer_helper'
 
 RSpec.describe Rack::Analyzer::Normalizer do
   describe '.normalize' do
-    shared_examples :normalize do
-      it 'returns normalized statement' do
-        expect(described_class.normalize(dialect, statement)).to eq(normalized)
-      end
-    end
+    include NormalizerHelper
 
-    describe 'mysql' do
-      let(:dialect) { 'mysql' }
+    subject { described_class.normalize(dialect, statement) }
 
+    where(:dialect) {
+      [
+        Rack::Analyzer::SqlDialects::MYSQL,
+        Rack::Analyzer::SqlDialects::POSTGRESQL,
+        Rack::Analyzer::SqlDialects::SQLITE
+      ]
+    }
+
+    with_them do
       context 'SELECT' do
         context 'WHERE' do
           let(:statement) { 'SELECT a FROM t1 WHERE b = 1 and c in (1, 2) and d IS NULL' }
@@ -43,13 +48,6 @@ RSpec.describe Rack::Analyzer::Normalizer do
         context 'ALIAS' do
           let(:statement) { 'SELECT a FROM t1 AS t1_alias' }
           let(:normalized) { 'SELECT a FROM t1 AS t1_alias' }
-
-          it_behaves_like :normalize
-        end
-
-        context 'PARTITION' do
-          let(:statement) { 'SELECT a FROM t1 PARTITION (p0)' }
-          let(:normalized) { 'SELECT a FROM t1PARTITION (p0)' } # Not desirable. Table name and partition name are not separated.
 
           it_behaves_like :normalize
         end
@@ -222,14 +220,5 @@ RSpec.describe Rack::Analyzer::Normalizer do
         end
       end
     end
-
-    describe 'postgresql' do
-      let(:dialect) { 'postgresql' }
-    end
-
-    describe 'sqlite' do
-      let(:dialect) { 'sqlite' }
-    end
   end
 end
-

@@ -6,6 +6,7 @@ require "rack/analyzer"
 require 'rack/test'
 require 'committee'
 require 'db_helper'
+require 'rspec-parameterized'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
