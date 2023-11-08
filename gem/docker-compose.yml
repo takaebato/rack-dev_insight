@@ -3,7 +3,6 @@ services:
   mysql:
     image: mysql:8.0
     environment:
-      MYSQL_USER: root
       MYSQL_ROOT_PASSWORD: password
     ports:
       - "3306:3306"
@@ -31,6 +30,10 @@ services:
         - RUBY_VERSION=3.1.3
         - RAILS_VERSION=6.1
     volumes:
-      - ./dummy_app/rails/:/app/tmp/dummy/
+      - ./tmp/dummy_app/rails/:/app/
+#    command: "bundle exec rails s -p 3000 -b '0.0.0.0'"
+    command: "/bin/sh -c 'while :; do sleep 10; done'"
+    ports:
+      - "3000:3000"
     depends_on:
       - mysql

@@ -2,6 +2,8 @@ module Rack
   class Analyzer
     class Recorder
       def record_request(http_method:, path:)
+        return if Rack::Analyzer::Context.current.nil?
+
         start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         status, headers, body = yield
         duration = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start
@@ -15,6 +17,8 @@ module Rack
       end
 
       def record_sql(dialect:, statement:)
+        return if Rack::Analyzer::Context.current.nil?
+
         start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         res = yield
         duration = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start
@@ -28,6 +32,8 @@ module Rack
       end
 
       def record_api(request:)
+        return if Rack::Analyzer::Context.current.nil?
+
         start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         response = yield
         duration = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start
@@ -54,7 +60,7 @@ module Rack
               .reject { |line| Rack::Analyzer.config.backtrace_exclusion_patterns.any? { |regex| line =~ regex } }
               .first(Rack::Analyzer.config.backtrace_depth)
               .map { |line|
-                if (match = line.match(/\A(?<path>.*):(?<line>\d+)\z/))
+                if (match = line.match(/(?<path>.*):(?<line>\d+)/))
                   { original: line, path: match[:path], line: match[:line].to_i }
                 end
               }.compact

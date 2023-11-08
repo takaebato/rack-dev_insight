@@ -33,7 +33,6 @@ module Rack
       @config = Analyzer.config
       @config.storage_instance ||= @config.storage.new
       @storage = @config.storage_instance
-      Context.create_current(SecureRandom.uuid)
     end
 
     def call(env)
@@ -47,9 +46,10 @@ module Rack
     private
 
     def fetch_analyzed(id)
-      header = { 'Content-Type' => 'application/json' }
+      header = { 'Content-Type' => 'application/json', 'etag' => id }
       if (result = @storage.read(id))
-        [200, header, result.to_response_json]
+        puts '#########return retusts'
+        [203, header, result.to_response_json]
       else
         [404, header, { status: 404, message: "id: #{id} is not found" }.to_json]
       end
@@ -58,6 +58,7 @@ module Rack
     end
 
     def analyze(env)
+      Context.create_current(SecureRandom.uuid)
       request = Rack::Request.new(env)
       status, headers, body = Recorder.new.record_request(http_method: request.request_method, path: request.path) do
         @app.call(env)
