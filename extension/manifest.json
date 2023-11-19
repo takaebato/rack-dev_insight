@@ -8,10 +8,6 @@
     "default_title": "Svelte Extension",
     "default_icon": "logo.png"
   },
-  "permissions": [
-    "storage"
-  ],
-  "host_permissions": [
-    "<all_urls>"
-  ]
+  "permissions": ["storage"],
+  "host_permissions": ["<all_urls>"]
 }

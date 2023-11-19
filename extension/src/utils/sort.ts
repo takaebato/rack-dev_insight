@@ -14,13 +14,14 @@ export const buildRows = (originalRows: OpenRowsType, id: number, key?: string):
       rows[id].key = key;
       rows[id].direction = 1;
     }
+    // eslint-disable-next-line no-prototype-builtins
+  } else if (rows.hasOwnProperty(id)) {
+    delete rows[id];
   } else {
-    rows.hasOwnProperty(id)
-      ? delete rows[id]
-      : (rows[id] = {
-          key: 'id',
-          direction: 1,
-        });
+    rows[id] = {
+      key: 'id',
+      direction: 1,
+    };
   }
   return rows;
 };

@@ -1,4 +1,4 @@
-<script lang='ts'>
+<script lang="ts">
   import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Tabs } from 'flowbite-svelte';
   import { onMount } from 'svelte';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
@@ -55,10 +55,10 @@
 
   const API_DETAILS_COUNT = 5;
   const openApiDetails: boolean[] = new Array(API_DETAILS_COUNT).fill(true);
-  const selectApiRow = (idx: number) => openApiRow = idx;
+  const selectApiRow = (idx: number) => (openApiRow = idx);
 
   let isRecording = true;
-  const handleToggleRecording = () => isRecording = !isRecording;
+  const handleToggleRecording = () => (isRecording = !isRecording);
   const handleSweep = () => {
     results = [];
     openRequestRow = -1;
@@ -68,7 +68,8 @@
   };
 
   onMount(() => {
-    chrome.devtools.network.onRequestFinished.addListener(async (request) => {
+    // eslint-disable-next-line no-undef
+    chrome.devtools.network.onRequestFinished.addListener(async (request: chrome.devtools.network.Request) => {
       if (!isRecording) return;
 
       const { skip, response } = await fetchResult(request);
@@ -77,6 +78,7 @@
       if (response.ok) {
         results = [...results, response.data];
       } else {
+        // eslint-disable-next-line no-console
         console.error(response.error);
       }
     });
@@ -87,48 +89,49 @@
   });
 </script>
 
-<div class='border-b flex'>
+<div class="flex border-b">
   {#if isRecording}
     <Recording on:click={handleToggleRecording} />
   {:else}
     <Pausing on:click={handleToggleRecording} />
   {/if}
   <Sweep on:click={handleSweep} />
-  <div class='my-1 border-l' />
+  <div class="my-1 border-l" />
   <SettingWithModal />
 </div>
-<div class='[&_td]:border [&_td]:text-xs [&_td]:p-2 [&_th]:border [&_th]:normal-case [&_th]:text-sm [&_th]:p-3'>
-  <Splitpanes horizontal={isNarrowViewport} style='height: {PANE_HEIGHT}' class='!bg-white'
-              on:resize={handlePanesResize}>
-    <Pane size={DEFAULT_REQUEST_PANE_SIZE} class='!overflow-auto !bg-white'>
-      <Table hoverable class='table-fixed min-w-[40em]'>
+<div class="[&_td]:border [&_td]:p-2 [&_td]:text-xs [&_th]:border [&_th]:p-3 [&_th]:text-sm [&_th]:normal-case">
+  <Splitpanes
+    horizontal={isNarrowViewport}
+    style="height: {PANE_HEIGHT}"
+    class="!bg-white"
+    on:resize={handlePanesResize}
+  >
+    <Pane size={DEFAULT_REQUEST_PANE_SIZE} class="!overflow-auto !bg-white">
+      <Table hoverable class="min-w-[40em] table-fixed">
         <TableHead>
-          <TableHeadCell class='w-2/12'>Status</TableHeadCell>
-          <TableHeadCell class='w-2/12'>Method</TableHeadCell>
-          <TableHeadCell class='w-6/12'>Path</TableHeadCell>
-          <TableHeadCell class='w-2/12'>Duration</TableHeadCell>
+          <TableHeadCell class="w-2/12">Status</TableHeadCell>
+          <TableHeadCell class="w-2/12">Method</TableHeadCell>
+          <TableHeadCell class="w-6/12">Path</TableHeadCell>
+          <TableHeadCell class="w-2/12">Duration</TableHeadCell>
         </TableHead>
         <TableBody>
           {#each results as result, idx}
-            <TableBodyRow on:click={() => selectRequestRow(idx)}
-                          class={idx === openRequestRow ? 'bg-primary-100 hover:bg-primary-100' : ''}>
-              <TableBodyCell class='whitespace-normal break-words'>{result.status}</TableBodyCell>
-              <TableBodyCell class='whitespace-normal break-words'>{result.method}</TableBodyCell>
-              <TableBodyCell class='whitespace-normal break-words'>{result.path}</TableBodyCell>
-              <TableBodyCell class='whitespace-normal break-words'>{result.duration}</TableBodyCell>
+            <TableBodyRow
+              on:click={() => selectRequestRow(idx)}
+              class={idx === openRequestRow ? 'bg-primary-100 hover:bg-primary-100' : ''}
+            >
+              <TableBodyCell class="whitespace-normal break-words">{result.status}</TableBodyCell>
+              <TableBodyCell class="whitespace-normal break-words">{result.method}</TableBodyCell>
+              <TableBodyCell class="whitespace-normal break-words">{result.path}</TableBodyCell>
+              <TableBodyCell class="whitespace-normal break-words">{result.duration}</TableBodyCell>
             </TableBodyRow>
           {/each}
         </TableBody>
       </Table>
     </Pane>
-    <Pane class='!overflow-hidden !bg-white'>
-      <Tabs style='underline' contentClass='p-2 bg-white rounded-lg dark:bg-gray-800'>
-        <SqlTabItem
-          sql={results[openRequestRow]?.sql}
-          {sqlSubPanesHeight}
-          {openCrudRows}
-          {openNormalizedRows}
-        />
+    <Pane class="!overflow-hidden !bg-white">
+      <Tabs style="underline" contentClass="p-2 bg-white rounded-lg dark:bg-gray-800">
+        <SqlTabItem sql={results[openRequestRow]?.sql} {sqlSubPanesHeight} {openCrudRows} {openNormalizedRows} />
         <ApiTabItem
           apis={results[openRequestRow]?.apis || []}
           {apiPanesHeight}

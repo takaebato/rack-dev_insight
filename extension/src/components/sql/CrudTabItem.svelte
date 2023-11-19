@@ -1,9 +1,9 @@
-<script lang='ts'>
+<script lang="ts">
   import { TabItem, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell } from 'flowbite-svelte';
-  import QueryTable from './QueryTable.svelte';
-  import type { CrudAggregationSchema, SqlSchema } from '../../api/Api';
-  import type { OpenRowsType, SortType } from '../../types';
+  import type { CrudAggregationSchema, SqlSchema } from 'src/api/Api';
+  import type { OpenRowsType, SortType } from 'src/types';
   import { compFunc } from '../../utils/sort';
+  import QueryTable from './QueryTable.svelte';
 
   export let sql: SqlSchema | undefined;
   export let sqlSubPanesHeight: string;
@@ -12,33 +12,34 @@
   export let crudSort: SortType;
   export let setCrudSort: (key: string) => void;
 
-  const extractQueries = (sql: SqlSchema, crud: CrudAggregationSchema, sortKey: string, sortDirection: number) =>
-    sql.queries
+  const extractQueries = (sqlData: SqlSchema, crud: CrudAggregationSchema, sortKey: string, sortDirection: number) =>
+    sqlData.queries
       .filter((query) => crud.queryIds.includes(query.id))
-      .sort((a, b) => a[sortKey] > b[sortKey] ? sortDirection : -sortDirection);
+      .sort((a, b) => (a[sortKey] > b[sortKey] ? sortDirection : -sortDirection));
 </script>
 
-<TabItem open title='CRUD' class='[&>button]:!p-3'>
-  <div class='overflow-auto' style='height: {sqlSubPanesHeight}'>
-    <Table hoverable class='table-fixed  min-w-[50em]'>
+<TabItem open title="CRUD" class="[&>button]:!p-3">
+  <div class="overflow-auto" style="height: {sqlSubPanesHeight}">
+    <Table hoverable class="min-w-[50em]  table-fixed">
       <TableHead>
-        <TableHeadCell class='w-3/12' on:click={() => setCrudSort('type')}>Type</TableHeadCell>
-        <TableHeadCell class='w-5/12' on:click={() => setCrudSort('table')}>Table</TableHeadCell>
-        <TableHeadCell class='w-2/12' on:click={() => setCrudSort('count')}>Count</TableHeadCell>
-        <TableHeadCell class='w-2/12' on:click={() => setCrudSort('duration')}>Duration</TableHeadCell>
+        <TableHeadCell class="w-3/12" on:click={() => setCrudSort('type')}>Type</TableHeadCell>
+        <TableHeadCell class="w-5/12" on:click={() => setCrudSort('table')}>Table</TableHeadCell>
+        <TableHeadCell class="w-2/12" on:click={() => setCrudSort('count')}>Count</TableHeadCell>
+        <TableHeadCell class="w-2/12" on:click={() => setCrudSort('duration')}>Duration</TableHeadCell>
       </TableHead>
       <TableBody>
         {#if sql !== undefined}
           {#each sql.crudAggregations.sort(compFunc(crudSort)) as crud}
             <TableBodyRow on:click={() => setOpenCrudRows(crud.id)()}>
-              <TableBodyCell class='whitespace-normal break-words'>{crud.type}</TableBodyCell>
-              <TableBodyCell class='whitespace-normal break-words'>{crud.table}</TableBodyCell>
-              <TableBodyCell class='whitespace-normal break-words'>{crud.count}</TableBodyCell>
-              <TableBodyCell class='whitespace-normal break-words'>{crud.duration}</TableBodyCell>
+              <TableBodyCell class="whitespace-normal break-words">{crud.type}</TableBodyCell>
+              <TableBodyCell class="whitespace-normal break-words">{crud.table}</TableBodyCell>
+              <TableBodyCell class="whitespace-normal break-words">{crud.count}</TableBodyCell>
+              <TableBodyCell class="whitespace-normal break-words">{crud.duration}</TableBodyCell>
             </TableBodyRow>
+            <!--eslint-disable-next-line no-prototype-builtins-->
             {#if openCrudRows.hasOwnProperty(crud.id)}
               <TableBodyRow>
-                <TableBodyCell colspan='4' class='p-2'>
+                <TableBodyCell colspan="4" class="p-2">
                   <QueryTable
                     setSort={setOpenCrudRows(crud.id)}
                     queries={extractQueries(sql, crud, openCrudRows[crud.id].key, openCrudRows[crud.id].direction)}

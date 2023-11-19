@@ -8,6 +8,7 @@ chrome.devtools.panels.create('Rack analyzer', 'src/favicon.png', 'src/devtools/
 });
 
 async function render() {
+  // eslint-disable-next-line no-new
   new DevtoolsPanel({ target, props: {} });
 }
 

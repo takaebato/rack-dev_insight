@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Api } from './Api';
 
-export const fetchResult = async (request) => {
+export const fetchResult = async (request: chrome.devtools.network.Request) => {
   const rackAnalyzerId = request.response.headers.find((header) => header.name.toLowerCase() === 'x-rackanalyzer-id');
   if (!rackAnalyzerId) return { skip: true };
 
@@ -15,7 +15,7 @@ export const fetchResult = async (request) => {
   }
 };
 
-export const fetchResultDebug = async (_request) => {
+export const fetchResultDebug = async (_request: chrome.devtools.network.Request) => {
   const MOCK_SERVER_ORIGIN = 'http://localhost:8081';
   const api = new Api({ baseUrl: MOCK_SERVER_ORIGIN });
   try {
@@ -25,4 +25,3 @@ export const fetchResultDebug = async (_request) => {
     return { skip: false, response: e };
   }
 };
-

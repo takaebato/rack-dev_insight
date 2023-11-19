@@ -1,4 +1,4 @@
-<script lang='ts'>
+<script lang="ts">
   import { TabItem, Tabs } from 'flowbite-svelte';
   import CrudTabItem from './sql/CrudTabItem.svelte';
   import NormalizedTabItem from './sql/NormalizedTabItem.svelte';
@@ -18,16 +18,20 @@
   let allSort: SortType = { key: 'id', direction: 1 };
   let erroredSort: SortType = { key: 'id', direction: 1 };
 
-  const setOpenCrudRows = (id: number) => (key?: string): void => {
-    openCrudRows = buildRows(openCrudRows, id, key);
-  };
+  const setOpenCrudRows =
+    (id: number) =>
+    (key?: string): void => {
+      openCrudRows = buildRows(openCrudRows, id, key);
+    };
   const setCrudSort = (key: string) => {
     crudSort = buildSort(crudSort, key);
   };
 
-  const setOpenNormalizedRows = (id: number) => (key?: string): void => {
-    openNormalizedRows = buildRows(openNormalizedRows, id, key);
-  };
+  const setOpenNormalizedRows =
+    (id: number) =>
+    (key?: string): void => {
+      openNormalizedRows = buildRows(openNormalizedRows, id, key);
+    };
   const setNormalizedSort = (key: string): void => {
     normalizedSort = buildSort(normalizedSort, key);
   };
@@ -41,16 +45,9 @@
   };
 </script>
 
-<TabItem open title='SQL' class='[&>button]:!p-3'>
-  <Tabs contentClass='bg-white rounded-lg dark:bg-gray-800 mt-2'>
-    <CrudTabItem
-      {sql}
-      {sqlSubPanesHeight}
-      {openCrudRows}
-      {setOpenCrudRows}
-      {crudSort}
-      {setCrudSort}
-    />
+<TabItem open title="SQL" class="[&>button]:!p-3">
+  <Tabs contentClass="bg-white rounded-lg dark:bg-gray-800 mt-2">
+    <CrudTabItem {sql} {sqlSubPanesHeight} {openCrudRows} {setOpenCrudRows} {crudSort} {setCrudSort} />
     <NormalizedTabItem
       {sql}
       {sqlSubPanesHeight}
@@ -59,19 +56,9 @@
       {normalizedSort}
       {setNormalizedSort}
     />
-    <AllTabItem
-      {sql}
-      {sqlSubPanesHeight}
-      {allSort}
-      {setAllSort}
-    />
-    {#if sql !== undefined && sql.erroredQueries.length > 0 }
-      <ErroredTabItem
-        {sql}
-        {sqlSubPanesHeight}
-        {erroredSort}
-        {setErroredSort}
-      />
+    <AllTabItem {sql} {sqlSubPanesHeight} {allSort} {setAllSort} />
+    {#if sql !== undefined && sql.erroredQueries.length > 0}
+      <ErroredTabItem {sql} {sqlSubPanesHeight} {erroredSort} {setErroredSort} />
     {/if}
   </Tabs>
 </TabItem>
