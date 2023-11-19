@@ -2,7 +2,7 @@
 
 require "bundler/gem_tasks"
 require "rspec/core/rake_task"
-require_relative "tasks/dummy_app/setup_rails"
+require_relative "tasks/dummy_app/rails"
 
 RSpec::Core::RakeTask.new(:spec)
 

@@ -64,7 +64,7 @@ if defined?(PG::Connection)
       private
 
       def missing_statement_message(name)
-        "Missing statement name: #{name}"
+        "Missing prepared statement name: #{name}"
       end
     end
 

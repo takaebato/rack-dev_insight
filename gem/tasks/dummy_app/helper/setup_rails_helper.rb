@@ -3,6 +3,11 @@ module SetupRailsHelper
     system('docker compose stop dummy-app-rails')
   end
 
+  def build_image(version)
+    version ||= '3.1.3'
+    system("RUBY_VERSION=#{version} docker compose build dummy-app-rails")
+  end
+
   def create_rails_app(version)
     version ||= '7.0'
     system(<<~COMMAND
@@ -39,10 +44,15 @@ module SetupRailsHelper
     system(<<~COMMAND
       docker compose exec dummy-app-rails /bin/bash -c '\
       bundle install && \
-      bundle exec rails generate scaffold User name:string; \
-      bundle exec rails db:drop; \
-      bundle exec rails db:create; \
-      bundle exec rails db:migrate;'
+      bundle exec rails generate scaffold User name:string;'
+    COMMAND
+    )
+  end
+
+  def migrate_reset
+    system(<<~COMMAND
+      docker compose exec dummy-app-rails /bin/bash -c '\
+      bundle exec rails db:migrate:reset;'
     COMMAND
     )
   end

@@ -4,6 +4,7 @@ default: &default
   username: root
   password: password
   host: mysql
+  prepared_statements: true
 
 development:
   <<: *default
