@@ -2,7 +2,7 @@ module Rack
   class Analyzer
     class Recorder
       def record_request(http_method:, path:)
-        return if Rack::Analyzer::Context.current.nil?
+        return yield if Rack::Analyzer::Context.current.nil?
 
         start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         status, headers, body = yield
@@ -11,13 +11,13 @@ module Rack
           status:,
           http_method:,
           path:,
-          duration: sprintf("%.3g", duration * 1000).to_f
+          duration: format('%.2f', duration * 1000).to_f
         )
         [status, headers, body]
       end
 
-      def record_sql(dialect:, statement:)
-        return if Rack::Analyzer::Context.current.nil?
+      def record_sql(dialect:, statement:, binds: nil)
+        return yield if Rack::Analyzer::Context.current.nil?
 
         start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         res = yield
@@ -25,14 +25,15 @@ module Rack
         Rack::Analyzer::Context.current.result.add_sql(
           dialect:,
           statement:,
+          binds: format_binds(binds),
           backtrace: get_backtrace,
-          duration: sprintf("%.3g", duration * 1000).to_f
+          duration: format('%.2f', duration * 1000).to_f
         )
         res
       end
 
       def record_api(request:)
-        return if Rack::Analyzer::Context.current.nil?
+        return yield if Rack::Analyzer::Context.current.nil?
 
         start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         response = yield
@@ -46,12 +47,20 @@ module Rack
           response_headers: response.each_header.map { |field, value| { field:, value: } },
           response_body: response.body,
           backtrace: get_backtrace,
-          duration: sprintf("%.3g", duration * 1000).to_f
+          duration: format('%.2f', duration * 1000).to_f
         )
         response
       end
 
       private
+
+      def format_binds(binds)
+        if binds.nil? || binds.empty?
+          ''
+        else
+          binds.to_s
+        end
+      end
 
       def get_backtrace
         return [] if Rack::Analyzer.config.skip_backtrace

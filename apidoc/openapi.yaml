@@ -383,6 +383,7 @@ components:
       required:
         - id
         - statement
+        - binds
         - backtrace
         - duration
       properties:
@@ -391,6 +392,9 @@ components:
           format: int32
         statement:
           description: Sql statement
+          type: string
+        binds:
+          description: Sql statement bind parameters
           type: string
         backtrace:
           description: Backtrace

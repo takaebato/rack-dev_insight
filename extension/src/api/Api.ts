@@ -112,6 +112,8 @@ export interface QuerySchema {
   id: number;
   /** Sql statement */
   statement: string;
+  /** Sql statement bind parameters */
+  binds: string;
   /** Backtrace */
   backtrace: TraceInfoSchema[];
   /**

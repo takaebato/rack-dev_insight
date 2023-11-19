@@ -23,8 +23,8 @@ module Rack
         @request = Request.new(status, http_method, path, duration)
       end
 
-      def add_sql(dialect:, statement:, backtrace:, duration:)
-        @sql.add(dialect, statement, backtrace, duration)
+      def add_sql(dialect:, statement:, binds:, backtrace:, duration:)
+        @sql.add(dialect, statement, binds, backtrace, duration)
       end
 
       def add_api(method:, url:, request_headers:, request_body:, status:, response_headers:, response_body:, backtrace:, duration:)
