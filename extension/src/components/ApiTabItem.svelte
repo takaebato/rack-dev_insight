@@ -32,7 +32,7 @@
         </TableHead>
         <TableBody>
           {#each apis as api, idx}
-            <TableBodyRow on:click={() => selectApiRow(idx)}>
+            <TableBodyRow on:click={() => selectApiRow(idx)} class={idx === openApiRow ? 'bg-primary-100 hover:bg-primary-100' : ''}>
               <TableBodyCell class='whitespace-normal break-words'>{api.status}</TableBodyCell>
               <TableBodyCell class='whitespace-normal break-words'>{api.method}</TableBodyCell>
               <TableBodyCell class='whitespace-normal break-words'>{api.url}</TableBodyCell>

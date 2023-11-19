@@ -5,7 +5,7 @@
   import type { RackAnalyzerResultSchema } from '../api/Api';
   import ApiTabItem from './ApiTabItem.svelte';
   import SqlTabItem from './SqlTabItem.svelte';
-  import { fetchResultDebug } from '../api/fetch';
+  import { fetchResult } from '../api/fetch';
   import type { OpenRowsType } from '../types';
   import Pausing from './svgs/Pausing.svelte';
   import Recording from './svgs/Recording.svelte';
@@ -71,7 +71,7 @@
     chrome.devtools.network.onRequestFinished.addListener(async (request) => {
       if (!isRecording) return;
 
-      const { skip, response } = await fetchResultDebug(request);
+      const { skip, response } = await fetchResult(request);
       if (skip) return;
 
       if (response.ok) {
@@ -111,7 +111,7 @@
         <TableBody>
           {#each results as result, idx}
             <TableBodyRow on:click={() => selectRequestRow(idx)}
-                          class={idx === openRequestRow ? 'bg-primary-200 hover:bg-primary-200' : ''}>
+                          class={idx === openRequestRow ? 'bg-primary-100 hover:bg-primary-100' : ''}>
               <TableBodyCell class='whitespace-normal break-words'>{result.status}</TableBodyCell>
               <TableBodyCell class='whitespace-normal break-words'>{result.method}</TableBodyCell>
               <TableBodyCell class='whitespace-normal break-words'>{result.path}</TableBodyCell>

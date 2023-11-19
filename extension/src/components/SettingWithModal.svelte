@@ -20,10 +20,9 @@
     localStorage.setItem('rack-analyzer.remote-root-path', remoteRootPath);
     localStorage.setItem('rack-analyzer.local-root-path', localRootPath);
   }
-  let isOpen = true;
+  let isOpen = false;
   const handleOpen = () => isOpen = !isOpen;
 </script>
-
 
 <Setting on:click={handleOpen} {isOpen} />
 <Modal bind:open={isOpen} autoclose outsideclose size='sm'>
@@ -40,7 +39,7 @@
       <Input type='text' name='Local application root folder' placeholder='/path/to/local/app/root/folder'
              bind:value={localRootPath} />
       <Helper class='px-1.5 text-gray-700'>
-        <span>Tip: Even for local machines only, setting this is beneficial for shortening each line of the backtrace by displaying paths as relative.</span>
+        <span>Tip: Even for local machines only, setting this is useful for shortening each line of the backtrace by displaying paths as relative.</span>
       </Helper>
     </Label>
     <Label class='space-y-2'>

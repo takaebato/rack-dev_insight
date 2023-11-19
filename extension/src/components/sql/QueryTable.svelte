@@ -15,7 +15,14 @@
   <TableBody>
     {#each queries as query}
       <TableBodyRow>
-        <TableBodyCell class='whitespace-normal break-words'>{query.statement}</TableBodyCell>
+        <TableBodyCell
+          class='whitespace-normal break-words'
+        >
+          {query.statement}
+          {#if query.binds !== ''}
+            <span class='pl-1.5'>{query.binds}</span>
+          {/if}
+        </TableBodyCell>
         <TableBodyCell class='whitespace-normal break-words'>
           {#each query.backtrace as traceInfo}
             <TraceInfo {traceInfo} />
