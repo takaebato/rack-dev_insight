@@ -16,6 +16,8 @@ require_relative 'analyzer/patches/sql/pg'
 require_relative 'analyzer/patches/sql/sqlite'
 require_relative 'analyzer/patches/api/net_http'
 
+require_relative 'analyzer/railtie' if defined?(::Rails)
+
 module Rack
   class Analyzer
     class << self
@@ -36,7 +38,7 @@ module Rack
     end
 
     def call(env)
-      if (id = env['PATH_INFO'][%r{/rack-analyzer-results/(.+)$}, 1])
+      if (id = get_id_from_path(env))
         fetch_analyzed(id)
       else
         analyze(env)
@@ -45,16 +47,19 @@ module Rack
 
     private
 
+    def get_id_from_path(env)
+      env['PATH_INFO'][%r{/rack-analyzer-results/(.+)$}, 1]
+    end
+
     def fetch_analyzed(id)
-      header = { 'Content-Type' => 'application/json', 'etag' => id }
+      header = { 'Content-Type' => 'application/json' }
       if (result = @storage.read(id))
-        puts '#########return retusts'
-        [203, header, result.to_response_json]
+        [200, header, [result.to_response_json]]
       else
-        [404, header, { status: 404, message: "id: #{id} is not found" }.to_json]
+        [404, header, [{ status: 404, message: "id: #{id} is not found" }.to_json]]
       end
     rescue StandardError => e
-      [500, header, { status: 500, message: e.inspect }.to_json]
+      [500, header, [{ status: 500, message: e.inspect }.to_json]]
     end
 
     def analyze(env)
