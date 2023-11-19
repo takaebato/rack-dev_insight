@@ -13,5 +13,12 @@ ENV PATH $PATH:$CARGO_HOME/bin
 RUN apt update
 RUN apt install libclang-dev -y
 
-RUN gem update --system
+COPY Gemfile /app/Gemfile
+COPY Gemfile.lock /app/Gemfile.lock
+COPY lib/rack/analyzer/version.rb /app/lib/rack/analyzer/version.rb
+COPY rack-analyzer.gemspec /app/rack-analyzer.gemspec
+
 WORKDIR /app
+RUN gem update --system
+RUN bundle update --bundler
+RUN bundle install
