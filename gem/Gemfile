@@ -17,3 +17,4 @@ gem "pg"
 gem "sqlite3"
 gem "rspec-parameterized", "~> 1.0"
 gem "simplecov", "~> 0.18"
+gem "dotenv", '~> 2.8'

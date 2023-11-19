@@ -8,6 +8,10 @@ require 'committee'
 require 'db_helper'
 require 'rspec-parameterized'
 require 'simplecov'
+require 'dotenv'
+
+# Load `.env.test.local` or `.env.test.docker`
+Dotenv.load('.env.test.local')
 
 SimpleCov.start
 

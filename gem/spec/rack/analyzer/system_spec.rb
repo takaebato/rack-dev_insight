@@ -31,7 +31,7 @@ RSpec.describe Rack::Analyzer do
         conn.exec("INSERT INTO users (name, email) VALUES ('foo2', 'bar2@example.com')")
         db = sqlite_client
         db.execute("INSERT INTO users (name, email) VALUES ('foo3', 'bar3@example.com')")
-        uri = URI('http://localhost:8080/get')
+        uri = URI("http://#{ENV['MOCK_HTTP_SERVER_HOST']}:#{ENV['MOCK_HTTP_SERVER_PORT']}/get")
         Net::HTTP.get_response(uri)
 
         [200, { 'Content-Type' => 'application/json' }, { status: 'success' }.to_json]
@@ -40,7 +40,7 @@ RSpec.describe Rack::Analyzer do
   end
 
   def committee_options
-    @committee_options ||= { schema: Committee::Drivers.load_from_file('apidoc/openapi.yaml') }
+    @committee_options ||= { schema: Committee::Drivers.load_from_file('../apidoc/openapi.yaml') }
   end
 
   def request_object

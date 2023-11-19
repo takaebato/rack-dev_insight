@@ -5,7 +5,7 @@ module DbHelper
   def setup_mysql
     around do |example|
       c = Mysql2::Client.new(
-        host: "127.0.0.1",
+        host: ENV['MYSQL_HOST'],
         port: 3306,
         username: "root",
         password: 'password'
@@ -31,7 +31,7 @@ module DbHelper
 
   def mysql_client
     Mysql2::Client.new(
-      host: "127.0.0.1",
+      host: ENV['MYSQL_HOST'],
       port: 3306,
       username: "root",
       password: 'password',
@@ -43,7 +43,7 @@ module DbHelper
   def setup_postgresql
     around do |example|
       conn = PG.connect(
-        host: "127.0.0.1",
+        host: ENV['POSTGRESQL_HOST'],
         port: 5432,
         user: "root",
         password: 'password'
@@ -71,7 +71,7 @@ module DbHelper
 
   def postgres_client
     PG.connect(
-      host: "127.0.0.1",
+      host: ENV['POSTGRESQL_HOST'],
       port: 5432,
       user: "root",
       password: 'password',

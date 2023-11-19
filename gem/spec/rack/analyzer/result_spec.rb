@@ -39,7 +39,7 @@ RSpec.describe Rack::Analyzer::Result do
     )
     result.add_api(
       method: 'GET',
-      url: 'http://localhost:8080/users',
+      url: 'http://testhost:80/users',
       request_headers: { 'Content-Type' => 'application/json' },
       request_body: nil,
       status: 200,
