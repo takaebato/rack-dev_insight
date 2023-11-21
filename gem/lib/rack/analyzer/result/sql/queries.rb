@@ -6,6 +6,7 @@ module Rack
       class Sql
         class Queries
           Query = Struct.new(:id, :statement, :binds, :backtrace, :duration)
+          TraceInfo = Struct.new(:original, :path, :line)
 
           attr_reader :id
 
@@ -15,7 +16,7 @@ module Rack
           end
 
           def add(statement, binds, backtrace, duration)
-            @data << Query.new(@id += 1, statement, binds, backtrace, duration)
+            @data << Query.new(@id += 1, statement, binds, backtrace.map(&:to_h), duration)
           end
 
           def attributes

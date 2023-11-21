@@ -10,6 +10,16 @@ module Rack
     class Result
       Request = Struct.new(:status, :http_method, :path, :duration)
 
+      class << self
+        def build_backtrace_item(original, path, line)
+          Sql::Queries::TraceInfo.new(original, path, line)
+        end
+
+        def build_header(field, value)
+          Apis::Header.new(field, value)
+        end
+      end
+
       attr_reader :id
 
       def initialize(id)

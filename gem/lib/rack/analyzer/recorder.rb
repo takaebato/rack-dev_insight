@@ -2,12 +2,12 @@ module Rack
   class Analyzer
     class Recorder
       def record_request(http_method:, path:)
-        return yield if Rack::Analyzer::Context.current.nil?
+        return yield if Context.current.nil?
 
         start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         status, headers, body = yield
         duration = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start
-        Rack::Analyzer::Context.current.result.set_request(
+        Context.current.result.set_request(
           status:,
           http_method:,
           path:,
@@ -17,12 +17,12 @@ module Rack
       end
 
       def record_sql(dialect:, statement:, binds: nil)
-        return yield if Rack::Analyzer::Context.current.nil?
+        return yield if Context.current.nil?
 
         start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         res = yield
         duration = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start
-        Rack::Analyzer::Context.current.result.add_sql(
+        Context.current.result.add_sql(
           dialect:,
           statement:,
           binds: format_binds(binds),
@@ -33,18 +33,18 @@ module Rack
       end
 
       def record_api(request:)
-        return yield if Rack::Analyzer::Context.current.nil?
+        return yield if Context.current.nil?
 
         start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         response = yield
         duration = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start
-        Rack::Analyzer::Context.current.result.add_api(
+        Context.current.result.add_api(
           method: request.method,
           url: request.uri,
-          request_headers: request.each_header.map { |field, value| { field:, value: } },
+          request_headers: request.each_header.map { |field, value| Result.build_header(field, value) },
           request_body: request.body,
           status: response.code,
-          response_headers: response.each_header.map { |field, value| { field:, value: } },
+          response_headers: response.each_header.map { |field, value| Result.build_header(field, value) },
           response_body: response.body,
           backtrace: get_backtrace,
           duration: format('%.2f', duration * 1000).to_f
@@ -63,14 +63,14 @@ module Rack
       end
 
       def get_backtrace
-        return [] if Rack::Analyzer.config.skip_backtrace
+        return [] if Analyzer.config.skip_backtrace
 
         Kernel.caller
-              .reject { |line| Rack::Analyzer.config.backtrace_exclusion_patterns.any? { |regex| line =~ regex } }
-              .first(Rack::Analyzer.config.backtrace_depth)
+              .reject { |line| Analyzer.config.backtrace_exclusion_patterns.any? { |regex| line =~ regex } }
+              .first(Analyzer.config.backtrace_depth)
               .map { |line|
                 if (match = line.match(/(?<path>.*):(?<line>\d+)/))
-                  { original: line, path: match[:path], line: match[:line].to_i }
+                  Result.build_backtrace_item(line, match[:path], match[:line].to_i)
                 end
               }.compact
       end
