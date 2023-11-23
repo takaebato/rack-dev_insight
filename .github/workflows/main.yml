@@ -10,20 +10,23 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Ruby ${{ matrix.ruby }}
+    name: Ruby-${{ matrix.ruby }} MySQL-${{ matrix.mysql }} Postgres-${{ matrix.pg }}
     strategy:
       matrix:
-        ruby:
-          - '3.1.3'
+        versions:
+          - { ruby: '2.7', mysql: '8.0', pg: '16' }
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Ruby & Rust
-      uses: oxidize-rb/actions/setup-ruby-and-rust@v1
-      with:
-        ruby-version: ${{ matrix.ruby }}
-        bundler-cache: true
-        cargo-cache: true
-        rubygems: '3.4.13'
-    - name: Run the default task
-      run: bundle exec rake
+      - uses: actions/checkout@v3
+      #      - name: Set up Ruby & Rust
+      #        uses: oxidize-rb/actions/setup-ruby-and-rust@v1
+      #        with:
+      #          ruby-version: ${{ matrix.ruby }}
+      #          bundler-cache: true
+      #          cargo-cache: true
+      #          rubygems: '3.4.13'
+      - name: Checkout And Build
+        run: cd gem && RUBY_VERSION=${{ matrix.versions.ruby }} MYSQL_VERSION=${{ matrix.versions.mysql }} POSTGRES_VERSION=${{ matrix.versions.pg }} docker compose up -d ruby-rust
+
+      - name: Checkout And Build
+        run: docker compose exec ruby-rust bundle exec rake
