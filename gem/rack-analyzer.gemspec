@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description = 'Analyze database queries and http requests for rack applications.'
   spec.homepage = 'https://github.com/takaebato/rack-analyzer'
   spec.license = 'MIT'
-  spec.required_ruby_version = '>= 2.7.0' # rubocop:disable Gemspec/RequiredRubyVersion
+  spec.required_ruby_version = '>= 3.0.2'
   spec.required_rubygems_version = '>= 3.3.11'
 
   # spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"

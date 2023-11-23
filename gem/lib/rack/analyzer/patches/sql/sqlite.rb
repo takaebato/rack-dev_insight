@@ -4,7 +4,7 @@ if defined?(SQLite3::Statement)
   module SQLite3
     class Statement
       module RackAnalyzer
-        def initialize(*args, &)
+        def initialize(*args, &block)
           @_rack_analyzer_sql = args[1]
           super
         end

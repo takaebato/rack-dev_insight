@@ -4,8 +4,8 @@ if defined?(Net) && defined?(Net::HTTP)
   module Net
     class HTTP
       module RackAnalyzer
-        def request(request, *args, &)
-          Rack::Analyzer::Recorder.new.record_api(request:) { super }
+        def request(request, *args, &block)
+          Rack::Analyzer::Recorder.new.record_api(request: request) { super }
         end
       end
 

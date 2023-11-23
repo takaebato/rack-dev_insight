@@ -4,12 +4,12 @@ if defined?(Mysql2::Client)
   module Mysql2
     class Client
       module RackAnalyzer
-        def query(*args, &)
+        def query(*args, &block)
           sql = args[0]
           Rack::Analyzer::Recorder.new.record_sql(dialect: Rack::Analyzer::SqlDialects::MYSQL, statement: sql) { super }
         end
 
-        def prepare(*args, &)
+        def prepare(*args, &block)
           sql = args[0]
           statement = super
           statement.instance_variable_set(:@_rack_analyzer_sql, sql)

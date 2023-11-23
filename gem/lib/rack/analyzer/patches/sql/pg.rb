@@ -4,21 +4,21 @@ if defined?(PG::Connection)
   module PG
     class Connection
       module RackAnalyzer
-        def exec(*args, &)
+        def exec(*args, &block)
           sql = args[0]
           Rack::Analyzer::Recorder
             .new
             .record_sql(dialect: Rack::Analyzer::SqlDialects::POSTGRESQL, statement: sql) { super }
         end
 
-        def async_exec(*args, &)
+        def async_exec(*args, &block)
           sql = args[0]
           Rack::Analyzer::Recorder
             .new
             .record_sql(dialect: Rack::Analyzer::SqlDialects::POSTGRESQL, statement: sql) { super }
         end
 
-        def exec_params(*args, &)
+        def exec_params(*args, &block)
           sql = args[0]
           params = args[1]
           Rack::Analyzer::Recorder
@@ -26,7 +26,7 @@ if defined?(PG::Connection)
             .record_sql(dialect: Rack::Analyzer::SqlDialects::POSTGRESQL, statement: sql, binds: params) { super }
         end
 
-        def prepare(*args, &)
+        def prepare(*args, &block)
           name = args[0]
           sql = args[1]
           @_rack_analyzer_prepared_statements ||= {}
@@ -34,7 +34,7 @@ if defined?(PG::Connection)
           super
         end
 
-        def exec_prepared(*args, &)
+        def exec_prepared(*args, &block)
           name = args[0]
           params = args[1]
           sql = @_rack_analyzer_prepared_statements&.[](name) || missing_statement_message(name)
@@ -43,7 +43,7 @@ if defined?(PG::Connection)
             .record_sql(dialect: Rack::Analyzer::SqlDialects::POSTGRESQL, statement: sql, binds: params) { super }
         end
 
-        def send_query_prepared(*args, &)
+        def send_query_prepared(*args, &block)
           name = args[0]
           params = args[1]
           sql = @_rack_analyzer_prepared_statements&.[](name) || missing_statement_message(name)

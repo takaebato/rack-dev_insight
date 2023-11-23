@@ -528,4 +528,3 @@ components:
           description: Error message
           type: string
           example: 'Not Found'
-

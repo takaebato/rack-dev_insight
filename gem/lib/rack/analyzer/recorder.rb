@@ -9,7 +9,12 @@ module Rack
         start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         status, headers, body = yield
         duration = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start
-        Context.current.result.set_request(status:, http_method:, path:, duration: format('%.2f', duration * 1000).to_f)
+        Context.current.result.set_request(
+          status: status,
+          http_method: http_method,
+          path: path,
+          duration: format('%.2f', duration * 1000).to_f,
+        )
         [status, headers, body]
       end
 
@@ -20,8 +25,8 @@ module Rack
         res = yield
         duration = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start
         Context.current.result.add_sql(
-          dialect:,
-          statement:,
+          dialect: dialect,
+          statement: statement,
           binds: format_binds(binds),
           backtrace: get_backtrace,
           duration: format('%.2f', duration * 1000).to_f,
