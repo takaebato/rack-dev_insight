@@ -2,7 +2,7 @@
   import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Tabs } from 'flowbite-svelte';
   import { onMount } from 'svelte';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
-  import type { RackAnalyzerResultSchema } from '../api/Api';
+  import type { RackDevInsightResultSchema } from '../api/Api';
   import ApiTabItem from './ApiTabItem.svelte';
   import SqlTabItem from './SqlTabItem.svelte';
   import { fetchResult } from '../api/fetch';
@@ -38,7 +38,7 @@
   const DETAIL_PANE_NUMBER = 1;
   const handlePanesResize = (event: CustomEvent) => (detailPanePercent = event.detail[DETAIL_PANE_NUMBER].size);
 
-  let results: RackAnalyzerResultSchema[] = [];
+  let results: RackDevInsightResultSchema[] = [];
 
   let openRequestRow: number = -1;
   let openCrudRows: OpenRowsType = {};

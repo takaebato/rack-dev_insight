@@ -3,5 +3,5 @@
 # in the ext/ directory.
 
 [workspace]
-members = ["./ext/rack_analyzer"]
+members = ["./ext/rack_dev_insight"]
 resolver = "2"

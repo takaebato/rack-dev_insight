@@ -4,17 +4,18 @@ require_relative 'helper/setup_rails_helper'
 
 namespace :dummy_app do
   namespace :rails do
-    # ex) bundle exec rake dummy_app:rails:setup'[3.1.3,7.0,sqlite]'
-    desc 'Create a rails application with rack analyzer gem on docker and sync it with tmp/dummy_app/rails on host'
+    # ex) bundle exec rake dummy_app:rails:setup'[3.0.2,7.0,sqlite]'
+    desc 'Create a rails application with rack dev insight gem on docker and sync it with tmp/dummy_app/rails on host'
     task :setup, %w[ruby_version rails_version database] do |_task, args|
       include SetupRailsHelper
 
       stop_docker
       build_image(args[:ruby_version])
-      create_rails_app(args[:rails_version])
+      create_rails_app_if_not_exists(args[:rails_version])
       set_database_config(args[:database])
-      up_docker
       add_gems
+      compile_gem
+      up_docker
       generate_scaffold
       migrate_reset
       restart_docker

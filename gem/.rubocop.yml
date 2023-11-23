@@ -20,6 +20,10 @@ Layout/LineLength:
 
 Naming/AccessorMethodName:
   Enabled: false
+Naming/FileName:
+  Enabled: true
+  Exclude:
+    - 'lib/rack-dev-insight.rb'
 
 Metrics/BlockLength:
   Enabled: false

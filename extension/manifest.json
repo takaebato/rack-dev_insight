@@ -1,6 +1,6 @@
 {
-  "name": "Rack analyzer extension",
-  "description": "Rack analyzer extension",
+  "name": "Rack dev insight extension",
+  "description": "Rack dev insight extension",
   "version": "1.0",
   "manifest_version": 3,
   "devtools_page": "src/devtools/index.html",

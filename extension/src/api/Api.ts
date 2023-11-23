@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-export interface RackAnalyzerResultSchema {
+export interface RackDevInsightResultSchema {
   /**
    * @format uuid
    * @example "123e4567-e89b-12d3-a456-426614174000"
@@ -339,17 +339,9 @@ export class HttpClient<SecurityDataType = unknown> {
     }
   };
 
-  public request = async <T = any, E = any>({
-    body,
-    secure,
-    path,
-    type,
-    query,
-    format,
-    baseUrl,
-    cancelToken,
-    ...params
-  }: FullRequestParams): Promise<HttpResponse<T, E>> => {
+  public request = async <T = any, E = any>(
+    { body, secure, path, type, query, format, baseUrl, cancelToken, ...params }: FullRequestParams,
+  ): Promise<HttpResponse<T, E>> => {
     const secureParams =
       ((typeof secure === 'boolean' ? secure : this.baseApiParams.secure) &&
         this.securityWorker &&
@@ -400,7 +392,7 @@ export class HttpClient<SecurityDataType = unknown> {
 }
 
 /**
- * @title Rack Analyzer Internal API
+ * @title Rack Dev Insight Internal API
  * @version 1.0.11
  * @license Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0.html)
  * @termsOfService http://swagger.io/terms/
@@ -420,18 +412,18 @@ export class HttpClient<SecurityDataType = unknown> {
  * - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
-  rackAnalyzerResults = {
+  rackDevInsightResults = {
     /**
      * @description Multiple status values can be provided with comma separated strings
      *
      * @tags Result
-     * @name GetRackAnalyzerResult
-     * @summary Fetches a rack analyzer result by UUID
-     * @request GET:/rack-analyzer-results/{uuid}
+     * @name GetRackDevInsightResult
+     * @summary Fetches a rack dev insight result by UUID
+     * @request GET:/rack-dev-insight-results/{uuid}
      */
-    getRackAnalyzerResult: (uuid: string, params: RequestParams = {}) =>
-      this.request<RackAnalyzerResultSchema, ErrorSchema>({
-        path: `/rack-analyzer-results/${uuid}`,
+    getRackDevInsightResult: (uuid: string, params: RequestParams = {}) =>
+      this.request<RackDevInsightResultSchema, ErrorSchema>({
+        path: `/rack-dev-insight-results/${uuid}`,
         method: 'GET',
         format: 'json',
         ...params,

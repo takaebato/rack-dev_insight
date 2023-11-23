@@ -22,7 +22,7 @@ require 'rb_sys/extensiontask'
 
 task build: :compile
 
-RbSys::ExtensionTask.new('rack_analyzer') { |ext| ext.lib_dir = 'lib/rack/analyzer' }
+RbSys::ExtensionTask.new('rack_dev_insight') { |ext| ext.lib_dir = 'lib/rack/dev_insight' }
 
 task default: %i[compile spec]
 task fix: %i[rubocop:autocorrect_all stree:write]

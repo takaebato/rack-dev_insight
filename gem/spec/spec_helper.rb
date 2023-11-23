@@ -2,7 +2,7 @@
 
 require 'rspec'
 require 'rack'
-require 'rack/analyzer'
+require 'rack-dev-insight'
 require 'rack/test'
 require 'committee'
 require 'db_helper'
@@ -11,7 +11,7 @@ require 'simplecov'
 require 'dotenv'
 
 # Load `.env.test.local` or `.env.test.docker`
-Dotenv.load('.env.test.docker')
+Dotenv.load('.env.test.local')
 
 SimpleCov.start
 

@@ -1,6 +1,6 @@
 import { sprintf } from 'sprintf-js';
 
-export const isEditorSet = (): boolean => !!localStorage.getItem('rack-analyzer.editor');
+export const isEditorSet = (): boolean => !!localStorage.getItem('rack-dev-insight.editor');
 
 export const buildPathInfo = (original: string, path: string, line: number): { display: string; link: string } => {
   const Links: { [key: string]: string } = {
@@ -12,9 +12,9 @@ export const buildPathInfo = (original: string, path: string, line: number): { d
     emacs: 'emacs://open?url=file://%s&line=%d&column=%d',
     macvim: 'mvim://open?url=file://%s&line=%d&column=%d',
   };
-  const editor = localStorage.getItem('rack-analyzer.editor') || '';
-  const remoteRootPath = localStorage.getItem('rack-analyzer.remote-root-path') || '';
-  const localRootPath = localStorage.getItem('rack-analyzer.local-root-path') || '';
+  const editor = localStorage.getItem('rack-dev-insight.editor') || '';
+  const remoteRootPath = localStorage.getItem('rack-dev-insight.remote-root-path') || '';
+  const localRootPath = localStorage.getItem('rack-dev-insight.local-root-path') || '';
   let originalToDisplay = original;
   let linkPath = path;
   if (remoteRootPath) {

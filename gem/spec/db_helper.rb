@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module DbHelper
-  DB_NAME = 'rack_analyzer_test'
+  DB_NAME = 'rack_dev_insight_test'
 
   # create database and users table
   def setup_mysql

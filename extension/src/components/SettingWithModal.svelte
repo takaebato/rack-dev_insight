@@ -2,9 +2,9 @@
   import { Input, Label, Modal, Select, Helper } from 'flowbite-svelte';
   import Setting from './svgs/Setting.svelte';
 
-  let editor = localStorage.getItem('rack-analyzer.editor') || '';
-  let remoteRootPath = localStorage.getItem('rack-analyzer.remote-root-path') || '';
-  let localRootPath = localStorage.getItem('rack-analyzer.local-root-path') || '';
+  let editor = localStorage.getItem('rack-dev-insight.editor') || '';
+  let remoteRootPath = localStorage.getItem('rack-dev-insight.remote-root-path') || '';
+  let localRootPath = localStorage.getItem('rack-dev-insight.local-root-path') || '';
   const editors = [
     { value: 'rubymine', name: 'RubyMine' },
     { value: 'vscode', name: 'Visual studio code' },
@@ -16,9 +16,9 @@
   ];
 
   $: {
-    localStorage.setItem('rack-analyzer.editor', editor);
-    localStorage.setItem('rack-analyzer.remote-root-path', remoteRootPath);
-    localStorage.setItem('rack-analyzer.local-root-path', localRootPath);
+    localStorage.setItem('rack-dev-insight.editor', editor);
+    localStorage.setItem('rack-dev-insight.remote-root-path', remoteRootPath);
+    localStorage.setItem('rack-dev-insight.local-root-path', localRootPath);
   }
   let isOpen = false;
   const handleOpen = () => (isOpen = !isOpen);

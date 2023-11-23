@@ -1,0 +1,530 @@
+openapi: 3.0.3
+info:
+  title: Rack Dev Insight Internal API
+  description: |-
+    This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
+    Swagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
+    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
+    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
+
+    _If you're looking for the Swagger 2.0/OAS 2.0 version of Petstore, then click [here](https://editor.swagger.io/?url=https://petstore.swagger.io/v2/swagger.yaml). Alternatively, you can load via the `Edit > Load Petstore OAS 2.0` menu option!_
+    
+    Some useful links:
+    - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
+    - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: https://petstore3.swagger.io/api/v3
+tags:
+  - name: Result
+    description: Result of an analyzed rack request
+paths:
+  /rack-dev-insight-results/{uuid}:
+    get:
+      tags:
+        - Result
+      summary: Fetches a rack dev insight result by UUID
+      description: Multiple status values can be provided with comma separated strings
+      operationId: getRackDevInsightResult
+      parameters:
+        - in: path
+          name: uuid
+          description: Numeric ID of the user to get
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RackDevInsightResult'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    RackDevInsightResult:
+      type: object
+      required:
+        - id
+        - status
+        - method
+        - path
+        - duration
+        - sql
+        - apis
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        status:
+          description: Http status code
+          type: integer
+          format: int32
+          example: 200
+        method:
+          description: Http method
+          type: string
+          example: GET
+        path:
+          description: Http path
+          type: string
+          example: /api/v1/users
+        duration:
+          description: Request duration in milliseconds
+          type: number
+          format: float
+          example: 10
+        sql:
+          $ref: '#/components/schemas/Sql'
+        apis:
+          description: Api requests and responses
+          type: array
+          items:
+            $ref: '#/components/schemas/Api'
+    Sql:
+      type: object
+      required:
+        - crudAggregations
+        - normalizedAggregations
+        - queries
+      properties:
+        crudAggregations:
+          type: array
+          items:
+            $ref: '#/components/schemas/CrudAggregation'
+          example:
+            - id: 1
+              type: CREATE
+              table: users
+              count: 1
+              duration: 10
+              queryIds: [ 1 ]
+            - id: 2
+              type: READ
+              table: users
+              count: 1
+              duration: 10
+              queryIds: [ 2 ]
+            - id: 3
+              type: UPDATE
+              table: users
+              count: 1
+              duration: 10
+              queryIds: [ 3 ]
+            - id: 4
+              type: DELETE
+              table: users
+              count: 2
+              duration: 30
+              queryIds: [ 4, 5 ]
+        normalizedAggregations:
+          type: array
+          items:
+            $ref: '#/components/schemas/NormalizedAggregation'
+          example:
+            - id: 1
+              statement: INSERT INTO users (first_name, last_name, email, password, created_at, updated_at) VALUES (?, ?, ?, ?, NOW(), NOW()), (?, ?, ?, ?, NOW(), NOW()), (?, ?, ?, ?, NOW(), NOW())
+              count: 1
+              duration: 10
+              queryIds: [ 1 ]
+            - id: 2
+              statement: SELECT * FROM users WHERE id = ?
+              count: 1
+              duration: 10
+              queryIds: [ 2 ]
+            - id: 3
+              statement: UPDATE users SET name = ? WHERE id = ?
+              count: 1
+              duration: 10
+              queryIds: [ 3 ]
+            - id: 4
+              statement: DELETE FROM users WHERE id = ?
+              count: 2
+              duration: 30
+              queryIds: [ 4, 5 ]
+        erroredQueries:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErroredQuery'
+          example:
+            - id: 1
+              message: 'Syntax error'
+              statement: SELECT * FROM users WHERE id = 2
+              backtrace:
+                - original: app/controllers/users_controller.rb:25:in `show'
+                  path: app/controllers/users_controller.rb
+                  line: 25
+                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
+                  path: app/services/user_fetch_service.rb
+                  line: 15
+              duration: 10
+            - id: 2
+              message: 'Parser error'
+              statement: UPDATE users SET name  = 'Jack' WHERE id = 1
+              backtrace:
+                - original: app/controllers/users_controller.rb:25:in `show'
+                  path: app/controllers/users_controller.rb
+                  line: 25
+                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
+                  path: app/services/user_fetch_service.rb
+                  line: 15
+              duration: 10
+            - id: 3
+              message: 'Parser error'
+              statement: DELETE FROM users WHERE id = 1
+              backtrace:
+                - original: app/controllers/users_controller.rb:25:in `show'
+                  path: app/controllers/users_controller.rb
+                  line: 25
+                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
+                  path: app/services/user_fetch_service.rb
+                  line: 15
+              duration: 10
+        queries:
+          type: array
+          items:
+            $ref: '#/components/schemas/Query'
+          example:
+            - id: 1
+              statement: |
+                INSERT INTO users (first_name, last_name, email, password, created_at, updated_at) VALUES
+                ('John', 'Doe', 'john.doe@example.com', 'johnspassword', NOW(), NOW()),
+                ('Jane', 'Doe', 'jane.doe@example.com', 'janespassword', NOW(), NOW()),
+                ('Jim', 'Beam', 'jim.beam@example.com', 'jimspassword', NOW(), NOW());
+              backtrace:
+                - original: app/controllers/users_controller.rb:25:in `show'
+                  path: app/controllers/users_controller.rb
+                  line: 25
+                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
+                  path: app/services/user_fetch_service.rb
+                  line: 15
+                - original: app/models/user.rb:120:in `normalize_name'
+                  path: app/models/user.rb
+                  line: 120
+                - original: app/helpers/user_helper.rb:10:in `formatted_name'
+                  path: app/helpers/user_helper.rb
+                  line: 10
+                - original: app/views/users/show.html.erb:15:in `_app_views_users_show_html_erb__1234567890'
+                  path: app/views/users/show.html.erb
+                  line: 15
+                - original: app/middleware/custom_middleware.rb:30:in `call'
+                  path: app/middleware/custom_middleware.rb
+                  line: 30
+              duration: 10
+            - id: 2
+              statement: SELECT * FROM users WHERE id = 2
+              backtrace:
+                - original: app/controllers/users_controller.rb:25:in `show'
+                  path: app/controllers/users_controller.rb
+                  line: 25
+                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
+                  path: app/services/user_fetch_service.rb
+                  line: 15
+              duration: 10
+            - id: 3
+              statement: UPDATE users SET name  = 'Jack' WHERE id = 1
+              backtrace:
+                - original: app/controllers/users_controller.rb:25:in `show'
+                  path: app/controllers/users_controller.rb
+                  line: 25
+                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
+                  path: app/services/user_fetch_service.rb
+                  line: 15
+              duration: 10
+            - id: 4
+              statement: DELETE FROM users WHERE id = 1
+              backtrace:
+                - original: app/controllers/users_controller.rb:25:in `show'
+                  path: app/controllers/users_controller.rb
+                  line: 25
+                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
+                  path: app/services/user_fetch_service.rb
+                  line: 15
+              duration: 10
+            - id: 5
+              statement: DELETE FROM users WHERE id = 2
+              backtrace:
+                - original: app/controllers/users_controller.rb:25:in `show'
+                  path: app/controllers/users_controller.rb
+                  line: 25
+                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
+                  path: app/services/user_fetch_service.rb
+                  line: 15
+              duration: 20
+            - id: 6
+              statement: SELECT * FROM users WHERE id = 3
+              backtrace:
+                - original: app/controllers/users_controller.rb:25:in `show'
+                  path: app/controllers/users_controller.rb
+                  line: 25
+                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
+                  path: app/services/user_fetch_service.rb
+                  line: 15
+              duration: 10
+    CrudAggregation:
+      description: Aggregation of queries in terms of CRUD type and table
+      type: object
+      required:
+        - id
+        - type
+        - table
+        - count
+        - duration
+        - queryIds
+      properties:
+        id:
+          type: integer
+          format: int32
+        type:
+          description: CRUD type
+          type: string
+          enum:
+            - CREATE
+            - READ
+            - UPDATE
+            - DELETE
+        table:
+          description: Table name
+          type: string
+        count:
+          description: Number of queries
+          type: integer
+        duration:
+          description: Total duration in milliseconds
+          type: number
+          format: float
+        queryIds:
+          description: Corresponding query ids
+          type: array
+          items:
+            type: integer
+            format: int32
+    NormalizedAggregation:
+      description: Aggregation of queries in terms of normalized sql statement
+      type: object
+      required:
+        - id
+        - statement
+        - count
+        - duration
+        - queryIds
+      properties:
+        id:
+          type: integer
+          format: int32
+        statement:
+          description: Normalized sql statement
+          type: string
+        count:
+          description: Number of queries
+          type: integer
+        duration:
+          description: Total duration in milliseconds
+          type: number
+          format: float
+        queryIds:
+          description: Corresponding query ids
+          type: array
+          items:
+            type: integer
+    ErroredQuery:
+      description: Query errored on parsing
+      type: object
+      required:
+        - id
+        - message
+        - statement
+        - backtrace
+        - duration
+      properties:
+        id:
+          type: integer
+          format: int32
+        message:
+          description: Error message
+          type: string
+        statement:
+          description: Sql statement
+          type: string
+        backtrace:
+          description: Backtrace
+          type: array
+          items:
+            $ref: '#/components/schemas/TraceInfo'
+        duration:
+          description: Query duration in milliseconds
+          type: number
+          format: float
+    Query:
+      description: Single sql query
+      type: object
+      required:
+        - id
+        - statement
+        - binds
+        - backtrace
+        - duration
+      properties:
+        id:
+          type: integer
+          format: int32
+        statement:
+          description: Sql statement
+          type: string
+        binds:
+          description: Sql statement bind parameters
+          type: string
+        backtrace:
+          description: Backtrace
+          type: array
+          items:
+            $ref: '#/components/schemas/TraceInfo'
+        duration:
+          description: Query duration in milliseconds
+          type: number
+          format: float
+    Api:
+      description: Api request and response
+      type: object
+      required:
+        - status
+        - method
+        - url
+        - requestHeaders
+        - requestBody
+        - responseHeaders
+        - responseBody
+        - backtrace
+      properties:
+        status:
+          description: Http status code
+          type: string
+          example: 200
+        method:
+          description: Http method
+          type: string
+          example: GET
+        url:
+          description: Full url
+          type: string
+          example: https://example.com/api/v1/pets
+        requestHeaders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Header'
+          example:
+            - field: User-Agent
+              value: CustomServerClient/1.2.3
+            - field: Content-Type
+              value: application/json; charset=utf-8
+            - field: Content-Length
+              value: 123456
+            - field: Date
+              value: Sat, 08 Oct 2023 00:00:00 GMT
+        requestBody:
+          type: string
+          nullable: true
+          example: '{"id": 1, "name": "doggie", "photoUrls": ["url1", "url2"]}'
+        responseHeaders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Header'
+          example:
+            - field: Server
+              value: TargetServer/4.3.2
+            - field: Content-Type
+              value: application/json; charset=utf-8
+            - field: Content-Length
+              value: 34567
+            - field: Date
+              value: Sat, 08 Oct 2023 00:00:00 GMT
+        responseBody:
+          type: string
+          example: '{"id": 1, "name": "doggie", "photoUrls": ["url1", "url2"]}'
+        backtrace:
+          description: Backtrace
+          type: array
+          items:
+            $ref: '#/components/schemas/TraceInfo'
+          example:
+            - original: app/controllers/users_controller.rb:25:in `show'
+              path: app/controllers/users_controller.rb
+              line: 25
+            - original: app/services/user_fetch_service.rb:15:in `find_by_id'
+              path: app/services/user_fetch_service.rb
+              line: 15
+            - original: app/models/user.rb:120:in `normalize_name'
+              path: app/models/user.rb
+              line: 120
+            - original: app/helpers/user_helper.rb:10:in `formatted_name'
+              path: app/helpers/user_helper.rb
+              line: 10
+    Header:
+      type: object
+      required:
+        - field
+        - value
+      properties:
+        field:
+          description: Header field
+          type: string
+        value:
+          description: Header value
+          type: string
+      example:
+        field: Content-Type
+        value: application/json
+    TraceInfo:
+      type: object
+      required:
+        - original
+        - path
+        - line
+      properties:
+        original:
+          description: Original trace info
+          type: string
+        path:
+          description: File path
+          type: string
+        line:
+          description: Line number
+          type: integer
+          format: int32
+    Error:
+      type: object
+      required:
+        - status
+        - message
+      properties:
+        status:
+          description: Http status code
+          type: integer
+          format: int32
+          example: 404
+        message:
+          description: Error message
+          type: string
+          example: 'Not Found'
