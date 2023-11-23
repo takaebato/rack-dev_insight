@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 if defined?(PG::Connection)
   module PG
     class Connection

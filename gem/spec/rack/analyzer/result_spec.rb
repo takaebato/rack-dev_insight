@@ -11,40 +11,70 @@ RSpec.describe Rack::Analyzer::Result do
     result.add_sql(
       dialect: 'mysql',
       statement: 'SELECT * FROM users',
-      backtrace: ['app/controllers/user_controller.rb:1:in `index`'],
+      binds: '',
+      backtrace: [
+        Rack::Analyzer::Result.build_backtrace_item(
+          'app/controllers/user_controller.rb:1:in `index`',
+          'app/controllers/user_controller.rb',
+          1,
+        ),
+      ],
       duration: 10.0,
     )
     result.add_sql(
       dialect: 'mysql',
       statement: 'SELECT * FROM posts',
-      backtrace: ['app/controllers/user_controller.rb:1:in `index`'],
+      binds: '',
+      backtrace: [
+        Rack::Analyzer::Result.build_backtrace_item(
+          'app/controllers/user_controller.rb:1:in `index`',
+          'app/controllers/user_controller.rb',
+          1,
+        ),
+      ],
       duration: 10.0,
     )
     result.add_sql(
       dialect: 'mysql',
       statement: "INSERT INTO users (name) VALUES ('foo')",
-      backtrace: ['app/controllers/user_controller.rb:1:in `index`'],
+      binds: '',
+      backtrace: [
+        Rack::Analyzer::Result.build_backtrace_item(
+          'app/controllers/user_controller.rb:1:in `index`',
+          'app/controllers/user_controller.rb',
+          1,
+        ),
+      ],
       duration: 10.0,
     )
     result.add_sql(
       dialect: 'mysql',
       statement: "INSERT INTO users (name) VALUES ('foo')",
-      backtrace: ['app/controllers/user_controller.rb:1:in `index`'],
+      binds: '',
+      backtrace: [
+        Rack::Analyzer::Result.build_backtrace_item(
+          'app/controllers/user_controller.rb:1:in `index`',
+          'app/controllers/user_controller.rb',
+          1,
+        ),
+      ],
       duration: 10.0,
     )
     result.add_api(
       method: 'GET',
       url: 'http://testhost:80/users',
-      request_headers: {
-        'Content-Type' => 'application/json',
-      },
+      request_headers: [Rack::Analyzer::Result.build_header('Content-Type', 'application/json')],
       request_body: nil,
       status: 200,
-      response_headers: {
-        'Content-Type' => 'application/json',
-      },
+      response_headers: [Rack::Analyzer::Result.build_header('Content-Type', 'application/json')],
       response_body: { status: 'success' }.to_json,
-      backtrace: ['app/controllers/user_controller.rb:1:in `index`'],
+      backtrace: [
+        Rack::Analyzer::Result.build_backtrace_item(
+          'app/controllers/user_controller.rb:1:in `index`',
+          'app/controllers/user_controller.rb',
+          1,
+        ),
+      ],
       duration: 10.0,
     )
   end

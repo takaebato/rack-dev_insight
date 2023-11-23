@@ -1,0 +1,25 @@
+# frozen_string_literal: true
+
+appraise 'mysql-0.4' do
+  gem 'mysql2', '~> 0.4.10'
+end
+appraise 'mysql-0.5' do
+  gem 'mysql2', '~> 0.5.5'
+end
+
+appraise 'pg-1.3' do
+  gem 'pg', '~> 1.3.5'
+end
+appraise 'pg-1.4' do
+  gem 'pg', '~> 1.4.6'
+end
+appraise 'pg-1.5' do
+  gem 'pg', '~> 1.5.4'
+end
+
+appraise 'sqlite-1.4' do
+  gem 'sqlite3', '~> 1.4.4'
+end
+appraise 'sqlite-1.5' do
+  gem 'sqlite3', '~> 1.5.4'
+end

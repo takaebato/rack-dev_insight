@@ -36,7 +36,7 @@ RSpec.describe Rack::Analyzer do
                 URI("http://#{ENV.fetch('MOCK_HTTP_SERVER_HOST', nil)}:#{ENV.fetch('MOCK_HTTP_SERVER_PORT', nil)}/get")
               Net::HTTP.get_response(uri)
 
-              [200, { 'Content-Type' => 'application/json' }, { status: 'success' }.to_json]
+              [200, { 'Content-Type' => 'application/json' }, [{ status: 'success' }.to_json]]
             }
       end
       .to_app

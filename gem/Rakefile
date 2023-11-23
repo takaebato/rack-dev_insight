@@ -10,11 +10,13 @@ require 'rubocop/rake_task'
 RuboCop::RakeTask.new
 
 require 'syntax_tree/rake_tasks'
-SyntaxTree::Rake::WriteTask.new do |t|
+STREE_CONFIG = ->(t) do
   t.source_files = FileList[%w[Gemfile Rakefile lib/**/*.rb spec/**/*.rb tasks/**/*.rb]]
   t.print_width = 120
   t.plugins = [%w[plugin/single_quotes plugin/trailing_comma plugin/disable_auto_ternary]]
 end
+SyntaxTree::Rake::CheckTask.new(&STREE_CONFIG)
+SyntaxTree::Rake::WriteTask.new(&STREE_CONFIG)
 
 require 'rb_sys/extensiontask'
 
@@ -23,3 +25,4 @@ task build: :compile
 RbSys::ExtensionTask.new('rack_analyzer') { |ext| ext.lib_dir = 'lib/rack/analyzer' }
 
 task default: %i[compile spec]
+task fix: %i[rubocop:autocorrect_all stree:write]

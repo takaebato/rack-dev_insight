@@ -9,9 +9,9 @@ RSpec.describe 'Patch sqlite' do
   before { Rack::Analyzer::Context.create_current(SecureRandom.uuid) }
 
   it 'patches sqlite' do
-    expect(defined?(SQLite3::Database::RackAnalyzer)).to eq(nil)
+    expect(defined?(SQLite3::Statement::RackAnalyzer)).to eq(nil)
     load 'rack/analyzer/patches/sql/sqlite.rb'
-    expect(SQLite3::Database.ancestors.include?(SQLite3::Database::RackAnalyzer)).to eq(true)
+    expect(SQLite3::Statement.ancestors.include?(SQLite3::Statement::RackAnalyzer)).to eq(true)
     db = sqlite_client
     db.execute("INSERT INTO users (name, email) VALUES ('foo', 'bar@example.com')")
     res = db.execute('SELECT * FROM users WHERE id = 1')

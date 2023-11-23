@@ -31,7 +31,7 @@ class Apis
       status,
       response_headers.map(&:to_h),
       response_body,
-      backtrace,
+      backtrace.map(&:to_h),
       duration,
     )
   end

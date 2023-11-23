@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module ExtractorHelper
   # subject must be set
   RSpec.shared_examples :extracts_tables do |create:, read:, update:, delete:|
