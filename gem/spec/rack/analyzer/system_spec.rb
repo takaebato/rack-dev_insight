@@ -17,26 +17,29 @@ RSpec.describe Rack::Analyzer do
   setup_sqlite
 
   def app
-    Rack::Builder.new do
-      use Rack::Analyzer
-      run lambda { |_env|
-        load 'rack/analyzer/patches/api/net_http.rb'
-        load 'rack/analyzer/patches/sql/mysql2.rb'
-        load 'rack/analyzer/patches/sql/pg.rb'
-        load 'rack/analyzer/patches/sql/sqlite.rb'
+    Rack::Builder
+      .new do
+        use Rack::Analyzer
+        run lambda { |_env|
+              load 'rack/analyzer/patches/api/net_http.rb'
+              load 'rack/analyzer/patches/sql/mysql2.rb'
+              load 'rack/analyzer/patches/sql/pg.rb'
+              load 'rack/analyzer/patches/sql/sqlite.rb'
 
-        c = mysql_client
-        c.query('INSERT INTO users (name, email) VALUES ("foo1", "bar1@example.com")')
-        conn = postgres_client
-        conn.exec("INSERT INTO users (name, email) VALUES ('foo2', 'bar2@example.com')")
-        db = sqlite_client
-        db.execute("INSERT INTO users (name, email) VALUES ('foo3', 'bar3@example.com')")
-        uri = URI("http://#{ENV['MOCK_HTTP_SERVER_HOST']}:#{ENV['MOCK_HTTP_SERVER_PORT']}/get")
-        Net::HTTP.get_response(uri)
+              c = mysql_client
+              c.query('INSERT INTO users (name, email) VALUES ("foo1", "bar1@example.com")')
+              conn = postgres_client
+              conn.exec("INSERT INTO users (name, email) VALUES ('foo2', 'bar2@example.com')")
+              db = sqlite_client
+              db.execute("INSERT INTO users (name, email) VALUES ('foo3', 'bar3@example.com')")
+              uri =
+                URI("http://#{ENV.fetch('MOCK_HTTP_SERVER_HOST', nil)}:#{ENV.fetch('MOCK_HTTP_SERVER_PORT', nil)}/get")
+              Net::HTTP.get_response(uri)
 
-        [200, { 'Content-Type' => 'application/json' }, { status: 'success' }.to_json]
-      }
-    end.to_app
+              [200, { 'Content-Type' => 'application/json' }, { status: 'success' }.to_json]
+            }
+      end
+      .to_app
   end
 
   def committee_options
@@ -51,11 +54,7 @@ RSpec.describe Rack::Analyzer do
     [last_response.status, last_response.headers, last_response.body]
   end
 
-  before do
-    Rack::Analyzer.configure do |config|
-      config.storage = Rack::Analyzer::FileStore
-    end
-  end
+  before { Rack::Analyzer.configure { |config| config.storage = Rack::Analyzer::FileStore } }
 
   it 'records and returns analyzed result' do
     get '/app'

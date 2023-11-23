@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 require 'rack/analyzer/ext/normalizer/normalizer_helper'
 
@@ -10,8 +11,8 @@ RSpec.describe Rack::Analyzer::Normalizer do
     context 'SELECT' do
       context 'PARTITION' do
         let(:statement) { 'SELECT a FROM t1 PARTITION (p0)' }
-        let(:normalized) { 'SELECT a FROM t1PARTITION (p0)' } # Not desirable. Table name and partition name are not separated.
-
+        # Not desirable. Table name and partition name are not separated.
+        let(:normalized) { 'SELECT a FROM t1PARTITION (p0)' }
         it_behaves_like :normalize
       end
     end

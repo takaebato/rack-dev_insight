@@ -7,46 +7,45 @@ RSpec.describe Rack::Analyzer::Result do
   let(:result) { described_class.new(SecureRandom.uuid) }
 
   before do
-    result.set_request(
-      status: 200,
-      http_method: 'GET',
-      path: '/users',
-      duration: 10.0
+    result.set_request(status: 200, http_method: 'GET', path: '/users', duration: 10.0)
+    result.add_sql(
+      dialect: 'mysql',
+      statement: 'SELECT * FROM users',
+      backtrace: ['app/controllers/user_controller.rb:1:in `index`'],
+      duration: 10.0,
     )
     result.add_sql(
       dialect: 'mysql',
-      statement: "SELECT * FROM users",
+      statement: 'SELECT * FROM posts',
       backtrace: ['app/controllers/user_controller.rb:1:in `index`'],
-      duration: 10.0
-    )
-    result.add_sql(
-      dialect: 'mysql',
-      statement: "SELECT * FROM posts",
-      backtrace: ['app/controllers/user_controller.rb:1:in `index`'],
-      duration: 10.0
+      duration: 10.0,
     )
     result.add_sql(
       dialect: 'mysql',
       statement: "INSERT INTO users (name) VALUES ('foo')",
       backtrace: ['app/controllers/user_controller.rb:1:in `index`'],
-      duration: 10.0
+      duration: 10.0,
     )
     result.add_sql(
       dialect: 'mysql',
       statement: "INSERT INTO users (name) VALUES ('foo')",
       backtrace: ['app/controllers/user_controller.rb:1:in `index`'],
-      duration: 10.0
+      duration: 10.0,
     )
     result.add_api(
       method: 'GET',
       url: 'http://testhost:80/users',
-      request_headers: { 'Content-Type' => 'application/json' },
+      request_headers: {
+        'Content-Type' => 'application/json',
+      },
       request_body: nil,
       status: 200,
-      response_headers: { 'Content-Type' => 'application/json' },
+      response_headers: {
+        'Content-Type' => 'application/json',
+      },
       response_body: { status: 'success' }.to_json,
       backtrace: ['app/controllers/user_controller.rb:1:in `index`'],
-      duration: 10.0
+      duration: 10.0,
     )
   end
 

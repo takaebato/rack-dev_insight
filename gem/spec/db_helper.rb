@@ -4,23 +4,17 @@ module DbHelper
   # create database and users table
   def setup_mysql
     around do |example|
-      c = Mysql2::Client.new(
-        host: ENV['MYSQL_HOST'],
-        port: 3306,
-        username: "root",
-        password: 'password'
-      )
+      c = Mysql2::Client.new(host: ENV.fetch('MYSQL_HOST', nil), port: 3306, username: 'root', password: 'password')
       db = 'rack_analyzer_test'
       c.query("CREATE DATABASE IF NOT EXISTS #{db}")
       c.query("DROP TABLE IF EXISTS #{db}.users")
-      c.query(<<-"SQL"
+      c.query(<<-"SQL")
         CREATE TABLE #{db}.users (
           id INT AUTO_INCREMENT PRIMARY KEY,
           name VARCHAR(255) NOT NULL,
           email VARCHAR(255) NOT NULL
         )
       SQL
-      )
 
       example.run
 
@@ -31,51 +25,43 @@ module DbHelper
 
   def mysql_client
     Mysql2::Client.new(
-      host: ENV['MYSQL_HOST'],
+      host: ENV.fetch('MYSQL_HOST', nil),
       port: 3306,
-      username: "root",
+      username: 'root',
       password: 'password',
-      database: 'rack_analyzer_test'
+      database: 'rack_analyzer_test',
     )
   end
 
   # create database and users table
   def setup_postgresql
     around do |example|
-      conn = PG.connect(
-        host: ENV['POSTGRESQL_HOST'],
-        port: 5432,
-        user: "root",
-        password: 'password'
-      )
+      conn = PG.connect(host: ENV.fetch('POSTGRESQL_HOST', nil), port: 5432, user: 'root', password: 'password')
       db = 'rack_analyzer_test'
-      if conn.exec("SELECT FROM pg_database WHERE datname = '#{db}'").count.zero?
-        conn.exec("CREATE DATABASE #{db}")
-      end
-      conn.exec("DROP TABLE IF EXISTS users")
-      conn.exec(<<-SQL
+      conn.exec("CREATE DATABASE #{db}") if conn.exec("SELECT FROM pg_database WHERE datname = '#{db}'").count.zero?
+      conn.exec('DROP TABLE IF EXISTS users')
+      conn.exec(<<-SQL)
         CREATE TABLE users (
             id SERIAL PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
             email VARCHAR(255) NOT NULL
         )
       SQL
-      )
 
       example.run
 
-      conn.exec("DROP TABLE IF EXISTS users")
+      conn.exec('DROP TABLE IF EXISTS users')
       conn.close
     end
   end
 
   def postgres_client
     PG.connect(
-      host: ENV['POSTGRESQL_HOST'],
+      host: ENV.fetch('POSTGRESQL_HOST', nil),
       port: 5432,
-      user: "root",
+      user: 'root',
       password: 'password',
-      dbname: 'rack_analyzer_test'
+      dbname: 'rack_analyzer_test',
     )
   end
 
@@ -83,19 +69,18 @@ module DbHelper
   def setup_sqlite
     around do |example|
       db = sqlite_client
-      db.execute("DROP TABLE IF EXISTS users")
-      db.execute(<<-SQL
+      db.execute('DROP TABLE IF EXISTS users')
+      db.execute(<<-SQL)
         CREATE TABLE IF NOT EXISTS users (
           id INTEGER PRIMARY KEY,
           name TEXT,
           email TEXT
         )
       SQL
-      )
 
       example.run
 
-      db.execute("DROP TABLE IF EXISTS users")
+      db.execute('DROP TABLE IF EXISTS users')
       db.close
     end
   end

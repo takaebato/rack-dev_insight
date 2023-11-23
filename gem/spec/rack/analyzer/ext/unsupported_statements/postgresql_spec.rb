@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 require 'rack/analyzer/ext/extractor/extractor_helper'
 
@@ -19,4 +20,3 @@ RSpec.describe 'List unsupported statements' do
     it_behaves_like :not_parseable
   end
 end
-

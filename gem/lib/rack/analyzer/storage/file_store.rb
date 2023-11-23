@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rack
   class Analyzer
     class FileStore
@@ -16,21 +18,19 @@ module Rack
       def read(id)
         return nil unless ::File.exist?(file_path(id))
 
-        Marshal.load(::File.open(file_path(id), 'rb', &:read))
+        Marshal.load(::File.binread(file_path(id))) # rubocop:disable Security/MarshalLoad
       end
 
       private
 
       def file_path(id)
-        FileUtils.mkdir_p(@dir_path) unless Dir.exist?(@dir_path)
+        FileUtils.mkdir_p(@dir_path)
         Pathname.new(@dir_path).join(id.to_s).to_s
       end
 
       def reap_excess_files
         files = Dir.glob(::File.join(@dir_path, '*')).sort_by { |f| ::File.mtime(f) }
-        files[0..-(Rack::Analyzer.config.file_store_pool_size + 1)].each do |old_file|
-          ::File.delete(old_file)
-        end
+        files[0..-(Rack::Analyzer.config.file_store_pool_size + 1)].each { |old_file| ::File.delete(old_file) }
       end
     end
   end

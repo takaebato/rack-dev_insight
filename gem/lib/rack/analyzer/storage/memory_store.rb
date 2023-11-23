@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rack
   class Analyzer
     class MemoryStore
@@ -16,18 +18,14 @@ module Rack
       end
 
       def read(id)
-        @lock.synchronize do
-          @cache[id]
-        end
+        @lock.synchronize { @cache[id] }
       end
 
       private
 
       def reap_excess_memory
         start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-        while memory_excess? && within_reap_time?(start_time)
-          @cache.delete(@cache.keys.first)
-        end
+        @cache.delete(@cache.keys.first) while memory_excess? && within_reap_time?(start_time)
       end
 
       def memory_excess?
@@ -44,4 +42,3 @@ module Rack
     end
   end
 end
-

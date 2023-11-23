@@ -1,4 +1,4 @@
-# Frozen_string_literal: true
+# frozen_string_literal: true
 
 require_relative '../../ext/extractor'
 
@@ -7,7 +7,7 @@ module Rack
     class Result
       class Sql
         class CrudAggregations
-          CrudAggregation = Struct.new(:id, :type, :table, :count, :duration, :query_ids)
+          CrudAggregation = Struct.new(:id, :type, :table, :count, :duration, :query_ids) # rubocop:disable Lint/StructNewOverride
 
           def initialize
             @id = 0
@@ -36,4 +36,3 @@ module Rack
     end
   end
 end
-

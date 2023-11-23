@@ -1,12 +1,12 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'mysql2'
 
 RSpec.describe 'Patch mysql2' do
   setup_mysql
 
-  before do
-    Rack::Analyzer::Context.create_current(SecureRandom.uuid)
-  end
+  before { Rack::Analyzer::Context.create_current(SecureRandom.uuid) }
 
   it 'patch mysql2' do
     expect(defined?(Mysql2::Client::RackAnalyzer)).to eq(nil)
@@ -21,4 +21,3 @@ RSpec.describe 'Patch mysql2' do
     c.close
   end
 end
-

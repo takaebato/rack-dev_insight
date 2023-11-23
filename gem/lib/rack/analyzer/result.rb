@@ -37,8 +37,28 @@ module Rack
         @sql.add(dialect, statement, binds, backtrace, duration)
       end
 
-      def add_api(method:, url:, request_headers:, request_body:, status:, response_headers:, response_body:, backtrace:, duration:)
-        @apis.add(method, url, request_headers, request_body, status, response_headers, response_body, backtrace, duration)
+      def add_api(
+        method:,
+        url:,
+        request_headers:,
+        request_body:,
+        status:,
+        response_headers:,
+        response_body:,
+        backtrace:,
+        duration:
+      )
+        @apis.add(
+          method,
+          url,
+          request_headers,
+          request_body,
+          status,
+          response_headers,
+          response_body,
+          backtrace,
+          duration,
+        )
       end
 
       def attributes
@@ -49,7 +69,7 @@ module Rack
           path: @request.path,
           duration: @request.duration,
           sql: @sql.attributes,
-          apis: @apis.attributes
+          apis: @apis.attributes,
         }
       end
 

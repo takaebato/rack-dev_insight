@@ -3,9 +3,12 @@
 require 'spec_helper'
 
 RSpec.describe Rack::Analyzer::FileStore do
-  Result = Struct.new(:id, :value)
-
   let(:file_store) { described_class.new }
+
+  before do
+    mock_result = Struct.new(:id, :value)
+    stub_const('Result', mock_result)
+  end
 
   it 'can write and read data' do
     result = Result.new(1, 'hoge')
@@ -15,11 +18,7 @@ RSpec.describe Rack::Analyzer::FileStore do
   end
 
   context 'when reaching the file pool size limit' do
-    before do
-      Rack::Analyzer.configure do |config|
-        config.file_store_pool_size = 2
-      end
-    end
+    before { Rack::Analyzer.configure { |config| config.file_store_pool_size = 2 } }
 
     it 'reaps excess files' do
       file_store.write(Result.new(1, 'hoge'))

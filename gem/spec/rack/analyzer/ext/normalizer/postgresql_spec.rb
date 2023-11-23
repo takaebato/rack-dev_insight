@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 require 'rack/analyzer/ext/normalizer/normalizer_helper'
 
@@ -15,4 +16,3 @@ RSpec.describe Rack::Analyzer::Normalizer do
     end
   end
 end
-

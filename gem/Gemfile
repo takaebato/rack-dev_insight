@@ -1,20 +1,22 @@
 # frozen_string_literal: true
 
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
 # Specify your gem's dependencies in rack_analyzer.gemspec
 gemspec
 
-gem "rake", "~> 13.0"
+gem 'rake', '~> 13.0'
 
-gem "rake-compiler"
-gem "rb_sys", "~> 0.9.63"
-gem "rspec", "~> 3.0"
-gem "rubocop", "~> 1.21"
-gem "committee", "~> 5.0"
-gem "mysql2"
-gem "pg"
-gem "sqlite3"
-gem "rspec-parameterized", "~> 1.0"
-gem "simplecov", "~> 0.18"
-gem "dotenv", '~> 2.8'
+gem 'committee', '~> 5.0'
+gem 'dotenv', '~> 2.8'
+gem 'mysql2'
+gem 'pg'
+gem 'rack-test'
+gem 'rake-compiler'
+gem 'rb_sys', '~> 0.9.63'
+gem 'rspec', '~> 3.0'
+gem 'rspec-parameterized', '~> 1.0'
+gem 'rubocop', '~> 1.21'
+gem 'simplecov', '~> 0.18'
+gem 'sqlite3'
+gem 'syntax_tree'

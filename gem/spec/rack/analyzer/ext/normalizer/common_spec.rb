@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 require 'rack/analyzer/ext/normalizer/normalizer_helper'
 
@@ -7,13 +8,9 @@ RSpec.describe Rack::Analyzer::Normalizer do
 
     subject { described_class.normalize(dialect, statement) }
 
-    where(:dialect) {
-      [
-        Rack::Analyzer::SqlDialects::MYSQL,
-        Rack::Analyzer::SqlDialects::POSTGRESQL,
-        Rack::Analyzer::SqlDialects::SQLITE
-      ]
-    }
+    where(:dialect) do
+      [Rack::Analyzer::SqlDialects::MYSQL, Rack::Analyzer::SqlDialects::POSTGRESQL, Rack::Analyzer::SqlDialects::SQLITE]
+    end
 
     with_them do
       context 'SELECT' do
@@ -183,8 +180,12 @@ RSpec.describe Rack::Analyzer::Normalizer do
         end
 
         context 'UPDATE with ALIAS' do
-          let(:statement) { 'UPDATE t1 AS t1_alias JOIN t2 AS t2_alias ON t1_alias.a = t2_alias.a SET t1_alias.b = 1 WHERE t2_alias.b = 1' }
-          let(:normalized) { 'UPDATE t1 AS t1_alias JOIN t2 AS t2_alias ON t1_alias.a = t2_alias.a SET t1_alias.b = ? WHERE t2_alias.b = ?' }
+          let(:statement) do
+            'UPDATE t1 AS t1_alias JOIN t2 AS t2_alias ON t1_alias.a = t2_alias.a SET t1_alias.b = 1 WHERE t2_alias.b = 1'
+          end
+          let(:normalized) do
+            'UPDATE t1 AS t1_alias JOIN t2 AS t2_alias ON t1_alias.a = t2_alias.a SET t1_alias.b = ? WHERE t2_alias.b = ?'
+          end
 
           it_behaves_like :normalize
         end
@@ -199,8 +200,12 @@ RSpec.describe Rack::Analyzer::Normalizer do
         end
 
         context 'DELETE with ALIAS' do
-          let(:statement) { 'DELETE t1_alias FROM t1 AS t1_alias JOIN t2 AS t2_alias ON t1_alias.a = t2_alias.a WHERE t2_alias.b = 1' }
-          let(:normalized) { 'DELETE t1_alias FROM t1 AS t1_alias JOIN t2 AS t2_alias ON t1_alias.a = t2_alias.a WHERE t2_alias.b = ?' }
+          let(:statement) do
+            'DELETE t1_alias FROM t1 AS t1_alias JOIN t2 AS t2_alias ON t1_alias.a = t2_alias.a WHERE t2_alias.b = 1'
+          end
+          let(:normalized) do
+            'DELETE t1_alias FROM t1 AS t1_alias JOIN t2 AS t2_alias ON t1_alias.a = t2_alias.a WHERE t2_alias.b = ?'
+          end
 
           it_behaves_like :normalize
         end

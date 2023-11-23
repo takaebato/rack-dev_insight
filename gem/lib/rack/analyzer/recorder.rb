@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Rack
   class Analyzer
     class Recorder
@@ -7,12 +8,7 @@ module Rack
         start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         status, headers, body = yield
         duration = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start
-        Context.current.result.set_request(
-          status:,
-          http_method:,
-          path:,
-          duration: format('%.2f', duration * 1000).to_f
-        )
+        Context.current.result.set_request(status:, http_method:, path:, duration: format('%.2f', duration * 1000).to_f)
         [status, headers, body]
       end
 
@@ -27,7 +23,7 @@ module Rack
           statement:,
           binds: format_binds(binds),
           backtrace: get_backtrace,
-          duration: format('%.2f', duration * 1000).to_f
+          duration: format('%.2f', duration * 1000).to_f,
         )
         res
       end
@@ -47,7 +43,7 @@ module Rack
           response_headers: response.each_header.map { |field, value| Result.build_header(field, value) },
           response_body: response.body,
           backtrace: get_backtrace,
-          duration: format('%.2f', duration * 1000).to_f
+          duration: format('%.2f', duration * 1000).to_f,
         )
         response
       end
@@ -65,14 +61,16 @@ module Rack
       def get_backtrace
         return [] if Analyzer.config.skip_backtrace
 
-        Kernel.caller
-              .reject { |line| Analyzer.config.backtrace_exclusion_patterns.any? { |regex| line =~ regex } }
-              .first(Analyzer.config.backtrace_depth)
-              .map { |line|
-                if (match = line.match(/(?<path>.*):(?<line>\d+)/))
-                  Result.build_backtrace_item(line, match[:path], match[:line].to_i)
-                end
-              }.compact
+        Kernel
+          .caller
+          .reject { |line| Analyzer.config.backtrace_exclusion_patterns.any? { |regex| line =~ regex } }
+          .first(Analyzer.config.backtrace_depth)
+          .map do |line|
+            if (match = line.match(/(?<path>.*):(?<line>\d+)/))
+              Result.build_backtrace_item(line, match[:path], match[:line].to_i)
+            end
+          end
+          .compact
       end
     end
   end

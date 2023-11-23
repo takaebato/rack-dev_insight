@@ -1,25 +1,25 @@
 # frozen_string_literal: true
 
-require_relative "lib/rack/analyzer/version"
+require_relative 'lib/rack/analyzer/version'
 
 Gem::Specification.new do |spec|
-  spec.name = "rack-analyzer"
+  spec.name = 'rack-analyzer'
   spec.version = Rack::Analyzer::VERSION
-  spec.authors = ["Takahiro Ebato"]
-  spec.email = ["ebato.takahiro@gmail.com"]
+  spec.authors = ['Takahiro Ebato']
+  spec.email = ['ebato.takahiro@gmail.com']
 
-  spec.summary = "Analyze database queries and http requests for rack applications."
-  spec.description = "Analyze database queries and http requests for rack applications."
-  spec.homepage = "https://github.com/takaebato/rack-analyzer"
-  spec.license = "MIT"
-  spec.required_ruby_version = ">= 2.6.0"
-  spec.required_rubygems_version = ">= 3.3.11"
+  spec.summary = 'Analyze database queries and http requests for rack applications.'
+  spec.description = 'Analyze database queries and http requests for rack applications.'
+  spec.homepage = 'https://github.com/takaebato/rack-analyzer'
+  spec.license = 'MIT'
+  spec.required_ruby_version = '>= 2.7.0' # rubocop:disable Gemspec/RequiredRubyVersion
+  spec.required_rubygems_version = '>= 3.3.11'
 
   # spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
 
   # spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/takaebato/rack-analyzer"
-  spec.metadata["changelog_uri"] = "https://github.com/takaebato/rack-analyzer/blob/master/CHANGELOG.md"
+  spec.metadata['source_code_uri'] = 'https://github.com/takaebato/rack-analyzer'
+  spec.metadata['changelog_uri'] = 'https://github.com/takaebato/rack-analyzer/blob/master/CHANGELOG.md'
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
@@ -28,16 +28,15 @@ Gem::Specification.new do |spec|
       (File.expand_path(f) == __FILE__) || f.start_with?(*%w[bin/ test/ spec/ features/ .git .circleci appveyor])
     end
   end
-  spec.bindir = "exe"
+  spec.bindir = 'exe'
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
-  spec.require_paths = ["lib"]
-  spec.extensions = ["ext/rack_analyzer/Cargo.toml"]
-
-  spec.add_development_dependency 'rack-test'
+  spec.require_paths = ['lib']
+  spec.extensions = ['ext/rack_analyzer/Cargo.toml']
 
   # Uncomment to register a new dependency of your gem
   # spec.add_dependency "example-gem", "~> 1.0"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
+spec.metadata['rubygems_mfa_required'] = 'true'
 end

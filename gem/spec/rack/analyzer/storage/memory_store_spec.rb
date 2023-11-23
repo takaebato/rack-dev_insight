@@ -3,9 +3,12 @@
 require 'spec_helper'
 
 RSpec.describe Rack::Analyzer::MemoryStore do
-  Result = Struct.new(:id, :value)
-
   let(:memory_store) { described_class.new }
+
+  before do
+    mock_result = Struct.new(:id, :value)
+    stub_const('Result', mock_result)
+  end
 
   it 'can write and read data' do
     result = Result.new(1, 'hoge')
@@ -15,11 +18,7 @@ RSpec.describe Rack::Analyzer::MemoryStore do
   end
 
   context 'when reaching the memory limit' do
-    before do
-      Rack::Analyzer.configure do |config|
-        config.memory_store_size = 60
-      end
-    end
+    before { Rack::Analyzer.configure { |config| config.memory_store_size = 60 } }
 
     it 'reaps excess memory' do
       memory_store.write(Result.new(1, 'hoge'))

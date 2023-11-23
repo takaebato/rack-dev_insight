@@ -1,12 +1,12 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'sqlite3'
 
 RSpec.describe 'Patch sqlite' do
   setup_sqlite
 
-  before do
-    Rack::Analyzer::Context.create_current(SecureRandom.uuid)
-  end
+  before { Rack::Analyzer::Context.create_current(SecureRandom.uuid) }
 
   it 'patches sqlite' do
     expect(defined?(SQLite3::Database::RackAnalyzer)).to eq(nil)
@@ -20,4 +20,3 @@ RSpec.describe 'Patch sqlite' do
     db.close
   end
 end
-

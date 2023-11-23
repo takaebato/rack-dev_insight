@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 require 'rack/analyzer/ext/extractor/extractor_helper'
 
@@ -13,13 +14,9 @@ RSpec.describe 'List unsupported statements' do
     end
   end
 
-  where(:dialect) {
-    [
-      Rack::Analyzer::SqlDialects::MYSQL,
-      Rack::Analyzer::SqlDialects::POSTGRESQL,
-      Rack::Analyzer::SqlDialects::SQLITE
-    ]
-  }
+  where(:dialect) do
+    [Rack::Analyzer::SqlDialects::MYSQL, Rack::Analyzer::SqlDialects::POSTGRESQL, Rack::Analyzer::SqlDialects::SQLITE]
+  end
 
   with_them do
     context 'SELECT' do
@@ -72,11 +69,7 @@ RSpec.describe 'List unsupported statements' do
       context 'DELETE IGNORE' do
         let(:statement) { 'DELETE IGNORE FROM t1' }
 
-        it_behaves_like :extracts_tables,
-                        create: [],
-                        read: ['t1'],
-                        update: [],
-                        delete: ['IGNORE'] # IGNORE should not be included as table name
+        it_behaves_like :extracts_tables, create: [], read: ['t1'], update: [], delete: ['IGNORE'] # IGNORE should not be included as table name
       end
     end
 
@@ -87,4 +80,3 @@ RSpec.describe 'List unsupported statements' do
     end
   end
 end
-

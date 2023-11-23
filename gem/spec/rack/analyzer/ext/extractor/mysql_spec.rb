@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 require 'rack/analyzer/ext/extractor/extractor_helper'
 
@@ -11,11 +12,7 @@ RSpec.describe Rack::Analyzer::Extractor::CrudTables do
       context 'PARTITION' do
         let(:statement) { 'SELECT a FROM t1 PARTITION (p0)' }
 
-        it_behaves_like :extracts_tables,
-                        create: [],
-                        read: ['t1'],
-                        update: [],
-                        delete: []
+        it_behaves_like :extracts_tables, create: [], read: ['t1'], update: [], delete: []
       end
     end
   end

@@ -1,4 +1,4 @@
-# Frozen_string_literal: true
+# frozen_string_literal: true
 
 module Rack
   class Analyzer
@@ -23,4 +23,3 @@ module Rack
     end
   end
 end
-

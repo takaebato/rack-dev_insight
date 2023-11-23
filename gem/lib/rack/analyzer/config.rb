@@ -1,8 +1,16 @@
+# frozen_string_literal: true
+
 module Rack
   class Analyzer
     class Config
-      attr_accessor :storage, :storage_instance, :memory_store_size, :file_store_pool_size, :file_store_dir_path,
-                    :skip_backtrace, :backtrace_exclusion_patterns, :backtrace_depth
+      attr_accessor :storage,
+                    :storage_instance,
+                    :memory_store_size,
+                    :file_store_pool_size,
+                    :file_store_dir_path,
+                    :skip_backtrace,
+                    :backtrace_exclusion_patterns,
+                    :backtrace_depth
 
       def initialize
         @storage = MemoryStore

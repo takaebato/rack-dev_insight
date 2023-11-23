@@ -1,12 +1,12 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'pg'
 
 RSpec.describe 'Patch pg' do
   setup_postgresql
 
-  before do
-    Rack::Analyzer::Context.create_current(SecureRandom.uuid)
-  end
+  before { Rack::Analyzer::Context.create_current(SecureRandom.uuid) }
 
   it 'patches pg' do
     expect(defined?(PG::Connection::RackAnalyzer)).to eq(nil)
@@ -21,4 +21,3 @@ RSpec.describe 'Patch pg' do
     conn.close
   end
 end
-

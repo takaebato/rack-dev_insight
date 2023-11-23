@@ -1,4 +1,4 @@
-# Frozen_string_literal: true
+# frozen_string_literal: true
 
 require_relative 'sql/crud_aggregations'
 require_relative 'sql/normalized_aggregations'
@@ -29,7 +29,7 @@ module Rack
             crud_aggregations: @crud_aggregations.attributes,
             normalized_aggregations: @normalized_aggregations.attributes,
             errored_queries: @errored_queries.attributes,
-            queries: @queries.attributes
+            queries: @queries.attributes,
           }
         end
       end
