@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-if defined?(Net) && defined?(Net::HTTP)
+if !defined?(Rack::DevInsight::DISABLE_NET_HTTP_PATCH) && (defined?(Net) && defined?(Net::HTTP))
   module Net
     class HTTP
       module RackDevInsight

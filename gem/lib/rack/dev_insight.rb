@@ -20,7 +20,6 @@ module Rack
     def initialize(app)
       @app = app
       @config = DevInsight.config
-      @config.storage_instance ||= @config.storage.new
       @storage = @config.storage_instance
     end
 
