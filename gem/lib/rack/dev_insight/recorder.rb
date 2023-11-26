@@ -65,8 +65,6 @@ module Rack
       end
 
       def get_backtrace
-        return [] if DevInsight.config.skip_backtrace
-
         Kernel
           .caller
           .reject { |line| DevInsight.config.backtrace_exclusion_patterns.any? { |regex| line =~ regex } }
