@@ -30,6 +30,9 @@ if defined?(PG::Connection)
           name = args[0]
           sql = args[1]
           @_rack_dev_insight_prepared_statements ||= {}
+          while Rack::DevInsight.config.prepared_statement_limit <= @_rack_dev_insight_prepared_statements.size
+            @_rack_dev_insight_prepared_statements.shift
+          end
           @_rack_dev_insight_prepared_statements[name] = sql
           super
         end

@@ -54,7 +54,7 @@ RSpec.describe Rack::DevInsight do
     [last_response.status, last_response.headers, last_response.body]
   end
 
-  before { Rack::DevInsight.configure { |config| config.storage = Rack::DevInsight::FileStore } }
+  before { Rack::DevInsight.config.storage_type = :file }
 
   it 'records and returns analyzed result' do
     get '/app'
