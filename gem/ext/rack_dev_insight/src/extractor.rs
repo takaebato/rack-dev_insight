@@ -1,13 +1,13 @@
 use std::collections::HashMap;
 use std::ops::ControlFlow;
 
+use crate::errors::PARSER_ERROR;
 use magnus::{Error, Ruby};
-use sqlparser::ast::{Statement, TableFactor, Visit, Visitor};
 use sqlparser::ast::TableFactor::Table;
-use sqlparser::dialect::{dialect_from_str};
+use sqlparser::ast::{Statement, TableFactor, Visit, Visitor};
+use sqlparser::dialect::dialect_from_str;
 use sqlparser::parser::Parser;
 use tap::Tap;
-use crate::errors::PARSER_ERROR;
 
 #[derive(Default, Debug, PartialEq)]
 #[magnus::wrap(class = "Rack::DevInsight::Extractor::CrudTables")]
@@ -19,10 +19,18 @@ pub struct CrudTables {
 }
 
 impl CrudTables {
-    pub fn create_tables(&self) -> Vec<String> { self.create_tables.clone() }
-    pub fn read_tables(&self) -> Vec<String> { self.read_tables.clone() }
-    pub fn update_tables(&self) -> Vec<String> { self.update_tables.clone() }
-    pub fn delete_tables(&self) -> Vec<String> { self.delete_tables.clone() }
+    pub fn create_tables(&self) -> Vec<String> {
+        self.create_tables.clone()
+    }
+    pub fn read_tables(&self) -> Vec<String> {
+        self.read_tables.clone()
+    }
+    pub fn update_tables(&self) -> Vec<String> {
+        self.update_tables.clone()
+    }
+    pub fn delete_tables(&self) -> Vec<String> {
+        self.delete_tables.clone()
+    }
 }
 
 #[derive(Default, Debug)]
@@ -40,14 +48,11 @@ impl Visitor for CrudTableExtractor {
 
     fn pre_visit_table_factor(&mut self, table_factor: &TableFactor) -> ControlFlow<Self::Break> {
         match table_factor {
-            Table {
-                name,
-                alias,
-                ..
-            } => {
+            Table { name, alias, .. } => {
                 self.read_tables.push(name.0[0].value.clone());
                 if let Some(alias) = alias {
-                    self.aliases.insert(alias.name.value.clone(), name.0[0].value.clone());
+                    self.aliases
+                        .insert(alias.name.value.clone(), name.0[0].value.clone());
                 }
             }
             _ => {}
@@ -57,21 +62,13 @@ impl Visitor for CrudTableExtractor {
 
     fn pre_visit_statement(&mut self, statement: &Statement) -> ControlFlow<Self::Break> {
         match statement {
-            Statement::Insert {
-                table_name,
-                ..
-            } => {
+            Statement::Insert { table_name, .. } => {
                 self.create_tables.push(table_name.0[0].value.clone());
-                self.to_subtract_from_read.push(table_name.0[0].value.clone());
+                self.to_subtract_from_read
+                    .push(table_name.0[0].value.clone());
             }
-            Statement::Update {
-                table,
-                ..
-            } => {
-                if let Table {
-                    name,
-                    ..
-                } = &table.relation {
+            Statement::Update { table, .. } => {
+                if let Table { name, .. } = &table.relation {
                     self.update_tables.push(name.0[0].value.clone());
                     self.to_subtract_from_read.push(name.0[0].value.clone());
                 }
@@ -89,10 +86,7 @@ impl Visitor for CrudTableExtractor {
                     }
                 } else {
                     for table_with_joins in from {
-                        if let Table {
-                            name,
-                            ..
-                        } = &table_with_joins.relation {
+                        if let Table { name, .. } = &table_with_joins.relation {
                             self.delete_tables.push(name.0[0].value.clone());
                             self.to_subtract_from_read.push(name.0[0].value.clone());
                             // subtract again since using contains the same table
@@ -110,24 +104,44 @@ impl Visitor for CrudTableExtractor {
 }
 
 impl CrudTableExtractor {
-    pub fn extract(ruby: &Ruby, dialect_name: String, subject: String) -> Result<CrudTables, Error> {
-        let mut statements = match dialect_from_str(dialect_name) {
-            Some(dialect) => {
-                match Parser::parse_sql(dialect.as_ref(), &subject) {
-                    Ok(statements) => statements,
-                    Err(error) => return Err(Error::new(ruby.get_inner(&PARSER_ERROR), error.to_string()))
+    pub fn extract(
+        ruby: &Ruby,
+        dialect_name: String,
+        subject: String,
+    ) -> Result<CrudTables, Error> {
+        let statements = match dialect_from_str(dialect_name) {
+            Some(dialect) => match Parser::parse_sql(dialect.as_ref(), &subject) {
+                Ok(statements) => statements,
+                Err(error) => {
+                    return Err(Error::new(ruby.get_inner(&PARSER_ERROR), error.to_string()))
                 }
+            },
+            None => {
+                return Err(Error::new(
+                    magnus::exception::arg_error(),
+                    "Dialect not found",
+                ))
             }
-            None => return Err(Error::new(magnus::exception::arg_error(), "Dialect not found"))
         };
         let mut visitor = CrudTableExtractor::default();
         statements.visit(&mut visitor);
-        let create_tables = visitor.convert_alias_to_original(visitor.create_tables.clone()).tap_mut(|vec| vec.sort());
-        let read_tables = visitor.convert_alias_to_original(visitor.read_tables.clone()).tap_mut(|vec| vec.sort());
-        let update_tables = visitor.convert_alias_to_original(visitor.update_tables.clone()).tap_mut(|vec| vec.sort());
-        let delete_tables = visitor.convert_alias_to_original(visitor.delete_tables.clone()).tap_mut(|vec| vec.sort());
+        let create_tables = visitor
+            .convert_alias_to_original(visitor.create_tables.clone())
+            .tap_mut(|vec| vec.sort());
+        let read_tables = visitor
+            .convert_alias_to_original(visitor.read_tables.clone())
+            .tap_mut(|vec| vec.sort());
+        let update_tables = visitor
+            .convert_alias_to_original(visitor.update_tables.clone())
+            .tap_mut(|vec| vec.sort());
+        let delete_tables = visitor
+            .convert_alias_to_original(visitor.delete_tables.clone())
+            .tap_mut(|vec| vec.sort());
         Ok(CrudTables {
-            read_tables: visitor.subtract(read_tables, visitor.convert_alias_to_original(visitor.to_subtract_from_read.clone())),
+            read_tables: visitor.subtract(
+                read_tables,
+                visitor.convert_alias_to_original(visitor.to_subtract_from_read.clone()),
+            ),
             create_tables,
             update_tables,
             delete_tables,
@@ -135,37 +149,59 @@ impl CrudTableExtractor {
     }
 
     fn convert_alias_to_original(&self, tables: Vec<String>) -> Vec<String> {
-        tables.into_iter().map(|table| {
-            if let Some(original) = self.aliases.get(&table) {
-                original.clone()
-            } else {
-                table
-            }
-        }).collect()
+        tables
+            .into_iter()
+            .map(|table| {
+                if let Some(original) = self.aliases.get(&table) {
+                    original.clone()
+                } else {
+                    table
+                }
+            })
+            .collect()
     }
 
     fn subtract(&self, read_tables: Vec<String>, mut to_subtracts: Vec<String>) -> Vec<String> {
-        read_tables.into_iter().filter(|read| {
-            if let Some(pos) = to_subtracts.iter().position(|sub| sub == read) {
-                to_subtracts.remove(pos);
-                false
-            } else {
-                true
-            }
-        }).collect()
+        read_tables
+            .into_iter()
+            .filter(|read| {
+                if let Some(pos) = to_subtracts.iter().position(|sub| sub == read) {
+                    to_subtracts.remove(pos);
+                    false
+                } else {
+                    true
+                }
+            })
+            .collect()
     }
 }
-
 
 // Thorough tests are written in Ruby. Basic cases are here for sanity check and to help debug.
 #[cfg(test)]
 mod tests {
-    use indoc::indoc;
     use super::*;
+    use indoc::indoc;
     use rb_sys_test_helpers::with_ruby_vm;
 
     #[test]
     fn test_select_statement() {
+        with_ruby_vm(|| {
+            let ruby = Ruby::get().unwrap();
+            let sql = "SELECT a FROM t1 WHERE b = 1 AND c in (2, 3) AND d LIKE '%foo'; SELECT b FROM t2 WHERE c = 4";
+            match CrudTableExtractor::extract(&ruby, String::from("mysql"), sql.into()) {
+                Ok(result) => assert_eq!(result, CrudTables {
+                    create_tables: vec![],
+                    read_tables: vec!["t1".to_string()],
+                    update_tables: vec![],
+                    delete_tables: vec![],
+                }),
+                Err(error) => assert!(false, "Should not have errored. Error: {}", error)
+            }
+        }).unwrap()
+    }
+
+    #[test]
+    fn test_complicated_select_statement() {
         with_ruby_vm(|| {
             let ruby = Ruby::get().unwrap();
             let sql = indoc! {" \
@@ -179,19 +215,23 @@ mod tests {
                 ) \
             "};
             match CrudTableExtractor::extract(&ruby, String::from("mysql"), sql.into()) {
-                Ok(result) => assert_eq!(result, CrudTables {
-                    create_tables: vec![],
-                    read_tables: vec!["t1".to_string(), "t2".to_string(), "t3".to_string()],
-                    update_tables: vec![],
-                    delete_tables: vec![],
-                }),
-                Err(error) => assert!(false, "Should not have errored. Error: {}", error)
+                Ok(result) => assert_eq!(
+                    result,
+                    CrudTables {
+                        create_tables: vec![],
+                        read_tables: vec!["t1".to_string(), "t2".to_string(), "t3".to_string()],
+                        update_tables: vec![],
+                        delete_tables: vec![],
+                    }
+                ),
+                Err(error) => assert!(false, "Should not have errored. Error: {}", error),
             }
-        }).unwrap()
+        })
+        .unwrap()
     }
 
     #[test]
-    fn test_insert_statement() {
+    fn test_complicated_insert_statement() {
         with_ruby_vm(|| {
             let ruby = Ruby::get().unwrap();
             let sql = indoc! {" \
@@ -206,19 +246,23 @@ mod tests {
                 ) \
             "};
             match CrudTableExtractor::extract(&ruby, String::from("mysql"), sql.into()) {
-                Ok(result) => assert_eq!(result, CrudTables {
-                    create_tables: vec!["t1".to_string()],
-                    read_tables: vec!["t2".to_string(), "t3".to_string(), "t4".to_string()],
-                    update_tables: vec![],
-                    delete_tables: vec![],
-                }),
-                Err(error) => assert!(false, "Should not have errored. Error: {}", error)
+                Ok(result) => assert_eq!(
+                    result,
+                    CrudTables {
+                        create_tables: vec!["t1".to_string()],
+                        read_tables: vec!["t2".to_string(), "t3".to_string(), "t4".to_string()],
+                        update_tables: vec![],
+                        delete_tables: vec![],
+                    }
+                ),
+                Err(error) => assert!(false, "Should not have errored. Error: {}", error),
             }
-        }).unwrap()
+        })
+        .unwrap()
     }
 
     #[test]
-    fn test_update_statement() {
+    fn test_complicated_update_statement() {
         with_ruby_vm(|| {
             let ruby = Ruby::get().unwrap();
             let sql = indoc! {"\
@@ -232,19 +276,23 @@ mod tests {
                 AND t3.f = 3
             "};
             match CrudTableExtractor::extract(&ruby, String::from("mysql"), sql.into()) {
-                Ok(result) => assert_eq!(result, CrudTables {
-                    create_tables: vec![],
-                    read_tables: vec!["t2".to_string(), "t3".to_string(), "t4".to_string()],
-                    update_tables: vec!["t1".to_string()],
-                    delete_tables: vec![],
-                }),
-                Err(error) => assert!(false, "Should not have errored. Error: {}", error)
+                Ok(result) => assert_eq!(
+                    result,
+                    CrudTables {
+                        create_tables: vec![],
+                        read_tables: vec!["t2".to_string(), "t3".to_string(), "t4".to_string()],
+                        update_tables: vec!["t1".to_string()],
+                        delete_tables: vec![],
+                    }
+                ),
+                Err(error) => assert!(false, "Should not have errored. Error: {}", error),
             }
-        }).unwrap()
+        })
+        .unwrap()
     }
 
     #[test]
-    fn test_delete_statement() {
+    fn test_complicated_delete_statement() {
         with_ruby_vm(|| {
             let ruby = Ruby::get().unwrap();
             let sql = indoc! {" \
@@ -258,15 +306,40 @@ mod tests {
                 ) \
             "};
             match CrudTableExtractor::extract(&ruby, String::from("mysql"), sql.into()) {
-                Ok(result) => assert_eq!(result, CrudTables {
-                    create_tables: vec![],
-                    read_tables: vec!["t3".to_string()],
-                    update_tables: vec![],
-                    delete_tables: vec!["t1".to_string(), "t2".to_string()],
-                }),
-                Err(error) => assert!(false, "Should not have errored. Error: {}", error)
+                Ok(result) => assert_eq!(
+                    result,
+                    CrudTables {
+                        create_tables: vec![],
+                        read_tables: vec!["t3".to_string()],
+                        update_tables: vec![],
+                        delete_tables: vec!["t1".to_string(), "t2".to_string()],
+                    }
+                ),
+                Err(error) => assert!(false, "Should not have errored. Error: {}", error),
             }
-        }).unwrap()
+        })
+        .unwrap()
+    }
+
+    #[test]
+    fn test_multiple_statements() {
+        with_ruby_vm(|| {
+            let ruby = Ruby::get().unwrap();
+            let sql = "SELECT a FROM t1 WHERE b = 1; INSERT INTO t2 (a, b) VALUES (1, 2); UPDATE t3 SET a = 1 WHERE b = 2; DELETE FROM t4 WHERE a = 1";
+            match CrudTableExtractor::extract(&ruby, String::from("mysql"), sql.into()) {
+                Ok(result) => assert_eq!(
+                    result,
+                    CrudTables {
+                        create_tables: vec!["t2".to_string()],
+                        read_tables: vec!["t1".to_string()],
+                        update_tables: vec!["t3".to_string()],
+                        delete_tables: vec![ "t4".to_string()],
+                    }
+                ),
+                Err(error) => assert!(false, "Should not have errored. Error: {}", error),
+            }
+        })
+            .unwrap()
     }
 
     #[test]
@@ -276,8 +349,9 @@ mod tests {
             let sql = "SELECT a FROM t1 WHERE b = 1 WHERE c in (2, 3";
             match CrudTableExtractor::extract(&ruby, String::from("mysql"), sql.into()) {
                 Ok(_) => assert!(false, "Should have errored"),
-                Err(error) => assert!(error.is_kind_of(ruby.get_inner(&PARSER_ERROR)))
+                Err(error) => assert!(error.is_kind_of(ruby.get_inner(&PARSER_ERROR))),
             }
-        }).unwrap()
+        })
+        .unwrap()
     }
 }

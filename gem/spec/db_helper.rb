@@ -30,13 +30,14 @@ module DbHelper
     c.close
   end
 
-  def mysql_client
+  def mysql_client(**options)
     Mysql2::Client.new(
       host: ENV.fetch('MYSQL_HOST', nil),
       port: 3306,
       username: 'root',
       password: 'password',
       database: DB_NAME,
+      flags: options[:flags],
     )
   end
 

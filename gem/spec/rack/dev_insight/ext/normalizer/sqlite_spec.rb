@@ -11,7 +11,7 @@ RSpec.describe Rack::DevInsight::Normalizer do
 
     context 'REPLACE' do
       let(:statement) { 'REPLACE INTO t1 (a) VALUES (1)' }
-      let(:normalized) { 'INSERT OR REPLACE INTO t1 (a) VALUES (?)' }
+      let(:normalized) { ['INSERT OR REPLACE INTO t1 (a) VALUES (?)'] }
 
       it_behaves_like :normalize
     end

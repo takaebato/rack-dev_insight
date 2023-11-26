@@ -1,11 +1,11 @@
 use std::ops::ControlFlow;
 
-use magnus::{Error, exception, Ruby};
-use sqlparser::ast::{Expr, VisitMut, VisitorMut};
+use crate::errors::PARSER_ERROR;
+use magnus::{exception, Error, Ruby};
 use sqlparser::ast::Value::Placeholder;
+use sqlparser::ast::{Expr, VisitMut, VisitorMut};
 use sqlparser::dialect::dialect_from_str;
 use sqlparser::parser::Parser;
-use crate::errors::{PARSER_ERROR};
 
 pub struct Normalizer;
 
@@ -21,18 +21,30 @@ impl VisitorMut for Normalizer {
 }
 
 impl Normalizer {
-    pub fn normalize(ruby: &Ruby, dialect_name: String, subject: String) -> Result<String, Error> {
+    pub fn normalize(
+        ruby: &Ruby,
+        dialect_name: String,
+        subject: String,
+    ) -> Result<Vec<String>, Error> {
         let mut statements = match dialect_from_str(&dialect_name) {
-            Some(dialect) => {
-                match Parser::parse_sql(dialect.as_ref(), &subject) {
-                    Ok(statements) => statements,
-                    Err(error) => return Err(Error::new(ruby.get_inner(&PARSER_ERROR), error.to_string()))
+            Some(dialect) => match Parser::parse_sql(dialect.as_ref(), &subject) {
+                Ok(statements) => statements,
+                Err(error) => {
+                    return Err(Error::new(ruby.get_inner(&PARSER_ERROR), error.to_string()))
                 }
+            },
+            None => {
+                return Err(Error::new(
+                    exception::arg_error(),
+                    format!("Dialect not found {}", dialect_name),
+                ))
             }
-            None => return Err(Error::new(exception::arg_error(), format!("Dialect not found {}", dialect_name)))
         };
         statements.visit(&mut Self);
-        Ok(statements[0].to_string())
+        Ok(statements
+            .into_iter()
+            .map(|statement| statement.to_string())
+            .collect::<Vec<String>>())
     }
 }
 
@@ -43,12 +55,28 @@ mod tests {
     use rb_sys_test_helpers::with_ruby_vm;
 
     #[test]
-    fn test_correct_sql() {
+    fn test_single_sql() {
         with_ruby_vm(|| {
             let ruby = Ruby::get().unwrap();
-            let sql = "SELECT a FROM1 WHERE b = 1 AND c in (2, 3) AND d LIKE '%foo";
+            let sql = "SELECT a FROM t1 WHERE b = 1 AND c in (2, 3) AND d LIKE '%foo'";
             match Normalizer::normalize(&ruby, String::from("mysql"), sql.into()) {
-                Ok(result) => assert_eq!(result, "SELECT a FROM t1 WHERE b = ? AND c IN (?, ?) AND d LIKE ?"),
+                Ok(result) => assert_eq!(
+                    result,
+                    ["SELECT a FROM t1 WHERE b = ? AND c IN (?, ?) AND d LIKE ?"]
+                ),
+                Err(error) => assert!(false, "Should not have errored. Error: {}", error),
+            }
+        })
+        .unwrap();
+    }
+
+    #[test]
+    fn test_multiple_sqls() {
+        with_ruby_vm(|| {
+            let ruby = Ruby::get().unwrap();
+            let sql = "SELECT a FROM t1 WHERE b = 1 AND c in (2, 3) AND d LIKE '%foo'; SELECT a FROM t1 WHERE b = 1 AND c in (2, 3) AND d LIKE '%foo'";
+            match Normalizer::normalize(&ruby, String::from("mysql"), sql.into()) {
+                Ok(result) => assert_eq!(result, ["SELECT a FROM t1 WHERE b = ? AND c IN (?, ?) AND d LIKE ?", "SELECT a FROM t1 WHERE b = ? AND c IN (?, ?) AND d LIKE ?"]),
                 Err(error) => assert!(false, "Should not have errored. Error: {}", error)
             }
         }).unwrap();
@@ -61,8 +89,9 @@ mod tests {
             let invalid_sql = "SELECT a FROM t1 WHERE b = 1 WHERE c in (2, 3)";
             match Normalizer::normalize(&ruby, String::from("mysql"), invalid_sql.into()) {
                 Ok(_) => assert!(false, "Should have errored"),
-                Err(error) => assert!(error.is_kind_of(ruby.get_inner(&PARSER_ERROR)))
+                Err(error) => assert!(error.is_kind_of(ruby.get_inner(&PARSER_ERROR))),
             }
-        }).unwrap();
+        })
+        .unwrap();
     }
 }

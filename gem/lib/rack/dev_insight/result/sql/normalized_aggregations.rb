@@ -15,7 +15,8 @@ module Rack
           end
 
           def add(dialect_name, statement, duration, query_id)
-            normalized_statement = Normalizer.normalize(dialect_name, statement)
+            normalized_statements = Normalizer.normalize(dialect_name, statement)
+            normalized_statement = normalized_statements.join('; ')
 
             data =
               @cached_data[normalized_statement] ||= NormalizedAggregation.new(@id += 1, normalized_statement, 0, 0, [])
