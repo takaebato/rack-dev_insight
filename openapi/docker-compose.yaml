@@ -7,3 +7,11 @@ services:
       - ./openapi.yaml:/tmp/openapi.yaml:ro
     ports:
       - '8081:4010'
+  redoc:
+    image: redocly/redoc
+    environment:
+      - SPEC_URL=/openapi/openapi.yml
+    volumes:
+      - ./openapi.yaml:/usr/share/nginx/html/openapi/openapi.yaml
+    ports:
+      - "3031:80"

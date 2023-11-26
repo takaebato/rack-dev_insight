@@ -11,7 +11,7 @@ require 'simplecov'
 require 'dotenv'
 
 # Load `.env.test.local` or `.env.test.docker`
-Dotenv.load('.env.test.local')
+Dotenv.load('.env.test.docker')
 
 SimpleCov.start
 

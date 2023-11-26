@@ -137,7 +137,7 @@ export interface ApiSchema {
   method: string;
   /**
    * Full url
-   * @example "https://example.com/api/v1/pets"
+   * @example "https://example.com/api/v1/users"
    */
   url: string;
   /** @example [{"field":"User-Agent","value":"CustomServerClient/1.2.3"},{"field":"Content-Type","value":"application/json; charset=utf-8"},{"field":"Content-Length","value":123456},{"field":"Date","value":"Sat, 08 Oct 2023 00:00:00 GMT"}] */
@@ -235,7 +235,7 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = 'https://petstore3.swagger.io/api/v3';
+  public baseUrl: string = '';
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>['securityWorker'];
   private abortControllers = new Map<CancelToken, AbortController>();
@@ -393,23 +393,14 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title Rack Dev Insight Internal API
- * @version 1.0.11
+ * @version 1.0.0
  * @license Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0.html)
- * @termsOfService http://swagger.io/terms/
- * @baseUrl https://petstore3.swagger.io/api/v3
- * @externalDocs http://swagger.io
- * @contact <apiteam@swagger.io>
+ * @termsOfService https://github.com/takaebato/rack-dev-insight/blob/master/CODE_OF_CONDUCT.md
+ * @externalDocs https://github.com/takaebato/rack-dev-insight
+ * @contact <ebato.takahiro@gmail.com>
  *
- * This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
- * Swagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
- * You can now help us improve the API whether it's by making changes to the definition itself or to the code.
- * That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
- *
- * _If you're looking for the Swagger 2.0/OAS 2.0 version of Petstore, then click [here](https://editor.swagger.io/?url=https://petstore.swagger.io/v2/swagger.yaml). Alternatively, you can load via the `Edit > Load Petstore OAS 2.0` menu option!_
- *
- * Some useful links:
- * - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
- * - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+ * This is an internal API specification for Rack Dev Insight.
+ * It is used for communication between the Rack Dev Insight gem and Chrome extension.
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
   rackDevInsightResults = {
