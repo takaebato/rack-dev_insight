@@ -3,14 +3,14 @@
 require_relative 'lib/rack/dev_insight/version'
 
 Gem::Specification.new do |spec|
-  spec.name = 'rack-dev-insight'
+  spec.name = 'rack-dev_insight'
   spec.version = Rack::DevInsight::VERSION
   spec.authors = ['Takahiro Ebato']
   spec.email = ['ebato.takahiro@gmail.com']
 
   spec.summary = 'Analyze database queries and http requests for rack applications.'
   spec.description = 'Analyze database queries and http requests for rack applications.'
-  spec.homepage = 'https://github.com/takaebato/rack-dev-insight'
+  spec.homepage = 'https://github.com/takaebato/rack-dev_insight'
   spec.license = 'MIT'
   spec.required_ruby_version = '>= 3.0.2'
   # spec.required_rubygems_version = '>= 3.3.11'
@@ -18,8 +18,8 @@ Gem::Specification.new do |spec|
   # spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
 
   # spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata['source_code_uri'] = 'https://github.com/takaebato/rack-dev-insight'
-  spec.metadata['changelog_uri'] = 'https://github.com/takaebato/rack-dev-insight/blob/master/CHANGELOG.md'
+  spec.metadata['source_code_uri'] = 'https://github.com/takaebato/rack-dev_insight'
+  spec.metadata['changelog_uri'] = 'https://github.com/takaebato/rack-dev_insight/blob/master/CHANGELOG.md'
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.

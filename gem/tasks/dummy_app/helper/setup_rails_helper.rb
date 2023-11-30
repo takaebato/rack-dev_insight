@@ -45,7 +45,7 @@ module SetupRailsHelper
       (bundle show mysql2 || bundle add mysql2); \
       (bundle show pg || bundle add pg); \
       (bundle show net-http || bundle add net-http); \
-      (bundle show rack-dev-insight || bundle add rack-dev-insight --path /gem);'
+      (bundle show rack-dev_insight || bundle add rack-dev_insight --path /gem);'
     COMMAND
   end
 

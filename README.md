@@ -1,8 +1,8 @@
 # RackDevInsight
 
-RackDevInsight is a rack middleware designed for recording and analyzing HTTP request/response data and database queries.
-A corresponding Chrome extension is required to display the recorded data in the Devtools panel.
-This tool is specifically intended for use in development environments only.
+RackDevInsight is a rack middleware for recording and analyzing database queries and HTTP request/response data.
+A Chrome extension is needed to display the data in Devtools panel.
+It is intended for development use only.
 
 ## Features
 
@@ -11,50 +11,47 @@ This tool is specifically intended for use in development environments only.
   - Normalized SQL
 - Record HTTP request/response
 
-#### Supported databases
+## Supported libraries
+
+#### Database clients:
 
 - MySQL (i.e. [mysql2](https://github.com/brianmario/mysql2) gem)
 - PostgreSQL (i.e. [pg](https://github.com/ged/ruby-pg) gem)
 - SQLite3 (i.e. [sqlite3](https://github.com/sparklemotion/sqlite3-ruby) gem)
 
-#### Supported HTTP clients
+#### HTTP clients:
 
 - [net-http](https://github.com/ruby/net-http) gem
 
 ## Status
 
-[![Gem Version](https://badge.fury.io/rb/rack-dev-insight.svg)](https://badge.fury.io/rb/rack-dev-insight)
-[![CI](https://github.com/takaebato/rack-dev-insight/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/takaebato/rack-dev-insight/actions/workflows/main.yml)
+[![Gem Version](https://badge.fury.io/rb/rack-dev_insight.svg)](https://badge.fury.io/rb/rack-dev_insight)
+[![CI](https://github.com/takaebato/rack-dev_insight/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/takaebato/rack-dev_insight/actions/workflows/main.yml)
 
 ## Installation
 
-### Gem
+### 1. Install gem
 
-Add this line to your application's Gemfile:
+Add the following lines to your application's Gemfile:
 
 ```rb
 group :development do
-  gem 'rack-dev-insight'
+  gem 'rack-dev_insight'
 end
 ```
 
-Note that the following gems need to be listed before `rack-dev-insight` in the Gemfile if they are used in the application, letting `rack-dev-insight` to patch them when loaded.
+Note that the following gems need to be listed before `rack-dev_insight` in the Gemfile if they are used in the application, letting `rack-dev_insight` patch them when loaded.
 
 - [mysql2](https://github.com/brianmario/mysql2)
 - [pg](https://github.com/ged/ruby-pg)
 - [sqlite3](https://github.com/sparklemotion/sqlite3-ruby)
 
-[net-http](https://github.com/ruby/net-http) is also patched to record HTTP requests. If you want to disable this feature, change the Gemfile as follows:
-
-```rb
-group :development do
-  gem 'rack-dev-insight', require: ['rack/dev_insight/disable_net_http_patch', 'rack-dev-insight']
-end
-```
+### 2. Setup middleware
 
 #### Rails
 
-No additional steps are required. Rack middleware is automatically inserted by railtie.
+No additional steps are required.
+Middleware is automatically inserted by railtie.
 
 #### Other Rack apps
 
@@ -64,25 +61,44 @@ For example, when using [Hanami](https://github.com/hanami/hanami):
 
 ```rb
 # config.ru
-require 'rack-dev-insight'
+require 'rack/dev_insight'
 
 use Rack::DevInsight
 ```
 
-when using [Sinatra](https://github.com/sinatra/sinatra):
+### 3. Install Chrome extension
+
+Install the extension from [Chrome Web Store](https://chrome.google.com/webstore/detail/rack-dev_insight/).
+
+### Installation options
+
+#### Enable SQL events subscription of `ActiveSupport::Notifications`
+
+If you use `ActiveSupport::Notifications`, and want to avoid patching SQL client gems, you can enable SQL events subscription of `ActiveSupport::Notifications` by changing the Gemfile as follows:
 
 ```rb
-# app.rb
-require 'rack-dev-insight'
-
-class MyApp < Sinatra::Base
-  use Rack::DevInsight
+group :development do
+  gem 'rack-dev_insight', require: ['rack/dev_insight/enable_sql_subscription', 'rack/dev_insight']
 end
 ```
 
-### Chrome extension
+In this setup, SQL patches are automatically disabled.
 
-Install the extension from [Chrome Web Store](https://chrome.google.com/webstore/detail/rack-dev-insight/).
+For Rails applications, the default subscribed events are `sql.active_record`, `sql.rom`, `sql.sequel`, and `sql.data_mapper`.
+For other rack applications, or to subscribe to additional events, use `Rack::DevInsight::SqlNotifications.subscribe('new_sql_event_name')`.
+
+<b>Notable limitation:</b> Only one SQL dialect is supported at a time, determined by the client library listed in the Gemfile. If multiple dialects are present, it defaults to mysql2, pg, then sqlite3 in order.
+To use multiple dialects, SQL patching is the only option.
+
+#### Disable patching of net-http
+
+If you want to disable patching of `net-http`, you can change the Gemfile as follows:
+
+```rb
+group :development do
+  gem 'rack-dev_insight', require: ['rack/dev_insight/disable_net_http_patch', 'rack/dev_insight']
+end
+```
 
 ## Usage
 
@@ -92,15 +108,16 @@ Install the extension from [Chrome Web Store](https://chrome.google.com/webstore
 
 ## Configuration
 
-| Name                         | Description                                                                                                                                                                                                                                                                    | Type            | Default                |
-|------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------|------------------------|
-| storage_type                 | Storage option. :memory or :file are available.                                                                                                                                                                                                                                | Symbol          | :memory                |
-| memory_store_size            | Byte size of memory allocated for storing results. When memory usage exceeds this limit, the oldest result is deleted.                                                                                                                                                         | Integer         | 32 * 1024 * 1024       |
-| file_store_pool_size         | Number of files of result to preserve. When the number of files exceeds this value, the oldest file is deleted.                                                                                                                                                                | Integer         | 100                    |
-| file_store_dir_path          | Path to the directory for storing result files.                                                                                                                                                                                                                                | String          | 'tmp/rack-dev-insight' |          
-| backtrace_depth              | Depth of the backtrace to record.                                                                                                                                                                                                                                              | Integer         | 5                      |              
-| backtrace_exclusion_patterns | Exclusion patterns for paths when recording backtraces. If there's a match, the recording of the line is skipped.                                                                                                                                                              | Array of Regexp | [/gems/]               | 
-| prepared_statement_limit     | The maximum number of prepared statement objects stored in memory per database connection. It is recommended to set the value equal to (or higher than) the corresponding setting in your application. The default value is 1000, consistent with the default in ActiveRecord. | Integer         | 1000                   | 
+| Name                         | Description                                                                                                                                                                                                                                                                    | Type          | Default                |
+|------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|------------------------|
+| storage_type                 | Storage option. :memory or :file are available.                                                                                                                                                                                                                                | Symbol        | :memory                |
+| memory_store_size            | Byte size of memory allocated for storing results. When memory usage exceeds this limit, the oldest result is deleted.                                                                                                                                                         | Integer       | 32 * 1024 * 1024       |
+| file_store_pool_size         | Number of files of result to preserve. When the number of files exceeds this value, the oldest file is deleted.                                                                                                                                                                | Integer       | 100                    |
+| file_store_dir_path          | Path to the directory for storing result files.                                                                                                                                                                                                                                | String        | 'tmp/rack-dev_insight' |          
+| backtrace_depth              | Depth of the backtrace to record.                                                                                                                                                                                                                                              | Integer       | 5                      |              
+| backtrace_exclusion_patterns | Exclusion patterns for paths when recording backtraces. If there's a match, the recording of the line is skipped.                                                                                                                                                              | Array<Regexp> | [/gems/]               | 
+| prepared_statement_limit     | The maximum number of prepared statement objects stored in memory per database connection. It is recommended to set the value equal to (or higher than) the corresponding setting in your application. The default value is 1000, consistent with the default in ActiveRecord. | Integer       | 1000                   | 
+| skip_cached_sql              | (Only when `ActiveSupport::Notifications` is used) whether to skip recording SQL that are cached.                                                                                                                                                                              | Boolean       | true                   | 
 
 ## Development
 

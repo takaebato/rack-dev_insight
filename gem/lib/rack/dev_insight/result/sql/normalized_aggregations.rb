@@ -26,7 +26,10 @@ module Rack
           end
 
           def attributes
-            @cached_data.values.map(&:to_h)
+            @cached_data.values.map do |data|
+              data.duration = format('%.2f', data.duration).to_f
+              data.to_h
+            end
           end
         end
       end

@@ -34,6 +34,20 @@ module Rack
         res
       end
 
+      def record_sql_from_event(started:, finished:, statement:, binds:, cached:)
+        return if Context.current.nil?
+        return if DevInsight.config.detected_dialect.nil?
+        return if DevInsight.config.skip_cached_sql && cached
+
+        Context.current.result.add_sql(
+          dialect: DevInsight.config.detected_dialect,
+          statement: statement,
+          binds: format_binds(binds),
+          backtrace: get_backtrace,
+          duration: format('%.2f', (finished - started) * 1000).to_f,
+        )
+      end
+
       def record_api(request:)
         return yield if Context.current.nil?
 
@@ -57,7 +71,7 @@ module Rack
       private
 
       def format_binds(binds)
-        if binds.nil? || binds.empty? || (binds.is_a?(Array) && binds.all?(&:empty?))
+        if binds.nil? || binds.try(:empty?) || (binds.is_a?(Array) && binds.all? { _1.try(:empty?) })
           ''
         else
           binds.to_s
