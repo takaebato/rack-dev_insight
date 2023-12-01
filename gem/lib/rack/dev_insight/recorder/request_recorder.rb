@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './base_recorder'
+require_relative 'base_recorder'
 
 module Rack
   class DevInsight

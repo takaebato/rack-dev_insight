@@ -15,12 +15,22 @@ if defined?(SQLite3::Statement)
         end
 
         def each(...)
-          Rack::DevInsight::Recorder
+          Rack::DevInsight::SqlRecorder
             .new
             .record_sql(
               dialect: Rack::DevInsight::SqlDialects::SQLITE,
               statement: @_rack_dev_insight_sql,
               binds: @_rack_dev_insight_bind_vars,
+            ) { super }
+        end
+
+        def execute(*bind_vars)
+          Rack::DevInsight::SqlRecorder
+            .new
+            .record_sql(
+              dialect: Rack::DevInsight::SqlDialects::SQLITE,
+              statement: @_rack_dev_insight_sql,
+              binds: bind_vars,
             ) { super }
         end
       end
@@ -31,7 +41,7 @@ if defined?(SQLite3::Statement)
     class ResultSet
       module RackDevInsight
         def each(...)
-          Rack::DevInsight::Recorder
+          Rack::DevInsight::SqlRecorder
             .new
             .record_sql(
               dialect: Rack::DevInsight::SqlDialects::SQLITE,
