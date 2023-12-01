@@ -10,7 +10,7 @@ module Rack
         app.middleware.use(Rack::DevInsight)
       end
       initializer 'rack_dev_insight.subscribe_events' do
-        if defined?(Rack::DevInsight::ENABLE_SQL_SUBSCRIPTION)
+        if defined?(ENABLE_SQL_SUBSCRIPTION)
           DevInsight.config.detected_dialect = SqlDialects.detect_dialect
           SqlNotifications.subscribe_events
         end

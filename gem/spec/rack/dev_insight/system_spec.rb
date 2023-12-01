@@ -27,11 +27,11 @@ RSpec.describe Rack::DevInsight do
               load 'rack/dev_insight/patches/sql/sqlite.rb'
 
               c = mysql_client
-              c.query('INSERT INTO users (name, email) VALUES ("foo1", "bar1@example.com")')
+              c.query("INSERT INTO users (name, email) VALUES ('foo1', 'bar1@example.com')")
               conn = postgres_client
-              conn.exec("INSERT INTO users (name, email) VALUES ('foo2', 'bar2@example.com')")
+              conn.exec("INSERT INTO users (name, email) VALUES ('foo2', 'bar2@example.com'); SELECT * FROM users")
               db = sqlite_client
-              db.execute("INSERT INTO users (name, email) VALUES ('foo3', 'bar3@example.com')")
+              db.execute("INSERT INTO users (name, email) VALUES ('foo3', 'bar3@example.com'); SELECT * FROM users")
               uri =
                 URI("http://#{ENV.fetch('MOCK_HTTP_SERVER_HOST', nil)}:#{ENV.fetch('MOCK_HTTP_SERVER_PORT', nil)}/get")
               Net::HTTP.get_response(uri)

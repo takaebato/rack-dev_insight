@@ -17,6 +17,16 @@ module Rack
             SQLITE
           end
         end
+
+        def validate!(dialect, error_klass)
+          return if dialects.include?(dialect)
+
+          raise error_klass, "Unsupported SQL dialect: #{dialect}. Supported dialects are: #{dialects.join(', ')}"
+        end
+
+        def dialects
+          [MYSQL, POSTGRESQL, SQLITE]
+        end
       end
     end
   end

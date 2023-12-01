@@ -2,7 +2,7 @@
 
 require 'rspec'
 require 'rack'
-require 'rack-dev-insight'
+require 'rack/dev_insight'
 require 'rack/test'
 require 'committee'
 require 'db_helper'
