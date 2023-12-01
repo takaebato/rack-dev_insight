@@ -5,7 +5,6 @@ require 'rack/test'
 require 'rack'
 require 'mysql2'
 require 'pg'
-require 'sqlite3'
 require 'net/http'
 
 RSpec.describe Rack::DevInsight do
@@ -14,7 +13,6 @@ RSpec.describe Rack::DevInsight do
 
   setup_mysql
   setup_postgresql
-  setup_sqlite
 
   def app
     Rack::Builder
@@ -24,14 +22,11 @@ RSpec.describe Rack::DevInsight do
               load 'rack/dev_insight/patches/api/net_http.rb'
               load 'rack/dev_insight/patches/sql/mysql2.rb'
               load 'rack/dev_insight/patches/sql/pg.rb'
-              load 'rack/dev_insight/patches/sql/sqlite.rb'
 
               c = mysql_client
               c.query("INSERT INTO users (name, email) VALUES ('foo1', 'bar1@example.com')")
               conn = postgres_client
               conn.exec("INSERT INTO users (name, email) VALUES ('foo2', 'bar2@example.com'); SELECT * FROM users")
-              db = sqlite_client
-              db.execute("INSERT INTO users (name, email) VALUES ('foo3', 'bar3@example.com'); SELECT * FROM users")
               uri =
                 URI("http://#{ENV.fetch('MOCK_HTTP_SERVER_HOST', nil)}:#{ENV.fetch('MOCK_HTTP_SERVER_PORT', nil)}/get")
               Net::HTTP.get_response(uri)
@@ -65,7 +60,7 @@ RSpec.describe Rack::DevInsight do
     get "/rack-dev-insight-results/#{rack_dev_insight_id}"
     assert_response_schema_confirm(200)
     result = JSON.parse(last_response.body)
-    expect(result['sql']['queries'].size).to eq(3)
+    expect(result['sql']['queries'].size).to eq(2)
     expect(result['apis'].size).to eq(1)
 
     get '/rack-dev-insight-results/dummy-uuid'

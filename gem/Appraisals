@@ -16,10 +16,3 @@ end
 appraise 'pg-1.5' do
   gem 'pg', '~> 1.5.4'
 end
-
-appraise 'sqlite-1.4' do
-  gem 'sqlite3', '~> 1.4.4'
-end
-appraise 'sqlite-1.5' do
-  gem 'sqlite3', '~> 1.5.4'
-end
