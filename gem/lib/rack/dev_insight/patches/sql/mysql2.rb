@@ -6,7 +6,7 @@ if defined?(Mysql2::Client)
       module RackDevInsight
         def query(*args, &block)
           sql = args[0]
-          Rack::DevInsight::Recorder
+          Rack::DevInsight::SqlRecorder
             .new
             .record_sql(dialect: Rack::DevInsight::SqlDialects::MYSQL, statement: sql) { super }
         end
@@ -30,7 +30,7 @@ if defined?(Mysql2::Statement)
       module RackDevInsight
         def execute(*args, **kwargs)
           params = args
-          Rack::DevInsight::Recorder
+          Rack::DevInsight::SqlRecorder
             .new
             .record_sql(
               dialect: Rack::DevInsight::SqlDialects::MYSQL,

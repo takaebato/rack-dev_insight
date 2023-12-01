@@ -31,7 +31,8 @@ module Rack
         when :file
           FileStore.new
         else
-          warn "warning: Unknown storage type: #{storage_type} in Rack::DevInsight::Config. Available types are :memory and :file. Falling back to :memory."
+          warn "warning: Unknown storage type: #{storage_type} in Rack::DevInsight::Config. " \
+                 'Available types are :memory and :file. Falling back to :memory.'
           MemoryStore.new
         end
       end

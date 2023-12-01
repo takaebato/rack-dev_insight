@@ -6,7 +6,9 @@ require_relative 'dev_insight/rack_dev_insight'
 require_relative 'dev_insight/storage/memory_store'
 require_relative 'dev_insight/storage/file_store'
 require_relative 'dev_insight/result'
-require_relative 'dev_insight/recorder'
+require_relative 'dev_insight/recorder/api_recorder'
+require_relative 'dev_insight/recorder/request_recorder'
+require_relative 'dev_insight/recorder/sql_recorder'
 require_relative 'dev_insight/config'
 require_relative 'dev_insight/context'
 require_relative 'dev_insight/errors'
@@ -67,7 +69,7 @@ module Rack
       Context.create_current(SecureRandom.uuid)
       request = Rack::Request.new(env)
       status, headers, body =
-        Recorder.new.record_request(http_method: request.request_method, path: request.path) { @app.call(env) }
+        RequestRecorder.new.record(http_method: request.request_method, path: request.path) { @app.call(env) }
       @storage.write(Context.current.result)
       headers['X-Rack-Dev-Insight-Id'] = Context.current.id
 
