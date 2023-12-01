@@ -28,17 +28,19 @@ group :development do
 end
 ```
 
-That's it.  
+That's it.
+
 By railtie, middleware is automatically inserted, and SQLs are subscribed to be recorded using `ActiveSupport::Notifications`.
 Default subscriptions include `sql.active_record`, `sql.rom`, and `sql.sequel`.
 To add more event subscriptions, use `Rack::DevInsight::SqlNotifications.subscribe('new_sql_event_name')`.
 
-Limitation: Only one SQL dialect is supported at a time, determined by the SQL client gem listed in the Gemfile. If multiple dialects are present, it defaults to mysql2, pg, then sqlite3 in order.
-To use multiple dialects (i.e. mysql and postgresql) at the same time, SQL patching can be used (see below).
+Limitation: Only one SQL dialect is supported at a time, determined by the SQL client gems (i.e. [mysql2](https://github.com/brianmario/mysql2), [pg](https://github.com/ged/ruby-pg) or [sqlite3](https://github.com/sparklemotion/sqlite3-ruby)) listed in the Gemfile.
+If multiple of them are present, it defaults to mysql2, pg, then sqlite3 in order.
+To use multiple dialects at the same time, [SQL patching](https://github.com/takaebato/rack-dev_insight#1-use-sql-client-gems-patch-option) can be used (mysql2 and pg are supported).
 
 ### For other Rack applications
 
-If `ActiveSupport::Notifications` is not used, You have two options:
+You have two options:
 
 #### 1. Use SQL client gems patch option
 
@@ -67,12 +69,19 @@ end
 If you have any way to execute hooks when SQL is executed, such as `dry-monitor`, you can use `record_sql` method to record SQL.
 
 ```ruby
-Rack::DevInsight::Recorder.record_sql(dialect: 'mysql', statement: 'SELECT * FROM users WHERE id = ?', binds: [1], duration: 5.0)
+Rack::DevInsight::SqlRecorder.record(dialect: 'mysql', statement: 'SELECT * FROM users WHERE id = ?', binds: [1], duration: 5.0)
 ```
 
-#### Insert middleware manually
+Keyword arguments are as follows:
 
-Need to insert middleware manually.
+| name      | description                                             | type   | required | 
+|-----------|---------------------------------------------------------|--------|----------|
+| dialect   | SQL dialect. 'mysql', 'pg', or 'sqlite3' are available. | String | required |
+| statement | SQL statement.                                          | String | required |
+| binds     | SQL binds.                                              | Array  | optional |
+| duration  | SQL execution time.                                     | Float  | required |
+
+#### Insert middleware manually
 
 For example, when using [Hanami](https://github.com/hanami/hanami):
 
@@ -82,10 +91,6 @@ require 'rack/dev_insight'
 
 use Rack::DevInsight
 ```
-
-### Install Chrome extension
-
-Install the extension from [Chrome Web Store](https://chrome.google.com/webstore/detail/rack-dev_insight/).
 
 ### Installation options
 
@@ -98,6 +103,10 @@ group :development do
   gem 'rack-dev_insight', require: ['rack/dev_insight/disable_net_http_patch', 'rack/dev_insight']
 end
 ```
+
+### Install Chrome extension
+
+Install the extension from [Chrome Web Store](https://chrome.google.com/webstore/detail/rack-dev_insight/).
 
 ## Usage
 
