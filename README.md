@@ -30,35 +30,40 @@ end
 
 That's it.
 
-By railtie, middleware is automatically inserted, and SQLs are subscribed to be recorded using `ActiveSupport::Notifications`.
-Default subscriptions include `sql.active_record`, `sql.rom`, and `sql.sequel`.
-To add more event subscriptions, use `Rack::DevInsight::SqlNotifications.subscribe('new_sql_event_name')`.
+By railtie, middleware is automatically inserted, and SQL queries are recorded through `ActiveSupport::Notifications`.  
+The default subscriptions include `sql.active_record`, `sql.rom`, and `sql.sequel`.
+More event subscriptions can be added by:
 
-Limitation: Only one SQL dialect is supported at a time, determined by the SQL client gems (i.e. [mysql2](https://github.com/brianmario/mysql2), [pg](https://github.com/ged/ruby-pg) or [sqlite3](https://github.com/sparklemotion/sqlite3-ruby)) listed in the Gemfile.
-If multiple of them are present, it defaults to mysql2, pg, then sqlite3 in order.
-To use multiple dialects at the same time, [SQL patching](https://github.com/takaebato/rack-dev_insight#1-use-sql-client-gems-patch-option) can be used (mysql2 and pg are supported).
+```ruby
+Rack::DevInsight::SqlNotifications.subscribe('new_sql_event_name')
+```
+
+Limitation:  
+Only one SQL dialect is supported at a time, determined by the database client gems (i.e. [mysql2](https://github.com/brianmario/mysql2), [pg](https://github.com/ged/ruby-pg) or [sqlite3](https://github.com/sparklemotion/sqlite3-ruby)) listed in the Gemfile.
+If multiple clients are present, it defaults to mysql2, pg, then sqlite3 in order.
+To use multiple dialects simultaneously, [SQL patch option](https://github.com/takaebato/rack-dev_insight#1-use-sql-client-gems-patch-option) can be used.
 
 ### For other Rack applications
 
-You have two options:
+You have two options to record database queries.
 
-#### 1. Use SQL client gems patch option
+#### 1. Enable SQL patch option
 
-[mysql2](https://github.com/brianmario/mysql2) and [pg](https://github.com/ged/ruby-pg) gems are supported.
+In order to record SQL queries, database client gems are patched. Currently, [mysql2](https://github.com/brianmario/mysql2) and [pg](https://github.com/ged/ruby-pg) gems are supported.
 
 Add the following lines to your application's Gemfile:
 
 ```ruby
 group :development do
-  gem 'rack-dev_insight', require: ['rack/dev_insight/enable_sql_patches', 'rack/dev_insight']
+  gem 'rack-dev_insight', require: ['rack/dev_insight/enable_sql_patch', 'rack/dev_insight']
 end
 ```
 
-Note that the mysql2 and pg gems need to be listed before `rack-dev_insight` in the Gemfile, letting `rack-dev_insight` patch them when loaded.
+Make sure to list the mysql2 and pg gems before `rack-dev_insight` in the Gemfile, letting `rack-dev_insight` patch them when loaded.
 
-#### 2. Manually call recording method provided by Rack::DevInsight::SqlRecorder
+#### 2. Manually call record method provided by `Rack::DevInsight::SqlRecorder`
 
-First, install gem by adding the following lines to your application's Gemfile:
+First, add the following lines to your application's Gemfile:
 
 ```ruby
 group :development do
@@ -66,13 +71,13 @@ group :development do
 end
 ````
 
-If you have any way to execute hooks when SQL is executed, such as `dry-monitor`, you can use `record_sql` method to record SQL.
+If you can execute hooks following SQL executions, such as via the notification system of `dry-monitor`, you can use the following method to record SQL queries.
 
 ```ruby
 Rack::DevInsight::SqlRecorder.record(dialect: 'mysql', statement: 'SELECT * FROM users WHERE id = ?', binds: [1], duration: 5.0)
 ```
 
-Keyword arguments are as follows:
+Keyword arguments are described below:
 
 | name      | description                                             | type   | required | 
 |-----------|---------------------------------------------------------|--------|----------|
@@ -82,6 +87,8 @@ Keyword arguments are as follows:
 | duration  | SQL execution time.                                     | Float  | required |
 
 #### Insert middleware manually
+
+Need to insert the middleware into your application's middleware stack.
 
 For example, when using [Hanami](https://github.com/hanami/hanami):
 
@@ -94,9 +101,9 @@ use Rack::DevInsight
 
 ### Installation options
 
-#### Disable patching of net-http
+#### Disable net-http patch
 
-If you want to disable patching of `net-http`, you can change the Gemfile as follows:
+If you want to disable `net-http` patch, you can change the Gemfile as follows:
 
 ```rb
 group :development do

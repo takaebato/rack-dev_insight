@@ -3,7 +3,7 @@
 module Rack
   class DevInsight
     class SqlNotifications
-      DEFAULT_EVENT_NAMES = %w[sql.active_record sql.rom sql.sequel sql.data_mapper].freeze
+      DEFAULT_EVENT_NAMES = %w[sql.active_record sql.rom sql.sequel].freeze
 
       class << self
         def subscribe_events(event_names = DEFAULT_EVENT_NAMES)

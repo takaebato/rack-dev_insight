@@ -15,7 +15,7 @@ require_relative 'dev_insight/errors'
 require_relative 'dev_insight/sql_dialects'
 
 require_relative 'dev_insight/railtie' if defined?(Rails)
-unless defined?(Rack::DevInsight::DISABLE_SQL_PATCH)
+if defined?(Rack::DevInsight::ENABLE_SQL_PATCH)
   require_relative 'dev_insight/patches/sql/mysql2'
   require_relative 'dev_insight/patches/sql/pg'
 end

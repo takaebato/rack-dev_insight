@@ -2,7 +2,7 @@
 
 module Rack
   class DevInsight
-    ENABLE_SQL_SUBSCRIPTION = true
-    DISABLE_SQL_PATCH = true
+    ENABLE_SQL_PATCH = true
+    DISABLE_SQL_SUBSCRIPTION = true
   end
 end
