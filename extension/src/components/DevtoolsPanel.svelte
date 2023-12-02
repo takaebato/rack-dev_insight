@@ -130,7 +130,10 @@
       </Table>
     </Pane>
     <Pane class="!overflow-hidden !bg-white">
-      <Tabs style="underline" contentClass="p-2 bg-white rounded-lg dark:bg-gray-800">
+      <Tabs
+        style="underline"
+        contentClass={`p-2 bg-white rounded-lg dark:bg-gray-800 ${isNarrowViewport ? 'pl-2' : 'pl-1'}`}
+      >
         <SqlTabItem sql={results[openRequestRow]?.sql} {sqlSubPanesHeight} {openCrudRows} {openNormalizedRows} />
         <ApiTabItem
           apis={results[openRequestRow]?.apis || []}
