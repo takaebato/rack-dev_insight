@@ -1,6 +1,6 @@
 # Rack::DevInsight
 
-Rack::DevInsight is a rack middleware for recording and analyzing database queries and HTTP request/response data.
+Rack::DevInsight is a rack middleware for recording and analyzing SQL queries and HTTP request/response data.
 A Chrome extension is needed to display the recorded data in Devtools panel.
 It is intended for development use only.
 
@@ -8,7 +8,7 @@ It is intended for development use only.
 
 ### Gem
 
-- Record database queries and aggregate them by CRUD operation and Normalized statement
+- Record SQL queries and aggregate them by CRUD operation and Normalized statement
   - Supports MySQL, PostgreSQL, and SQLite3
 - Record HTTP request/response
   - Supports requests using [net-http](https://github.com/ruby/net-http) gem
@@ -53,11 +53,11 @@ When this option is enabled, railtie does not subscribe sql events to prevent du
 
 ### For other Rack applications
 
-You have two options to record database queries.
+You have two options to record SQL queries.
 
 #### 1. Enable SQL patch option
 
-In order to record SQL queries, database client gems are patched. Currently, [mysql2](https://github.com/brianmario/mysql2) and [pg](https://github.com/ged/ruby-pg) gems are supported.
+Enabling this option will patch database client gems. Currently, [mysql2](https://github.com/brianmario/mysql2) and [pg](https://github.com/ged/ruby-pg) gems are supported.
 
 Add the following lines to your application's Gemfile:
 
@@ -127,7 +127,7 @@ Install the extension from [Chrome Web Store](https://chrome.google.com/webstore
 
 1. After installing the gem and extension, open the devtools and navigate to the 'RackDevInsight' tab.
 2. Initiate a request in your application from the browser.
-3. The HTTP request/response details and database queries executed during the request will be displayed in the panel.
+3. The HTTP request/response details and SQL queries executed during the request will be displayed in the panel.
 
 ## Configuration
 
