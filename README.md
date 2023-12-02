@@ -6,10 +6,16 @@ It is intended for development use only.
 
 ## Features
 
+### Gem
+
 - Record database queries and aggregate them by CRUD operation and Normalized statement
   - Supports MySQL, PostgreSQL, and SQLite3
 - Record HTTP request/response
   - Supports requests using [net-http](https://github.com/ruby/net-http) gem
+
+### Chrome extension
+
+- Display recorded data in Devtools panel.
 
 ## Status
 
@@ -38,10 +44,12 @@ More event subscriptions can be added by:
 Rack::DevInsight::SqlNotifications.subscribe('new_sql_event_name')
 ```
 
-Limitation:  
+#### Limitation
+
 Only one SQL dialect is supported at a time, determined by the database client gems (i.e. [mysql2](https://github.com/brianmario/mysql2), [pg](https://github.com/ged/ruby-pg) or [sqlite3](https://github.com/sparklemotion/sqlite3-ruby)) listed in the Gemfile.
 If multiple clients are present, it defaults to mysql2, pg, then sqlite3 in order.
-To use multiple dialects simultaneously, [SQL patch option](https://github.com/takaebato/rack-dev_insight#1-use-sql-client-gems-patch-option) can be used.
+To use multiple dialects simultaneously, [SQL patch option](https://github.com/takaebato/rack-dev_insight#1-enable-sql-patch-option) can be used.
+When this option is enabled, railtie does not subscribe sql events to prevent duplicate recording.
 
 ### For other Rack applications
 
@@ -71,7 +79,7 @@ group :development do
 end
 ````
 
-If you can execute hooks following SQL executions, such as via the notification system of `dry-monitor`, you can use the following method to record SQL queries.
+If you can execute hooks following SQL executions, such as via the notification system of [dry-monitor](https://github.com/dry-rb/dry-monitor), you can use the following method to record SQL queries.
 
 ```ruby
 Rack::DevInsight::SqlRecorder.record(dialect: 'mysql', statement: 'SELECT * FROM users WHERE id = ?', binds: [1], duration: 5.0)
@@ -83,7 +91,7 @@ Keyword arguments are described below:
 |-----------|---------------------------------------------------------|--------|----------|
 | dialect   | SQL dialect. 'mysql', 'pg', or 'sqlite3' are available. | String | required |
 | statement | SQL statement.                                          | String | required |
-| binds     | SQL binds.                                              | Array  | optional |
+| binds     | Parameters bound to SQL statement.                      | Array  | optional |
 | duration  | SQL execution time.                                     | Float  | required |
 
 #### Insert middleware manually
@@ -123,6 +131,18 @@ Install the extension from [Chrome Web Store](https://chrome.google.com/webstore
 
 ## Configuration
 
+You can set configuration options by `Rack::DevInsight.configure`. For example:
+
+```ruby
+Rack::DevInsight.configure do |config|
+  config.storage_type = :file
+  config.file_store_pool_size = 1000
+  config.backtrace_depth = 10
+end
+```
+
+Available options are described below:
+
 | Name                         | Description                                                                                                                                                                                                                                                                    | Type            | Default                |
 |------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------|------------------------|
 | storage_type                 | Storage option. :memory or :file are available.                                                                                                                                                                                                                                | Symbol          | :memory                |
@@ -130,7 +150,7 @@ Install the extension from [Chrome Web Store](https://chrome.google.com/webstore
 | file_store_pool_size         | Number of files of result to preserve. When the number of files exceeds this value, the oldest file is deleted.                                                                                                                                                                | Integer         | 100                    |
 | file_store_dir_path          | Path to the directory for storing result files.                                                                                                                                                                                                                                | String          | 'tmp/rack-dev_insight' |          
 | backtrace_depth              | Depth of the backtrace to record.                                                                                                                                                                                                                                              | Integer         | 5                      |              
-| backtrace_exclusion_patterns | Exclusion patterns for paths when recording backtraces. If there's a match, the recording of the line is skipped.                                                                                                                                                              | Array\<Regexp\> | [/gems/]               | 
+| backtrace_exclusion_patterns | Exclusion patterns for paths when recording backtraces. If there's a match, the recording of the line is skipped.                                                                                                                                                              | Array\<Regexp\> | `[/\/gems\//]`         | 
 | prepared_statement_limit     | The maximum number of prepared statement objects stored in memory per database connection. It is recommended to set the value equal to (or higher than) the corresponding setting in your application. The default value is 1000, consistent with the default in ActiveRecord. | Integer         | 1000                   | 
 | skip_cached_sql              | Skip the recording of cached SQL queries. This option has effect only when used with `ActiveSupport::Notifications`.                                                                                                                                                           | Boolean         | true                   | 
 
