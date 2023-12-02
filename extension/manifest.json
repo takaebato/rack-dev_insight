@@ -1,6 +1,6 @@
 {
   "name": "Rack Dev Insight",
-  "description": "Rack dev insight extension",
+  "description": "Extension for rack-dev_insight gem",
   "version": "1.0",
   "manifest_version": 3,
   "devtools_page": "src/devtools/index.html",
