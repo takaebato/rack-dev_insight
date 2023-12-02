@@ -397,7 +397,7 @@ export class HttpClient<SecurityDataType = unknown> {
  * @license Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0.html)
  * @termsOfService https://github.com/takaebato/rack-dev-insight/blob/master/CODE_OF_CONDUCT.md
  * @externalDocs https://github.com/takaebato/rack-dev-insight
- * @contact <ebato.takahiro@gmail.com>
+ * @contact <takahiro.ebato@gmail.com>
  *
  * This is an internal API specification for Rack Dev Insight.
  * It is used for communication between the Rack Dev Insight gem and Chrome extension.

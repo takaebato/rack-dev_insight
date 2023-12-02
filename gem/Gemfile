@@ -2,10 +2,7 @@
 
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in rack_dev_insight.gemspec
 gemspec
-
-gem 'rake', '~> 13.0'
 
 gem 'appraisal'
 gem 'committee', '~> 5.0'
@@ -13,6 +10,7 @@ gem 'dotenv', '~> 2.8'
 gem 'mysql2', '~> 0.5.5'
 gem 'pg', '~> 1.5.4'
 gem 'rack-test'
+gem 'rake', '~> 13.0'
 gem 'rake-compiler'
 gem 'rb_sys', '~> 0.9.63'
 gem 'rspec', '~> 3.0'

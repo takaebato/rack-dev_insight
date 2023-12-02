@@ -6,7 +6,7 @@ info:
     It is used for communication between the Rack Dev Insight gem and Chrome extension.
   termsOfService: https://github.com/takaebato/rack-dev_insight/blob/master/CODE_OF_CONDUCT.md
   contact:
-    email: ebato.takahiro@gmail.com
+    email: takahiro.ebato@gmail.com
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html

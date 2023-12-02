@@ -2,7 +2,7 @@
 name = "rack_dev_insight"
 version = "0.1.0"
 edition = "2021"
-authors = ["Takahiro Ebato <ebato.takahiro@gmail.com>"]
+authors = ["Takahiro Ebato <takahiro.ebato@gmail.com>"]
 license = "MIT"
 publish = false
 
@@ -14,12 +14,7 @@ magnus = { version = "0.6.2" }
 sqlparser = { version = "0.38.0", features = ["visitor"] }
 tap = { version = "1.0.1" }
 indoc = { version = "2" }
-#rb-sys = { version = "*", default-features = false, features = ["ruby-static"] }
 
 [dev-dependencies]
 magnus = { version = "0.6.2", features = ["embed"] }
-#rb-sys-env = { version = "0.1" }
 rb-sys-test-helpers = { version = "0.2" }
-
-#[build]
-#rustflags = ["-C", "link-dead-code=on"]
