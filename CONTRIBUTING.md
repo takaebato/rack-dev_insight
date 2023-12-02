@@ -21,10 +21,13 @@ After fork and clone this repository, you can start development by following the
 
 1. Run `docker compose exec ruby-rust bundle exec appraisal install` to install the dependencies for each appraisal.
 2. Run `docker compose exec ruby-rust bundle exec appraisal rake spec` to run each appraisal.
+3. Run `docker compose exec ruby-rust cargo test` to test rust extension code.
 
 #### Linting
 
 1. Run `docker compose exec ruby-rust bundle exec rake fix` to run rubocop and syntax tree format.
+2. Run `docker compose exec ruby-rust cargo fix` to fix rust compiler warnings.
+3. Run `docker compose exec ruby-rust cargo fmt` to format rust code.
 
 ### Chrome Extension
 
@@ -52,13 +55,14 @@ After fork and clone this repository, you can start development by following the
 1. Move into the `openapi` directory.
 2. Run `docker compose up -d` to start prism mock server (and redoc ui server).
 3. Change`await fetchResult(request)` to `await fetchResultDebug(request)` in `extension/src/components/DevtoolsPanel.svelte`.
-4. Initiate a request in the any web page, then a request to the mock server will be sent as a hook of the request.
+4. Initiate a request in any web page, then a request to the mock server will be sent as a hook of the request.
 5. The response of the mock server will be displayed in the devtools panel.
 
 #### Use dummy rails application for fullstack development
 
 1. Run `bundle exec rake dummy_app:rails:setup` to setup dummy rails application.
 2. Go to `http://localhost:3000` and initiate requests.
+3. To reflect file changes, run `docker compose restart dummy-app-rails`.
 
 ## How to Submit a Contribution
 
