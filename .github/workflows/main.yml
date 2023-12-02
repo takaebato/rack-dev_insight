@@ -19,7 +19,7 @@ jobs:
         run: cd gem && docker compose exec ruby-rust /bin/bash -c 'bundle install && bundle exec rake rubocop'
       - name: Run syntax tree check
         run: cd gem && docker compose exec ruby-rust /bin/bash -c 'bundle install && bundle exec rake stree:check'
-  test:
+  test-ruby:
     runs-on: ubuntu-latest
     name: Ruby-${{ matrix.ruby }}
     strategy:
@@ -35,3 +35,12 @@ jobs:
         run: cd gem && RUBY_VERSION=${{ matrix.ruby }} docker compose up -d ruby-rust
       - name: Run Tests
         run: cd gem && docker compose exec ruby-rust /bin/bash -c 'bundle install && bundle exec rake compile && bundle exec appraisal install && bundle exec appraisal rake spec'
+  test-rust:
+    runs-on: ubuntu-latest
+    name: Rust
+    steps:
+      - uses: actions/checkout@v3
+      - name: Checkout And Build
+        run: cd gem && docker compose up -d ruby-rust
+      - name: Run Tests
+        run: cd gem && docker compose exec ruby-rust /bin/bash -c 'cargo test --all'

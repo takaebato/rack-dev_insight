@@ -113,14 +113,14 @@ impl CrudTableExtractor {
             Some(dialect) => match Parser::parse_sql(dialect.as_ref(), &subject) {
                 Ok(statements) => statements,
                 Err(error) => {
-                    return Err(Error::new(ruby.get_inner(&PARSER_ERROR), error.to_string()))
+                    return Err(Error::new(ruby.get_inner(&PARSER_ERROR), error.to_string()));
                 }
             },
             None => {
                 return Err(Error::new(
                     magnus::exception::arg_error(),
                     "Dialect not found",
-                ))
+                ));
             }
         };
         let mut visitor = CrudTableExtractor::default();
@@ -191,7 +191,7 @@ mod tests {
             match CrudTableExtractor::extract(&ruby, String::from("mysql"), sql.into()) {
                 Ok(result) => assert_eq!(result, CrudTables {
                     create_tables: vec![],
-                    read_tables: vec!["t1".to_string()],
+                    read_tables: vec!["t1".to_string(), "t2".to_string()],
                     update_tables: vec![],
                     delete_tables: vec![],
                 }),
@@ -333,7 +333,7 @@ mod tests {
                         create_tables: vec!["t2".to_string()],
                         read_tables: vec!["t1".to_string()],
                         update_tables: vec!["t3".to_string()],
-                        delete_tables: vec![ "t4".to_string()],
+                        delete_tables: vec!["t4".to_string()],
                     }
                 ),
                 Err(error) => assert!(false, "Should not have errored. Error: {}", error),
