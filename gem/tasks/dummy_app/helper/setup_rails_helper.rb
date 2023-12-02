@@ -28,25 +28,39 @@ module SetupRailsHelper
   end
 
   def set_database_config(database)
-    database ||= 'sqlite'
-    unless %w[sqlite mysql pg].include?(database)
-      raise ArgumentError, "database must be one of 'sqlite', 'mysql', or 'pg'"
-    end
-
     puts "== Set database config to #{database} =="
     system("cp -f tasks/dummy_app/template_files/database-#{database}.yml tmp/dummy_app/rails/config/database.yml")
   end
 
-  def add_gems
-    puts '== Add gems =='
-    system(<<~COMMAND)
+  def remove_and_add_gems(database)
+    puts '== Remove and add gems =='
+    system(<<~"COMMAND")
       docker compose run -it --rm dummy-app-rails /bin/bash -c '\
       bundle install && \
-      (bundle show mysql2 || bundle add mysql2); \
-      (bundle show pg || bundle add pg); \
+      #{remove_db_gems_command} \
+      #{add_db_gems_command(database)} \
       (bundle show net-http || bundle add net-http); \
       (bundle show rack-dev_insight || bundle add rack-dev_insight --path /gem);'
     COMMAND
+  end
+
+  def remove_db_gems_command
+    'bundle remove mysql2;' \
+      'bundle remove pg;' \
+      'bundle remove sqlite3;'
+  end
+
+  def add_db_gems_command(database)
+    case database
+    when 'mysql'
+      'bundle add mysql2;'
+    when 'pg'
+      'bundle add pg;'
+    when 'sqlite'
+      'bundle add sqlite3;'
+    else
+      raise ArgumentError, "database must be one of 'sqlite', 'mysql', or 'pg'"
+    end
   end
 
   def compile_gem

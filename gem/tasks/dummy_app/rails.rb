@@ -9,11 +9,16 @@ namespace :dummy_app do
     task :setup, %w[ruby_version rails_version database] do |_task, args|
       include SetupRailsHelper
 
+      database = args[:database] || 'sqlite'
+      unless %w[sqlite mysql pg].include?(database)
+        raise ArgumentError, "database must be one of 'sqlite', 'mysql', or 'pg'"
+      end
+
       stop_docker
       build_image(args[:ruby_version])
       create_rails_app_if_not_exists(args[:rails_version])
-      set_database_config(args[:database])
-      add_gems
+      set_database_config(database)
+      remove_and_add_gems(database)
       compile_gem
       up_docker
       generate_scaffold
