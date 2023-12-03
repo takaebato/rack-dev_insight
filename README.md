@@ -1,8 +1,8 @@
 # Rack::DevInsight
 
 Rack::DevInsight is a rack middleware for recording and analyzing SQL queries and HTTP request/response data.
-A Chrome extension is needed to display the recorded data in Devtools panel.
-It is intended for development use only.
+A Chrome extension is needed to display the recorded data in Devtools panel.  
+It is intended for <b>development use only</b>.
 
 ## Features
 
@@ -150,7 +150,7 @@ Available options are described below:
 | file_store_pool_size         | Number of files of result to preserve. When the number of files exceeds this value, the oldest file is deleted.                                                                                                                                                                | Integer         | 100                    |
 | file_store_dir_path          | Path to the directory for storing result files.                                                                                                                                                                                                                                | String          | 'tmp/rack-dev_insight' |          
 | backtrace_depth              | Depth of the backtrace to record.                                                                                                                                                                                                                                              | Integer         | 5                      |              
-| backtrace_exclusion_patterns | Exclusion patterns for paths when recording backtraces. If there's a match, the recording of the line is skipped.                                                                                                                                                              | Array\<Regexp\> | `[/\/gems\//]`         | 
+| backtrace_exclusion_patterns | Exclusion patterns for paths when recording backtraces. If there's a match, the recording of the line is skipped.                                                                                                                                                              | Array\<Regexp\> | `[%r{/gems/}]`         | 
 | prepared_statement_limit     | The maximum number of prepared statement objects stored in memory per database connection. It is recommended to set the value equal to (or higher than) the corresponding setting in your application. The default value is 1000, consistent with the default in ActiveRecord. | Integer         | 1000                   | 
 | skip_cached_sql              | Skip the recording of cached SQL queries. This option has effect only when used with `ActiveSupport::Notifications`.                                                                                                                                                           | Boolean         | true                   | 
 

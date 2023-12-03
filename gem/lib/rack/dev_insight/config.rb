@@ -19,7 +19,7 @@ module Rack
         @file_store_pool_size = 100
         @file_store_dir_path = 'tmp/rack-dev_insight'
         @backtrace_depth = 5
-        @backtrace_exclusion_patterns = [/gems/]
+        @backtrace_exclusion_patterns = [%r{/gems/}]
         @prepared_statement_limit = 1000
         @skip_cached_sql = true
       end
