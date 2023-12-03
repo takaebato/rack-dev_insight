@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Tabs } from 'flowbite-svelte';
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
   import type { RackDevInsightResultSchema } from '../api/Api';
   import ApiTabItem from './ApiTabItem.svelte';
@@ -59,12 +59,23 @@
 
   let isRecording = true;
   const handleToggleRecording = () => (isRecording = !isRecording);
+
   const handleSweep = () => {
     results = [];
     openRequestRow = -1;
     openCrudRows = {};
     openNormalizedRows = {};
     openApiRow = -1;
+  };
+
+  let scrollContainer;
+  let atBottomOnRequestPane = true;
+  const checkScrollOnRequestPane = () => {
+    atBottomOnRequestPane =
+      Math.abs(scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight) < 1;
+  };
+  const scrollToBottomOnRequestPane = () => {
+    scrollContainer.scrollTop = scrollContainer.scrollHeight;
   };
 
   onMount(() => {
@@ -81,10 +92,18 @@
         // eslint-disable-next-line no-console
         console.error(response.error);
       }
+
+      await tick(); // wait for DOM update
+      if (atBottomOnRequestPane) scrollToBottomOnRequestPane();
     });
+
     window.addEventListener('resize', handleWindowResize);
+    checkScrollOnRequestPane();
+    scrollContainer.addEventListener('scroll', checkScrollOnRequestPane);
+
     return () => {
       window.removeEventListener('resize', handleWindowResize);
+      window.removeEventListener('scroll', checkScrollOnRequestPane);
     };
   });
 </script>
@@ -106,28 +125,30 @@
     class="!bg-white"
     on:resize={handlePanesResize}
   >
-    <Pane size={DEFAULT_REQUEST_PANE_SIZE} class="!overflow-auto !bg-white">
-      <Table hoverable class="min-w-[40em] table-fixed">
-        <TableHead>
-          <TableHeadCell class="w-2/12">Status</TableHeadCell>
-          <TableHeadCell class="w-2/12">Method</TableHeadCell>
-          <TableHeadCell class="w-6/12">Path</TableHeadCell>
-          <TableHeadCell class="w-2/12">Duration</TableHeadCell>
-        </TableHead>
-        <TableBody>
-          {#each results as result, idx}
-            <TableBodyRow
-              on:click={() => selectRequestRow(idx)}
-              class={idx === openRequestRow ? 'bg-primary-100 hover:bg-primary-100' : ''}
-            >
-              <TableBodyCell class="whitespace-normal break-words">{result.status}</TableBodyCell>
-              <TableBodyCell class="whitespace-normal break-words">{result.method}</TableBodyCell>
-              <TableBodyCell class="whitespace-normal break-words">{result.path}</TableBodyCell>
-              <TableBodyCell class="whitespace-normal break-words">{result.duration}</TableBodyCell>
-            </TableBodyRow>
-          {/each}
-        </TableBody>
-      </Table>
+    <Pane size={DEFAULT_REQUEST_PANE_SIZE} class="relative !bg-white">
+      <div bind:this={scrollContainer} class="absolute bottom-0 left-0 right-0 top-0 !overflow-auto">
+        <Table hoverable class="min-w-[40em] table-fixed">
+          <TableHead>
+            <TableHeadCell class="w-2/12">Status</TableHeadCell>
+            <TableHeadCell class="w-2/12">Method</TableHeadCell>
+            <TableHeadCell class="w-6/12">Path</TableHeadCell>
+            <TableHeadCell class="w-2/12">Duration</TableHeadCell>
+          </TableHead>
+          <TableBody>
+            {#each results as result, idx}
+              <TableBodyRow
+                on:click={() => selectRequestRow(idx)}
+                class={idx === openRequestRow ? 'bg-primary-100 hover:bg-primary-100' : ''}
+              >
+                <TableBodyCell class="whitespace-normal break-words">{result.status}</TableBodyCell>
+                <TableBodyCell class="whitespace-normal break-words">{result.method}</TableBodyCell>
+                <TableBodyCell class="whitespace-normal break-words">{result.path}</TableBodyCell>
+                <TableBodyCell class="whitespace-normal break-words">{result.duration}</TableBodyCell>
+              </TableBodyRow>
+            {/each}
+          </TableBody>
+        </Table>
+      </div>
     </Pane>
     <Pane class="!overflow-hidden !bg-white">
       <Tabs
