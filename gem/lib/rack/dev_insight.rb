@@ -68,7 +68,7 @@ module Rack
       Context.create_current(SecureRandom.uuid)
       request = Rack::Request.new(env)
       status, headers, body =
-        RequestRecorder.new.record(http_method: request.request_method, path: request.path) { @app.call(env) }
+        RequestRecorder.new.record(http_method: request.request_method, path: request.fullpath) { @app.call(env) }
       @storage.write(Context.current.result)
       headers['X-Rack-Dev-Insight-Id'] = Context.current.id
 
