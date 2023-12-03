@@ -1,13 +1,16 @@
 {
-  "name": "Rack Dev Insight",
-  "description": "Extension for rack-dev_insight gem",
-  "version": "1.0",
   "manifest_version": 3,
-  "devtools_page": "src/devtools/index.html",
+  "name": "Rack Dev Insight",
+  "version": "0.1",
+  "description": "Extension for rack-dev_insight gem",
+  "author": "takahiro.ebato@gmail.com",
   "action": {
-    "default_title": "Svelte Extension",
+    "default_title": "Rack Dev Insight",
     "default_icon": "logo.png"
   },
-  "permissions": ["storage"],
-  "host_permissions": ["<all_urls>"]
+  "devtools_page": "src/devtools/index.html",
+  "host_permissions": [
+    "http://*/",
+    "https://*/"
+  ]
 }
