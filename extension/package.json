@@ -9,8 +9,8 @@
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "buildSchema": "swagger-typescript-api -p ../openapi/openapi.yaml -o ./src/api/ --union-enums --type-suffix Schema",
-    "format": "prettier --write 'src/**/*.{js,ts,svelte}'",
-    "lint": "eslint --fix 'src/**/*.{js,ts,svelte}'",
+    "format": "prettier --write 'src/**/*.{js,ts,svelte,html}'",
+    "lint": "eslint --fix 'src/**/*.{js,ts,svelte,html}'",
     "fix": "npm run format && npm run lint"
   },
   "devDependencies": {

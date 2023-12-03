@@ -12,4 +12,11 @@ export default defineConfig({
     },
   },
   plugins: [svelte(), crx({ manifest })],
+  build: {
+    rollupOptions: {
+      input: {
+        panel: 'src/devtools/panel.html',
+      },
+    },
+  },
 });

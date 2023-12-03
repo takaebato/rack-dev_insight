@@ -8,7 +8,7 @@
     "default_title": "Rack Dev Insight",
     "default_icon": "logo.png"
   },
-  "devtools_page": "src/devtools/index.html",
+  "devtools_page": "src/devtools/page.html",
   "host_permissions": [
     "http://*/",
     "https://*/"
