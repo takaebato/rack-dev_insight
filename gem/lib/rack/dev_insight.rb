@@ -35,8 +35,7 @@ module Rack
 
     def initialize(app)
       @app = app
-      @config = DevInsight.config
-      @storage = @config.storage_instance
+      @storage = DevInsight.config.storage_instance
     end
 
     def call(env)
@@ -65,6 +64,8 @@ module Rack
     end
 
     def analyze(env)
+      return @app.call(env) if skip_path?(env)
+
       Context.create_current(SecureRandom.uuid)
       request = Rack::Request.new(env)
       status, headers, body =
@@ -73,6 +74,10 @@ module Rack
       headers['X-Rack-Dev-Insight-Id'] = Context.current.id
 
       [status, headers, body]
+    end
+
+    def skip_path?(env)
+      DevInsight.config.skip_paths.any? { |path| env['PATH_INFO'] =~ path }
     end
   end
 end
