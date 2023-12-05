@@ -31,8 +31,14 @@ namespace :dummy_app do
     task :switch_database, %w[database] do |_task, args|
       include SetupRailsHelper
 
+      database = args[:database] || 'sqlite'
+      unless %w[sqlite mysql pg].include?(database)
+        raise ArgumentError, "database must be one of 'sqlite', 'mysql', or 'pg'"
+      end
+
       stop_docker
-      set_database_config(args[:database])
+      set_database_config(database)
+      remove_and_add_gems(database)
       up_docker
       migrate_reset
       restart_docker

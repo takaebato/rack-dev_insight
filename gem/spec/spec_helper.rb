@@ -2,18 +2,22 @@
 
 require 'rspec'
 require 'rack'
-require 'rack/dev_insight'
 require 'rack/test'
 require 'committee'
-require 'db_helper'
 require 'rspec-parameterized'
-require 'simplecov'
 require 'dotenv'
+require 'simplecov'
+SimpleCov.start do
+  add_filter '/spec'
+  # Patches tests cannot be profiled correctly because patch files are loaded multiple times in spec.
+  add_group 'Patches', 'rack/dev_insight/patches'
+end
+
+require 'rack/dev_insight'
+require 'db_helper'
 
 # Load `.env.test.local` or `.env.test.docker`
 Dotenv.load('.env.test.docker')
-
-SimpleCov.start
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

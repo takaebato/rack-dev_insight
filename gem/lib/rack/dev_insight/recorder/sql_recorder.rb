@@ -32,7 +32,7 @@ module Rack
       end
 
       def record_sql(dialect:, statement:, binds: [])
-        return if Context.current.nil?
+        return yield if Context.current.nil?
 
         start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         res = yield
@@ -60,6 +60,7 @@ module Rack
           backtrace: get_backtrace,
           duration: format('%.2f', (finished - started) * 1000).to_f,
         )
+        nil
       end
     end
   end
