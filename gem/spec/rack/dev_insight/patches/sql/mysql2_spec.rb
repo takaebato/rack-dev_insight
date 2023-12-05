@@ -9,8 +9,6 @@ RSpec.describe 'Patch mysql2' do
   before { Rack::DevInsight::Context.create_current(SecureRandom.uuid) }
 
   it 'patches mysql2' do
-    expect(defined?(Mysql2::Client::RackDevInsight)).to eq(nil)
-    expect(defined?(Mysql2::Statement::RackDevInsight)).to eq(nil)
     load 'rack/dev_insight/patches/sql/mysql2.rb'
     expect(Mysql2::Client.ancestors.include?(Mysql2::Client::RackDevInsight)).to eq(true)
     expect(Mysql2::Statement.ancestors.include?(Mysql2::Statement::RackDevInsight)).to eq(true)

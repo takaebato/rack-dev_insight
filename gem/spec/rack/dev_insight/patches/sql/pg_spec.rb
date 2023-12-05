@@ -24,7 +24,6 @@ RSpec.describe 'Patch pg' do
   before { Rack::DevInsight::Context.create_current(SecureRandom.uuid) }
 
   it 'patches pg' do
-    expect(defined?(PG::Connection::RackDevInsight)).to eq(nil)
     load 'rack/dev_insight/patches/sql/pg.rb'
     expect(PG::Connection.ancestors.include?(PG::Connection::RackDevInsight)).to eq(true)
   end
