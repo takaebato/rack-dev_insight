@@ -1,6 +1,6 @@
 # Rack::DevInsight
 
-Rack::DevInsight is a rack middleware for recording and analyzing SQL queries and HTTP request/response data.
+Rack::DevInsight is a rack middleware for recording and analyzing SQL queries and HTTP request / response data.
 A Chrome extension is needed to display the recorded data in Devtools panel.  
 It is intended for <b>development use only</b>.
 
@@ -10,12 +10,23 @@ It is intended for <b>development use only</b>.
 
 - Record SQL queries and aggregate them by CRUD operation and Normalized statement
   - Supports MySQL, PostgreSQL, and SQLite3
-- Record HTTP request/response
+- Record HTTP request / response
   - Supports requests using [net-http](https://github.com/ruby/net-http) gem
 
 ### Chrome extension
 
 - Display recorded data in Devtools panel.
+  - SQL queries
+    - Queries grouped by CRUD operation, with total query count and duration
+    - Queries grouped by normalized statement, with total query count and duration
+    - All queries, with duration and backtrace
+  - HTTP request / response
+    - Request headers
+    - Request body
+    - Response headers
+    - Response body
+    - Duration
+    - Backtrace
 
 ## Status
 
@@ -127,7 +138,7 @@ Install the extension from [Chrome Web Store](https://chrome.google.com/webstore
 
 1. After installing the gem and extension, open the devtools and navigate to the 'RackDevInsight' tab.
 2. Initiate a request in your application from the browser.
-3. The HTTP request/response details and SQL queries executed during the request will be displayed in the panel.
+3. The HTTP request / response details and SQL queries executed during the request will be displayed in the panel.
 
 ## Configuration
 
@@ -158,6 +169,10 @@ Available options are described below:
 ## Contributing
 
 See [CONTRIBUTING.md](https://github.com/takaebato/rack-dev_insight/blob/master/CONTRIBUTING.md)
+
+## Thanks
+
+Special thanks to the [rails_panel](https://github.com/dejan/rails_panel) and [rack-mini-profiler](https://github.com/MiniProfiler/rack-mini-profiler) teams for their invaluable insights and innovations that greatly influenced this project.
 
 ## License
 
