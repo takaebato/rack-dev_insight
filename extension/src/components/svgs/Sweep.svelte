@@ -1,17 +1,24 @@
-<button on:click class="my-0.5 ml-1 mr-1.5 cursor-default">
+<button on:click class="my-0.5 ml-1.5 mr-2.5 cursor-default">
   <svg
-    class="[&_line]:hover:stroke-[#1b1b1b] [&_path]:hover:fill-[#1b1b1b]"
-    width="1.3rem"
-    height="1.3rem"
-    viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
+    class="[&_path]:hover:fill-[#1b1b1b] [&_rect]:hover:fill-[#1b1b1b]"
+    width="1rem"
+    height="1rem"
+    viewBox="0 0 314.57 314.57"
   >
     <path
-      fill-rule="evenodd"
-      d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-2 0a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"
-      clip-rule="evenodd"
-      class="color000000 svgShape fill-[#494949]"
+      d="m314.57,157.29c0,86.87-70.42,157.29-157.29,157.29S0,244.15,0,157.29,70.42,0,157.29,0s157.29,70.42,157.29,157.29Zm-28.57,0c0,71.09-57.63,128.71-128.71,128.71S28.57,228.37,28.57,157.29,86.2,28.57,157.29,28.57s128.71,57.63,128.71,128.71Z"
+      class="color000 svgShape fill-[#494949] stroke-[#494949]"
+      style=" fill-rule:evenodd; stroke-width:0px;"
     />
-    <line class="stroke-[#494949]" style="stroke-width: 2px;" x1="17.368" y1="7.158" x2="5.916" y2="17.474" />
+    <rect
+      x="9.14"
+      y="143"
+      width="296.29"
+      height="28.57"
+      transform="translate(-65.15 157.29) rotate(-45)"
+      class="color000 svgShape fill-[#494949] stroke-[#494949]"
+      style=" stroke-width:0px;"
+    />
   </svg>
 </button>

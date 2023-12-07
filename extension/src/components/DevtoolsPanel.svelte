@@ -14,7 +14,7 @@
 
   const DEFAULT_REQUEST_PANE_SIZE = 35;
   let detailPanePercent = 100 - DEFAULT_REQUEST_PANE_SIZE;
-  const RECORDING_BAR_HEIGHT = '(1.55rem + 1px)';
+  const RECORDING_BAR_HEIGHT = '(1.6rem + 1px)';
   const PANE_HEIGHT = `calc(100vh - ${RECORDING_BAR_HEIGHT})`;
   const LAYOUT_SWITCH_PIXEL = 1000;
   let isNarrowViewport = window.innerWidth <= LAYOUT_SWITCH_PIXEL;
@@ -127,12 +127,12 @@
   >
     <Pane size={DEFAULT_REQUEST_PANE_SIZE} class="relative !bg-white">
       <div bind:this={scrollContainer} class="absolute bottom-0 left-0 right-0 top-0 !overflow-auto">
-        <Table hoverable class="min-w-[40em] table-fixed">
+        <Table hoverable class="min-w-[40em] table-fixed border-0">
           <TableHead>
-            <TableHeadCell class="w-2/12">Status</TableHeadCell>
-            <TableHeadCell class="w-2/12">Method</TableHeadCell>
-            <TableHeadCell class="w-6/12">Path</TableHeadCell>
-            <TableHeadCell class="w-2/12">Duration</TableHeadCell>
+            <TableHeadCell class="w-2/12 !border-l-0 !border-t-0">Status</TableHeadCell>
+            <TableHeadCell class="w-2/12 !border-t-0">Method</TableHeadCell>
+            <TableHeadCell class="w-6/12 !border-t-0">Path</TableHeadCell>
+            <TableHeadCell class="w-2/12 !border-r-0 !border-t-0">Duration</TableHeadCell>
           </TableHead>
           <TableBody>
             {#each results as result, idx}
@@ -140,10 +140,10 @@
                 on:click={() => selectRequestRow(idx)}
                 class={idx === openRequestRow ? 'bg-primary-100 hover:bg-primary-100' : ''}
               >
-                <TableBodyCell class="whitespace-normal break-words">{result.status}</TableBodyCell>
+                <TableBodyCell class="whitespace-normal break-words !border-l-0">{result.status}</TableBodyCell>
                 <TableBodyCell class="whitespace-normal break-words">{result.method}</TableBodyCell>
                 <TableBodyCell class="whitespace-normal break-words">{result.path}</TableBodyCell>
-                <TableBodyCell class="whitespace-normal break-words">{result.duration}</TableBodyCell>
+                <TableBodyCell class="whitespace-normal break-words !border-r-0">{result.duration}</TableBodyCell>
               </TableBodyRow>
             {/each}
           </TableBody>
