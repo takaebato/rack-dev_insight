@@ -11,7 +11,7 @@ const config = {
     },
     extend: {
       fontSize: {
-        xs: ['0.65rem', '0.65rem'],
+        xs: ['0.67rem', '0.67rem'],
         sm: ['0.7rem', '0.7rem'],
       },
       colors: {

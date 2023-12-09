@@ -25,11 +25,12 @@
 <TabItem title="API" class="overflow-hidden [&>button]:!p-3">
   <Splitpanes style="height: {apiPanesHeight}">
     <Pane class="!overflow-auto !bg-white">
-      <Table hoverable class="min-w-[30em]  table-fixed">
+      <Table hoverable class="min-w-[35em]  table-fixed">
         <TableHead>
-          <TableHeadCell class="w-3/12">Status</TableHeadCell>
-          <TableHeadCell class="w-3/12">Method</TableHeadCell>
+          <TableHeadCell class="w-2/12">Status</TableHeadCell>
+          <TableHeadCell class="w-2/12">Method</TableHeadCell>
           <TableHeadCell class="w-6/12">Url</TableHeadCell>
+          <TableHeadCell class="w-2/12 !border-r-0">duration</TableHeadCell>
         </TableHead>
         <TableBody>
           {#each apis as api, idx}
@@ -40,6 +41,7 @@
               <TableBodyCell class="whitespace-normal break-words">{api.status}</TableBodyCell>
               <TableBodyCell class="whitespace-normal break-words">{api.method}</TableBodyCell>
               <TableBodyCell class="whitespace-normal break-words">{api.url}</TableBodyCell>
+              <TableBodyCell class="whitespace-normal break-words !border-r-0">{api.duration}</TableBodyCell>
             </TableBodyRow>
           {/each}
         </TableBody>

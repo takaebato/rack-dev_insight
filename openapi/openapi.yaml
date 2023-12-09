@@ -14,6 +14,9 @@ info:
 externalDocs:
   description: Find out more about Gem and Chrome extension
   url: https://github.com/takaebato/rack-dev_insight
+servers:
+  - url: http://localhost:8081
+    description: Local development server
 tags:
   - name: Result
     description: Result of analyzed request
@@ -39,18 +42,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RackDevInsightResult'
+              examples:
+                Basic:
+                  $ref: '#/components/examples/Basic'
         '404':
           description: Not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+              example:
+                status: 404
+                message: Result not found
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+              example:
+                status: 500
+                message: Internal server error
+      security: [ ]
 components:
   schemas:
     RackDevInsightResult:
@@ -65,27 +78,23 @@ components:
         - apis
       properties:
         id:
+          description: Result id
           type: string
           format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
         status:
           description: Http status code
           type: integer
           format: int32
-          example: 200
         method:
           description: Http method
           type: string
-          example: GET
         path:
           description: Http path
           type: string
-          example: /api/v1/users
         duration:
           description: Request duration in milliseconds
           type: number
           format: float
-          example: 10
         sql:
           $ref: '#/components/schemas/Sql'
         apis:
@@ -104,175 +113,18 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CrudAggregation'
-          example:
-            - id: 1
-              type: CREATE
-              table: users
-              count: 1
-              duration: 10
-              queryIds: [ 1 ]
-            - id: 2
-              type: READ
-              table: users
-              count: 1
-              duration: 10
-              queryIds: [ 2 ]
-            - id: 3
-              type: UPDATE
-              table: users
-              count: 1
-              duration: 10
-              queryIds: [ 3 ]
-            - id: 4
-              type: DELETE
-              table: users
-              count: 2
-              duration: 30
-              queryIds: [ 4, 5 ]
         normalizedAggregations:
           type: array
           items:
             $ref: '#/components/schemas/NormalizedAggregation'
-          example:
-            - id: 1
-              statement: INSERT INTO users (first_name, last_name, email, password, created_at, updated_at) VALUES (?, ?, ?, ?, NOW(), NOW()), (?, ?, ?, ?, NOW(), NOW()), (?, ?, ?, ?, NOW(), NOW())
-              count: 1
-              duration: 10
-              queryIds: [ 1 ]
-            - id: 2
-              statement: SELECT * FROM users WHERE id = ?
-              count: 1
-              duration: 10
-              queryIds: [ 2 ]
-            - id: 3
-              statement: UPDATE users SET name = ? WHERE id = ?
-              count: 1
-              duration: 10
-              queryIds: [ 3 ]
-            - id: 4
-              statement: DELETE FROM users WHERE id = ?
-              count: 2
-              duration: 30
-              queryIds: [ 4, 5 ]
         erroredQueries:
           type: array
           items:
             $ref: '#/components/schemas/ErroredQuery'
-          example:
-            - id: 1
-              message: 'Syntax error'
-              statement: SELECT * FROM users WHERE id = 2
-              backtrace:
-                - original: app/controllers/users_controller.rb:25:in `show'
-                  path: app/controllers/users_controller.rb
-                  line: 25
-                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
-                  path: app/services/user_fetch_service.rb
-                  line: 15
-              duration: 10
-            - id: 2
-              message: 'Parser error'
-              statement: UPDATE users SET name  = 'Jack' WHERE id = 1
-              backtrace:
-                - original: app/controllers/users_controller.rb:25:in `show'
-                  path: app/controllers/users_controller.rb
-                  line: 25
-                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
-                  path: app/services/user_fetch_service.rb
-                  line: 15
-              duration: 10
-            - id: 3
-              message: 'Parser error'
-              statement: DELETE FROM users WHERE id = 1
-              backtrace:
-                - original: app/controllers/users_controller.rb:25:in `show'
-                  path: app/controllers/users_controller.rb
-                  line: 25
-                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
-                  path: app/services/user_fetch_service.rb
-                  line: 15
-              duration: 10
         queries:
           type: array
           items:
             $ref: '#/components/schemas/Query'
-          example:
-            - id: 1
-              statement: |
-                INSERT INTO users (first_name, last_name, email, password, created_at, updated_at) VALUES
-                ('John', 'Doe', 'john.doe@example.com', 'johnspassword', NOW(), NOW()),
-                ('Jane', 'Doe', 'jane.doe@example.com', 'janespassword', NOW(), NOW()),
-                ('Jim', 'Beam', 'jim.beam@example.com', 'jimspassword', NOW(), NOW());
-              backtrace:
-                - original: app/controllers/users_controller.rb:25:in `show'
-                  path: app/controllers/users_controller.rb
-                  line: 25
-                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
-                  path: app/services/user_fetch_service.rb
-                  line: 15
-                - original: app/models/user.rb:120:in `normalize_name'
-                  path: app/models/user.rb
-                  line: 120
-                - original: app/helpers/user_helper.rb:10:in `formatted_name'
-                  path: app/helpers/user_helper.rb
-                  line: 10
-                - original: app/views/users/show.html.erb:15:in `_app_views_users_show_html_erb__1234567890'
-                  path: app/views/users/show.html.erb
-                  line: 15
-                - original: app/middleware/custom_middleware.rb:30:in `call'
-                  path: app/middleware/custom_middleware.rb
-                  line: 30
-              duration: 10
-            - id: 2
-              statement: SELECT * FROM users WHERE id = 2
-              backtrace:
-                - original: app/controllers/users_controller.rb:25:in `show'
-                  path: app/controllers/users_controller.rb
-                  line: 25
-                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
-                  path: app/services/user_fetch_service.rb
-                  line: 15
-              duration: 10
-            - id: 3
-              statement: UPDATE users SET name  = 'Jack' WHERE id = 1
-              backtrace:
-                - original: app/controllers/users_controller.rb:25:in `show'
-                  path: app/controllers/users_controller.rb
-                  line: 25
-                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
-                  path: app/services/user_fetch_service.rb
-                  line: 15
-              duration: 10
-            - id: 4
-              statement: DELETE FROM users WHERE id = 1
-              backtrace:
-                - original: app/controllers/users_controller.rb:25:in `show'
-                  path: app/controllers/users_controller.rb
-                  line: 25
-                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
-                  path: app/services/user_fetch_service.rb
-                  line: 15
-              duration: 10
-            - id: 5
-              statement: DELETE FROM users WHERE id = 2
-              backtrace:
-                - original: app/controllers/users_controller.rb:25:in `show'
-                  path: app/controllers/users_controller.rb
-                  line: 25
-                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
-                  path: app/services/user_fetch_service.rb
-                  line: 15
-              duration: 20
-            - id: 6
-              statement: SELECT * FROM users WHERE id = 3
-              backtrace:
-                - original: app/controllers/users_controller.rb:25:in `show'
-                  path: app/controllers/users_controller.rb
-                  line: 25
-                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
-                  path: app/services/user_fetch_service.rb
-                  line: 15
-              duration: 10
     CrudAggregation:
       description: Aggregation of queries in terms of CRUD type and table
       type: object
@@ -285,6 +137,7 @@ components:
         - queryIds
       properties:
         id:
+          description: Crud aggregation id
           type: integer
           format: int32
         type:
@@ -322,6 +175,7 @@ components:
         - queryIds
       properties:
         id:
+          description: Normalized aggregation id
           type: integer
           format: int32
         statement:
@@ -350,6 +204,7 @@ components:
         - duration
       properties:
         id:
+          description: Errored query id
           type: integer
           format: int32
         message:
@@ -378,6 +233,7 @@ components:
         - duration
       properties:
         id:
+          description: Query id
           type: integer
           format: int32
         statement:
@@ -402,6 +258,7 @@ components:
         - status
         - method
         - url
+        - duration
         - requestHeaders
         - requestBody
         - responseHeaders
@@ -410,68 +267,42 @@ components:
       properties:
         status:
           description: Http status code
-          type: string
-          example: 200
+          type: integer
+          format: int32
         method:
           description: Http method
           type: string
-          example: GET
         url:
           description: Full url
           type: string
-          example: https://example.com/api/v1/users
+        duration:
+          description: Request duration in milliseconds
+          type: number
+          format: float
         requestHeaders:
+          description: Request headers
           type: array
           items:
             $ref: '#/components/schemas/Header'
-          example:
-            - field: User-Agent
-              value: CustomServerClient/1.2.3
-            - field: Content-Type
-              value: application/json; charset=utf-8
-            - field: Content-Length
-              value: 123456
-            - field: Date
-              value: Sat, 08 Oct 2023 00:00:00 GMT
         requestBody:
+          description: Request body
           type: string
           nullable: true
-          example: '{"id": 1, "name": "doggie", "photoUrls": ["url1", "url2"]}'
         responseHeaders:
+          description: Response headers
           type: array
           items:
             $ref: '#/components/schemas/Header'
-          example:
-            - field: Server
-              value: TargetServer/4.3.2
-            - field: Content-Type
-              value: application/json; charset=utf-8
-            - field: Content-Length
-              value: 34567
-            - field: Date
-              value: Sat, 08 Oct 2023 00:00:00 GMT
         responseBody:
+          description: Response body
           type: string
-          example: '{"id": 1, "name": "doggie", "photoUrls": ["url1", "url2"]}'
         backtrace:
           description: Backtrace
           type: array
           items:
             $ref: '#/components/schemas/TraceInfo'
-          example:
-            - original: app/controllers/users_controller.rb:25:in `show'
-              path: app/controllers/users_controller.rb
-              line: 25
-            - original: app/services/user_fetch_service.rb:15:in `find_by_id'
-              path: app/services/user_fetch_service.rb
-              line: 15
-            - original: app/models/user.rb:120:in `normalize_name'
-              path: app/models/user.rb
-              line: 120
-            - original: app/helpers/user_helper.rb:10:in `formatted_name'
-              path: app/helpers/user_helper.rb
-              line: 10
     Header:
+      description: Http header
       type: object
       required:
         - field
@@ -483,9 +314,6 @@ components:
         value:
           description: Header value
           type: string
-      example:
-        field: Content-Type
-        value: application/json
     TraceInfo:
       type: object
       required:
@@ -513,8 +341,211 @@ components:
           description: Http status code
           type: integer
           format: int32
-          example: 404
         message:
           description: Error message
           type: string
-          example: 'Not Found'
+  examples:
+    Basic:
+      summary: Basic example
+      value:
+        id: 123e4567-e89b-12d3-a456-426614174000
+        status: 200
+        method: GET
+        path: /api/v1/users
+        duration: 100.0
+        sql:
+          crudAggregations:
+            - id: 1
+              type: CREATE
+              table: users
+              count: 1
+              duration: 10
+              queryIds: [ 1 ]
+            - id: 2
+              type: READ
+              table: users
+              count: 1
+              duration: 10
+              queryIds: [ 2 ]
+            - id: 3
+              type: UPDATE
+              table: users
+              count: 1
+              duration: 10
+              queryIds: [ 3 ]
+            - id: 4
+              type: DELETE
+              table: users
+              count: 2
+              duration: 30
+              queryIds: [ 4, 5 ]
+          normalizedAggregations:
+            - id: 1
+              statement: INSERT INTO users (first_name, last_name, email, password, created_at, updated_at) VALUES (?, ?, ?, ?, NOW(), NOW()), (?, ?, ?, ?, NOW(), NOW()), (?, ?, ?, ?, NOW(), NOW())
+              count: 1
+              duration: 10
+              queryIds: [ 1 ]
+            - id: 2
+              statement: SELECT * FROM users WHERE id = ?
+              count: 1
+              duration: 10
+              queryIds: [ 2 ]
+            - id: 3
+              statement: UPDATE users SET name = ? WHERE id = ?
+              count: 1
+              duration: 10
+              queryIds: [ 3 ]
+            - id: 4
+              statement: DELETE FROM users WHERE id = ?
+              count: 2
+              duration: 30
+              queryIds: [ 4, 5 ]
+          erroredQueries:
+            - id: 1
+              message: 'Syntax error'
+              statement: SELECT * FROM users WHERE id = 2
+              backtrace:
+                - original: app/controllers/users_controller.rb:25:in `show'
+                  path: app/controllers/users_controller.rb
+                  line: 25
+                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
+                  path: app/services/user_fetch_service.rb
+                  line: 15
+              duration: 10
+            - id: 2
+              message: 'Parser error'
+              statement: UPDATE users SET name  = 'Jack' WHERE id = 1
+              backtrace:
+                - original: app/controllers/users_controller.rb:25:in `show'
+                  path: app/controllers/users_controller.rb
+                  line: 25
+                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
+                  path: app/services/user_fetch_service.rb
+                  line: 15
+              duration: 10
+            - id: 3
+              message: 'Parser error'
+              statement: DELETE FROM users WHERE id = 1
+              backtrace:
+                - original: app/controllers/users_controller.rb:25:in `show'
+                  path: app/controllers/users_controller.rb
+                  line: 25
+                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
+                  path: app/services/user_fetch_service.rb
+                  line: 15
+              duration: 10
+          queries:
+            - id: 1
+              statement: |
+                INSERT INTO users (first_name, last_name, email, password, created_at, updated_at) VALUES
+                ('John', 'Doe', 'john.doe@example.com', 'johnspassword', NOW(), NOW()),
+                ('Jane', 'Doe', 'jane.doe@example.com', 'janespassword', NOW(), NOW()),
+                ('Jim', 'Beam', 'jim.beam@example.com', 'jimspassword', NOW(), NOW());
+              binds: ''
+              backtrace:
+                - original: app/controllers/users_controller.rb:25:in `show'
+                  path: app/controllers/users_controller.rb
+                  line: 25
+                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
+                  path: app/services/user_fetch_service.rb
+                  line: 15
+                - original: app/models/user.rb:120:in `normalize_name'
+                  path: app/models/user.rb
+                  line: 120
+                - original: app/helpers/user_helper.rb:10:in `formatted_name'
+                  path: app/helpers/user_helper.rb
+                  line: 10
+                - original: app/views/users/show.html.erb:15:in `_app_views_users_show_html_erb__1234567890'
+                  path: app/views/users/show.html.erb
+                  line: 15
+                - original: app/middleware/custom_middleware.rb:30:in `call'
+                  path: app/middleware/custom_middleware.rb
+                  line: 30
+              duration: 10
+            - id: 2
+              statement: SELECT * FROM users WHERE id = 2
+              binds: ''
+              backtrace:
+                - original: app/controllers/users_controller.rb:25:in `show'
+                  path: app/controllers/users_controller.rb
+                  line: 25
+                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
+                  path: app/services/user_fetch_service.rb
+                  line: 15
+              duration: 10
+            - id: 3
+              statement: UPDATE users SET name  = 'Jack' WHERE id = 1
+              binds: ''
+              backtrace:
+                - original: app/controllers/users_controller.rb:25:in `show'
+                  path: app/controllers/users_controller.rb
+                  line: 25
+                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
+                  path: app/services/user_fetch_service.rb
+                  line: 15
+              duration: 10
+            - id: 4
+              binds: ''
+              statement: DELETE FROM users WHERE id = 1
+              backtrace:
+                - original: app/controllers/users_controller.rb:25:in `show'
+                  path: app/controllers/users_controller.rb
+                  line: 25
+                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
+                  path: app/services/user_fetch_service.rb
+                  line: 15
+              duration: 10
+            - id: 5
+              statement: DELETE FROM users WHERE id = 2
+              binds: ''
+              backtrace:
+                - original: app/controllers/users_controller.rb:25:in `show'
+                  path: app/controllers/users_controller.rb
+                  line: 25
+                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
+                  path: app/services/user_fetch_service.rb
+                  line: 15
+              duration: 20
+            - id: 6
+              statement: SELECT * FROM users WHERE id = 3
+              binds: ''
+              backtrace:
+                - original: app/controllers/users_controller.rb:25:in `show'
+                  path: app/controllers/users_controller.rb
+                  line: 25
+                - original: app/services/user_fetch_service.rb:15:in `find_by_id'
+                  path: app/services/user_fetch_service.rb
+                  line: 15
+              duration: 10
+        apis:
+          - status: 200
+            method: POST
+            url: https://example.com/api/v1/users
+            duration: 100
+            requestHeaders:
+              - field: User-Agent
+                value: CustomServerClient/1.2.3
+              - field: Content-Type
+                value: application/json; charset=utf-8
+              - field: Content-Length
+                value: '123456'
+              - field: Date
+                value: Sat, 08 Oct 2023 00:00:00 GMT
+            requestBody: '{"name": "doggie", "photoUrls": ["url1", "url2"]}'
+            responseHeaders:
+              - field: Server
+                value: TargetServer/4.3.2
+              - field: Content-Type
+                value: application/json; charset=utf-8
+              - field: Content-Length
+                value: '34567'
+              - field: Date
+                value: Sat, 08 Oct 2023 00:00:00 GMT
+            responseBody: '{"name": "doggie", "photoUrls": ["url1", "url2"]}'
+            backtrace:
+              - original: app/services/user_post_service.rb:15:in `create'
+                path: app/services/user_post_service.rb
+                line: 15
+              - original: app/controllers/users_controller.rb:25:in `create'
+                path: app/controllers/users_controller.rb
+                line: 25

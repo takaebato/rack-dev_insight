@@ -11,30 +11,22 @@
 
 export interface RackDevInsightResultSchema {
   /**
+   * Result id
    * @format uuid
-   * @example "123e4567-e89b-12d3-a456-426614174000"
    */
   id: string;
   /**
    * Http status code
    * @format int32
-   * @example 200
    */
   status: number;
-  /**
-   * Http method
-   * @example "GET"
-   */
+  /** Http method */
   method: string;
-  /**
-   * Http path
-   * @example "/api/v1/users"
-   */
+  /** Http path */
   path: string;
   /**
    * Request duration in milliseconds
    * @format float
-   * @example 10
    */
   duration: number;
   sql: SqlSchema;
@@ -43,19 +35,18 @@ export interface RackDevInsightResultSchema {
 }
 
 export interface SqlSchema {
-  /** @example [{"id":1,"type":"CREATE","table":"users","count":1,"duration":10,"queryIds":[1]},{"id":2,"type":"READ","table":"users","count":1,"duration":10,"queryIds":[2]},{"id":3,"type":"UPDATE","table":"users","count":1,"duration":10,"queryIds":[3]},{"id":4,"type":"DELETE","table":"users","count":2,"duration":30,"queryIds":[4,5]}] */
   crudAggregations: CrudAggregationSchema[];
-  /** @example [{"id":1,"statement":"INSERT INTO users (first_name, last_name, email, password, created_at, updated_at) VALUES (?, ?, ?, ?, NOW(), NOW()), (?, ?, ?, ?, NOW(), NOW()), (?, ?, ?, ?, NOW(), NOW())","count":1,"duration":10,"queryIds":[1]},{"id":2,"statement":"SELECT * FROM users WHERE id = ?","count":1,"duration":10,"queryIds":[2]},{"id":3,"statement":"UPDATE users SET name = ? WHERE id = ?","count":1,"duration":10,"queryIds":[3]},{"id":4,"statement":"DELETE FROM users WHERE id = ?","count":2,"duration":30,"queryIds":[4,5]}] */
   normalizedAggregations: NormalizedAggregationSchema[];
-  /** @example [{"id":1,"message":"Syntax error","statement":"SELECT * FROM users WHERE id = 2","backtrace":[{"original":"app/controllers/users_controller.rb:25:in `show'","path":"app/controllers/users_controller.rb","line":25},{"original":"app/services/user_fetch_service.rb:15:in `find_by_id'","path":"app/services/user_fetch_service.rb","line":15}],"duration":10},{"id":2,"message":"Parser error","statement":"UPDATE users SET name  = 'Jack' WHERE id = 1","backtrace":[{"original":"app/controllers/users_controller.rb:25:in `show'","path":"app/controllers/users_controller.rb","line":25},{"original":"app/services/user_fetch_service.rb:15:in `find_by_id'","path":"app/services/user_fetch_service.rb","line":15}],"duration":10},{"id":3,"message":"Parser error","statement":"DELETE FROM users WHERE id = 1","backtrace":[{"original":"app/controllers/users_controller.rb:25:in `show'","path":"app/controllers/users_controller.rb","line":25},{"original":"app/services/user_fetch_service.rb:15:in `find_by_id'","path":"app/services/user_fetch_service.rb","line":15}],"duration":10}] */
   erroredQueries?: ErroredQuerySchema[];
-  /** @example [{"id":1,"statement":"INSERT INTO users (first_name, last_name, email, password, created_at, updated_at) VALUES\n('John', 'Doe', 'john.doe@example.com', 'johnspassword', NOW(), NOW()),\n('Jane', 'Doe', 'jane.doe@example.com', 'janespassword', NOW(), NOW()),\n('Jim', 'Beam', 'jim.beam@example.com', 'jimspassword', NOW(), NOW());\n","backtrace":[{"original":"app/controllers/users_controller.rb:25:in `show'","path":"app/controllers/users_controller.rb","line":25},{"original":"app/services/user_fetch_service.rb:15:in `find_by_id'","path":"app/services/user_fetch_service.rb","line":15},{"original":"app/models/user.rb:120:in `normalize_name'","path":"app/models/user.rb","line":120},{"original":"app/helpers/user_helper.rb:10:in `formatted_name'","path":"app/helpers/user_helper.rb","line":10},{"original":"app/views/users/show.html.erb:15:in `_app_views_users_show_html_erb__1234567890'","path":"app/views/users/show.html.erb","line":15},{"original":"app/middleware/custom_middleware.rb:30:in `call'","path":"app/middleware/custom_middleware.rb","line":30}],"duration":10},{"id":2,"statement":"SELECT * FROM users WHERE id = 2","backtrace":[{"original":"app/controllers/users_controller.rb:25:in `show'","path":"app/controllers/users_controller.rb","line":25},{"original":"app/services/user_fetch_service.rb:15:in `find_by_id'","path":"app/services/user_fetch_service.rb","line":15}],"duration":10},{"id":3,"statement":"UPDATE users SET name  = 'Jack' WHERE id = 1","backtrace":[{"original":"app/controllers/users_controller.rb:25:in `show'","path":"app/controllers/users_controller.rb","line":25},{"original":"app/services/user_fetch_service.rb:15:in `find_by_id'","path":"app/services/user_fetch_service.rb","line":15}],"duration":10},{"id":4,"statement":"DELETE FROM users WHERE id = 1","backtrace":[{"original":"app/controllers/users_controller.rb:25:in `show'","path":"app/controllers/users_controller.rb","line":25},{"original":"app/services/user_fetch_service.rb:15:in `find_by_id'","path":"app/services/user_fetch_service.rb","line":15}],"duration":10},{"id":5,"statement":"DELETE FROM users WHERE id = 2","backtrace":[{"original":"app/controllers/users_controller.rb:25:in `show'","path":"app/controllers/users_controller.rb","line":25},{"original":"app/services/user_fetch_service.rb:15:in `find_by_id'","path":"app/services/user_fetch_service.rb","line":15}],"duration":20},{"id":6,"statement":"SELECT * FROM users WHERE id = 3","backtrace":[{"original":"app/controllers/users_controller.rb:25:in `show'","path":"app/controllers/users_controller.rb","line":25},{"original":"app/services/user_fetch_service.rb:15:in `find_by_id'","path":"app/services/user_fetch_service.rb","line":15}],"duration":10}] */
   queries: QuerySchema[];
 }
 
 /** Aggregation of queries in terms of CRUD type and table */
 export interface CrudAggregationSchema {
-  /** @format int32 */
+  /**
+   * Crud aggregation id
+   * @format int32
+   */
   id: number;
   /** CRUD type */
   type: 'CREATE' | 'READ' | 'UPDATE' | 'DELETE';
@@ -74,7 +65,10 @@ export interface CrudAggregationSchema {
 
 /** Aggregation of queries in terms of normalized sql statement */
 export interface NormalizedAggregationSchema {
-  /** @format int32 */
+  /**
+   * Normalized aggregation id
+   * @format int32
+   */
   id: number;
   /** Normalized sql statement */
   statement: string;
@@ -91,7 +85,10 @@ export interface NormalizedAggregationSchema {
 
 /** Query errored on parsing */
 export interface ErroredQuerySchema {
-  /** @format int32 */
+  /**
+   * Errored query id
+   * @format int32
+   */
   id: number;
   /** Error message */
   message: string;
@@ -108,7 +105,10 @@ export interface ErroredQuerySchema {
 
 /** Single sql query */
 export interface QuerySchema {
-  /** @format int32 */
+  /**
+   * Query id
+   * @format int32
+   */
   id: number;
   /** Sql statement */
   statement: string;
@@ -127,35 +127,31 @@ export interface QuerySchema {
 export interface ApiSchema {
   /**
    * Http status code
-   * @example 200
+   * @format int32
    */
-  status: string;
-  /**
-   * Http method
-   * @example "GET"
-   */
+  status: number;
+  /** Http method */
   method: string;
-  /**
-   * Full url
-   * @example "https://example.com/api/v1/users"
-   */
+  /** Full url */
   url: string;
-  /** @example [{"field":"User-Agent","value":"CustomServerClient/1.2.3"},{"field":"Content-Type","value":"application/json; charset=utf-8"},{"field":"Content-Length","value":123456},{"field":"Date","value":"Sat, 08 Oct 2023 00:00:00 GMT"}] */
-  requestHeaders: HeaderSchema[];
-  /** @example "{"id": 1, "name": "doggie", "photoUrls": ["url1", "url2"]}" */
-  requestBody: string | null;
-  /** @example [{"field":"Server","value":"TargetServer/4.3.2"},{"field":"Content-Type","value":"application/json; charset=utf-8"},{"field":"Content-Length","value":34567},{"field":"Date","value":"Sat, 08 Oct 2023 00:00:00 GMT"}] */
-  responseHeaders: HeaderSchema[];
-  /** @example "{"id": 1, "name": "doggie", "photoUrls": ["url1", "url2"]}" */
-  responseBody: string;
   /**
-   * Backtrace
-   * @example [{"original":"app/controllers/users_controller.rb:25:in `show'","path":"app/controllers/users_controller.rb","line":25},{"original":"app/services/user_fetch_service.rb:15:in `find_by_id'","path":"app/services/user_fetch_service.rb","line":15},{"original":"app/models/user.rb:120:in `normalize_name'","path":"app/models/user.rb","line":120},{"original":"app/helpers/user_helper.rb:10:in `formatted_name'","path":"app/helpers/user_helper.rb","line":10}]
+   * Request duration in milliseconds
+   * @format float
    */
+  duration: number;
+  /** Request headers */
+  requestHeaders: HeaderSchema[];
+  /** Request body */
+  requestBody: string | null;
+  /** Response headers */
+  responseHeaders: HeaderSchema[];
+  /** Response body */
+  responseBody: string;
+  /** Backtrace */
   backtrace: TraceInfoSchema[];
 }
 
-/** @example {"field":"Content-Type","value":"application/json"} */
+/** Http header */
 export interface HeaderSchema {
   /** Header field */
   field: string;
@@ -179,13 +175,9 @@ export interface ErrorSchema {
   /**
    * Http status code
    * @format int32
-   * @example 404
    */
   status: number;
-  /**
-   * Error message
-   * @example "Not Found"
-   */
+  /** Error message */
   message: string;
 }
 
@@ -235,7 +227,7 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = '';
+  public baseUrl: string = 'http://localhost:8081';
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>['securityWorker'];
   private abortControllers = new Map<CancelToken, AbortController>();
@@ -395,8 +387,9 @@ export class HttpClient<SecurityDataType = unknown> {
  * @title Rack Dev Insight Internal API
  * @version 1.0.0
  * @license Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0.html)
- * @termsOfService https://github.com/takaebato/rack-dev-insight/blob/master/CODE_OF_CONDUCT.md
- * @externalDocs https://github.com/takaebato/rack-dev-insight
+ * @termsOfService https://github.com/takaebato/rack-dev_insight/blob/master/CODE_OF_CONDUCT.md
+ * @baseUrl http://localhost:8081
+ * @externalDocs https://github.com/takaebato/rack-dev_insight
  * @contact <takahiro.ebato@gmail.com>
  *
  * This is an internal API specification for Rack Dev Insight.
