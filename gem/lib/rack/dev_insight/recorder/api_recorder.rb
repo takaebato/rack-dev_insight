@@ -16,7 +16,7 @@ module Rack
           url: request.uri,
           request_headers: request.each_header.map { |field, value| Result.build_header(field, value) },
           request_body: request.body,
-          status: response.code,
+          status: response.code.to_i,
           response_headers: response.each_header.map { |field, value| Result.build_header(field, value) },
           response_body: response.body,
           backtrace: get_backtrace,

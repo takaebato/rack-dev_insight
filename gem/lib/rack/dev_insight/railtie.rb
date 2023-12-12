@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'sql_dialects'
 require_relative 'sql_notifications'
 
 module Rack

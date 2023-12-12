@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../ext/extractor'
-
 module Rack
   class DevInsight
     class Result

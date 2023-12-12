@@ -1,20 +1,30 @@
 # frozen_string_literal: true
 
 require 'securerandom'
-require_relative 'dev_insight/version'
-require_relative 'dev_insight/rack_dev_insight'
-require_relative 'dev_insight/storage/memory_store'
-require_relative 'dev_insight/storage/file_store'
-require_relative 'dev_insight/result'
+require_relative 'dev_insight/ext/extractor'
+require_relative 'dev_insight/ext/normalizer'
 require_relative 'dev_insight/recorder/api_recorder'
 require_relative 'dev_insight/recorder/request_recorder'
 require_relative 'dev_insight/recorder/sql_recorder'
+require_relative 'dev_insight/result'
+require_relative 'dev_insight/result/apis'
+require_relative 'dev_insight/result/sql'
+require_relative 'dev_insight/result/sql/crud_aggregations'
+require_relative 'dev_insight/result/sql/errored_queries'
+require_relative 'dev_insight/result/sql/normalized_aggregations'
+require_relative 'dev_insight/result/sql/queries'
+require_relative 'dev_insight/storage/file_store'
+require_relative 'dev_insight/storage/memory_store'
+require_relative 'dev_insight/utils/camelizer'
 require_relative 'dev_insight/config'
 require_relative 'dev_insight/context'
 require_relative 'dev_insight/errors'
+require_relative 'dev_insight/rack_dev_insight'
 require_relative 'dev_insight/sql_dialects'
-
+require_relative 'dev_insight/version'
+# Railtie
 require_relative 'dev_insight/railtie' if defined?(Rails)
+# Patches
 if defined?(Rack::DevInsight::ENABLE_SQL_PATCH)
   require_relative 'dev_insight/patches/sql/mysql2'
   require_relative 'dev_insight/patches/sql/pg'

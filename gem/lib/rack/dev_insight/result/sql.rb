@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'sql/crud_aggregations'
-require_relative 'sql/normalized_aggregations'
-require_relative 'sql/errored_queries'
-require_relative 'sql/queries'
-
 module Rack
   class DevInsight
     class Result

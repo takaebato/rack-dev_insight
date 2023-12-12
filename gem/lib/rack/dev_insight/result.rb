@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 require 'json'
-require_relative 'result/sql'
-require_relative 'result/apis'
-require_relative 'utils/camelizer'
 
 module Rack
   class DevInsight
