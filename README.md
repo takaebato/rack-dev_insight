@@ -28,6 +28,8 @@ It is intended for <b>development use only</b>.
     - Duration
     - Backtrace
 
+![rack_dev_insight_devtools_panel_1](https://github.com/takaebato/rack-dev_insight/assets/62829037/e0e13a8d-9954-46ec-98ae-8ee653f32778)
+
 ## Status
 
 [![Gem Version](https://badge.fury.io/rb/rack-dev_insight.svg)](https://badge.fury.io/rb/rack-dev_insight)
@@ -98,7 +100,7 @@ Rack::DevInsight::SqlRecorder.record(dialect: 'mysql', statement: 'SELECT * FROM
 
 Keyword arguments are described below:
 
-| name      | description                                             | type   | required | 
+| Name      | Description                                             | Type   | Required | 
 |-----------|---------------------------------------------------------|--------|----------|
 | dialect   | SQL dialect. 'mysql', 'pg', or 'sqlite3' are available. | String | required |
 | statement | SQL statement.                                          | String | required |
@@ -154,17 +156,17 @@ end
 
 Available options are described below:
 
-| Name                         | Description                                                                                                                                                                                                                                                                    | Type            | Default                |
-|------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------|------------------------|
-| storage_type                 | Storage option. :memory or :file are available.                                                                                                                                                                                                                                | Symbol          | :memory                |
-| memory_store_size            | Byte size of memory allocated for storing results. When memory usage exceeds this limit, the oldest result is deleted.                                                                                                                                                         | Integer         | 32 * 1024 * 1024       |
-| file_store_pool_size         | Number of files of result to preserve. When the number of files exceeds this value, the oldest file is deleted.                                                                                                                                                                | Integer         | 100                    |
-| file_store_dir_path          | Path to the directory for storing result files.                                                                                                                                                                                                                                | String          | 'tmp/rack-dev_insight' |          
-| skip_paths                   | Skip recording of requests whose path matches the given patterns.                                                                                                                                                                                                              | Array\<Regexp\> | `[]`                   |
-| backtrace_depth              | Depth of the backtrace to record.                                                                                                                                                                                                                                              | Integer         | 5                      |              
-| backtrace_exclusion_patterns | Exclusion patterns for paths when recording backtraces. If there's a match, the recording of the line is skipped.                                                                                                                                                              | Array\<Regexp\> | `[%r{/gems/}]`         | 
-| prepared_statement_limit     | The maximum number of prepared statement objects stored in memory per database connection. It is recommended to set the value equal to (or higher than) the corresponding setting in your application. The default value is 1000, consistent with the default in ActiveRecord. | Integer         | 1000                   | 
-| skip_cached_sql              | Skip the recording of cached SQL queries. This option has effect only when used with `ActiveSupport::Notifications`.                                                                                                                                                           | Boolean         | true                   | 
+| Name                         | Description                                                                                                                                                                                                                                                                                                                                                                                                          | Type            | Default                |
+|------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------|------------------------|
+| storage_type                 | Storage option. :memory or :file are available.                                                                                                                                                                                                                                                                                                                                                                      | Symbol          | :memory                |
+| memory_store_size            | Byte size of memory allocated for storing results. When memory usage exceeds this limit, the oldest result is deleted.                                                                                                                                                                                                                                                                                               | Integer         | 32 * 1024 * 1024       |
+| file_store_pool_size         | Number of files of result to preserve. When the number of files exceeds this value, the oldest file is deleted.                                                                                                                                                                                                                                                                                                      | Integer         | 100                    |
+| file_store_dir_path          | Path to the directory for storing result files.                                                                                                                                                                                                                                                                                                                                                                      | String          | 'tmp/rack-dev_insight' |          
+| skip_paths                   | Skip recording of requests whose path matches the given patterns.                                                                                                                                                                                                                                                                                                                                                    | Array\<Regexp\> | `[]`                   |
+| backtrace_depth              | Depth of the backtrace to record.                                                                                                                                                                                                                                                                                                                                                                                    | Integer         | 5                      |              
+| backtrace_exclusion_patterns | Exclusion patterns for paths when recording backtraces. If there's a match, the recording of the line is skipped.                                                                                                                                                                                                                                                                                                    | Array\<Regexp\> | `[%r{/gems/}]`         | 
+| prepared_statement_limit     | The maximum number of prepared statement objects stored in memory per database connection. It is recommended to set the value equal to (or higher than) the corresponding setting in your application. The default value is 1000, consistent with the default in ActiveRecord. This option has effect only when [SQL patch option](https://github.com/takaebato/rack-dev_insight#1-enable-sql-patch-option) is used. | Integer         | 1000                   | 
+| skip_cached_sql              | Skip the recording of cached SQL queries. This option has effect only when used with `ActiveSupport::Notifications`.                                                                                                                                                                                                                                                                                                 | Boolean         | true                   | 
 
 ## Contributing
 
@@ -172,7 +174,8 @@ See [CONTRIBUTING.md](https://github.com/takaebato/rack-dev_insight/blob/master/
 
 ## Thanks
 
-Special thanks to the [rails_panel](https://github.com/dejan/rails_panel) and [rack-mini-profiler](https://github.com/MiniProfiler/rack-mini-profiler) teams for their invaluable insights and innovations that greatly influenced this project.
+Special thanks to the [rails_panel](https://github.com/dejan/rails_panel) and [rack-mini-profiler](https://github.com/MiniProfiler/rack-mini-profiler) teams for their invaluable insights and innovations that have profoundly impacted this project.
+Additionally, we would like to thank [sqlparser-rs](https://github.com/sqlparser-rs/sqlparser-rs) teams for their exceptional SQL parser and visitor feature, which are essential for implementing the SQL CRUD and Normalized aggregation features across multiple SQL dialects in this project.
 
 ## License
 
