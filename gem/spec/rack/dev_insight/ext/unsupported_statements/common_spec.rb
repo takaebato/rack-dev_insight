@@ -34,13 +34,6 @@ RSpec.describe 'List unsupported statements' do
 
     context 'INSERT' do
       # https://github.com/sqlparser-rs/sqlparser-rs/issues/295
-      context 'INSERT IGNORE' do
-        let(:statement) { 'INSERT IGNORE INTO t1 (a) VALUES (1)' }
-
-        it_behaves_like :not_parseable
-      end
-
-      # https://github.com/sqlparser-rs/sqlparser-rs/issues/295
       context 'INSERT SET' do
         let(:statement) { 'INSERT INTO t1 SET a = 1' }
 
@@ -64,13 +57,6 @@ RSpec.describe 'List unsupported statements' do
     end
 
     context 'DELETE' do
-      # https://github.com/sqlparser-rs/sqlparser-rs/issues/295
-      context 'DELETE with ORDER BY and LIMIT' do
-        let(:statement) { 'DELETE FROM t1 ORDER BY a LIMIT 1' }
-
-        it_behaves_like :not_parseable
-      end
-
       context 'DELETE IGNORE' do
         let(:statement) { 'DELETE IGNORE FROM t1' }
 

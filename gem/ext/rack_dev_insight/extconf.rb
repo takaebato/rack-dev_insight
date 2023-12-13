@@ -3,4 +3,4 @@
 require 'mkmf'
 require 'rb_sys/mkmf'
 
-create_rust_makefile('rack_dev_insight/rack_dev_insight')
+create_rust_makefile('rack/dev_insight/rack_dev_insight')

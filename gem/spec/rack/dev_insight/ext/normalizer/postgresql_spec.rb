@@ -11,7 +11,7 @@ RSpec.describe Rack::DevInsight::Normalizer do
 
     describe 'INSERT ON CONFLICT' do
       let(:statement) { 'INSERT INTO t1 (a) VALUES (1) ON CONFLICT (a) DO NOTHING' }
-      let(:normalized) { ['INSERT INTO t1 (a) VALUES (?)  ON CONFLICT(a) DO NOTHING'] }
+      let(:normalized) { ['INSERT INTO t1 (a) VALUES (?) ON CONFLICT(a) DO NOTHING'] }
 
       it_behaves_like :normalize
     end
