@@ -4,7 +4,8 @@ module Rack
   class DevInsight
     class FileStore
       def initialize
-        @dir_path = Rack::DevInsight.config.file_store_dir_path
+        @dir_path = DevInsight.config.file_store_dir_path
+        @pool_size = DevInsight.config.file_store_pool_size
       end
 
       def write(result)
@@ -30,7 +31,7 @@ module Rack
 
       def reap_excess_files
         files = Dir.glob(::File.join(@dir_path, '*')).sort_by { |f| ::File.mtime(f) }
-        files[0..-(Rack::DevInsight.config.file_store_pool_size + 1)].each { |old_file| ::File.delete(old_file) }
+        files[0..-(@pool_size + 1)].each { |old_file| ::File.delete(old_file) }
       end
     end
   end

@@ -7,8 +7,8 @@ Gem::Specification.new do |spec|
   spec.version = Rack::DevInsight::VERSION
   spec.authors = ['Takahiro Ebato']
   spec.email = ['takahiro.ebato@gmail.com']
-  spec.summary = 'A rack middleware for analyzing database queries and HTTP request/response.'
-  spec.description = 'A rack middleware for analyzing database queries and HTTP request/response data. Chrome extension is needed to see the analysis result.'
+  spec.summary = 'A rack middleware for analyzing SQL queries and HTTP request / response data.'
+  spec.description = 'A rack middleware for analyzing SQL queries and HTTP request / response data. Chrome extension is needed to display the analysis result.'
   spec.homepage = 'https://github.com/takaebato/rack-dev_insight'
   spec.license = 'MIT'
   spec.required_ruby_version = '>= 3.0.2'

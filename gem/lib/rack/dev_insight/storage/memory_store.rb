@@ -8,6 +8,7 @@ module Rack
       def initialize
         @lock = Mutex.new
         @cache = {}
+        @memory_size = DevInsight.config.memory_store_size
       end
 
       def write(result)
@@ -29,7 +30,7 @@ module Rack
       end
 
       def memory_excess?
-        bytesize(@cache) > Rack::DevInsight.config.memory_store_size
+        bytesize(@cache) > @memory_size
       end
 
       def within_reap_time?(start_time)

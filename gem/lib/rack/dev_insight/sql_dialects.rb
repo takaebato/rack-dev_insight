@@ -6,6 +6,7 @@ module Rack
       MYSQL = 'mysql'
       POSTGRESQL = 'postgresql'
       SQLITE = 'sqlite'
+      DIALECTS = [MYSQL, POSTGRESQL, SQLITE].freeze
 
       class << self
         def detect_dialect
@@ -19,13 +20,9 @@ module Rack
         end
 
         def validate!(dialect, error_klass)
-          return if dialects.include?(dialect)
+          return if DIALECTS.include?(dialect)
 
-          raise error_klass, "Unsupported SQL dialect: #{dialect}. Supported dialects are: #{dialects.join(', ')}"
-        end
-
-        def dialects
-          [MYSQL, POSTGRESQL, SQLITE]
+          raise error_klass, "Unsupported SQL dialect: #{dialect}. Supported dialects are: #{DIALECTS.join(', ')}"
         end
       end
     end
