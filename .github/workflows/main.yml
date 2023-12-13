@@ -4,20 +4,24 @@ on:
   push:
     branches:
       - master
-
   pull_request:
 
 jobs:
   lint:
     runs-on: ubuntu-latest
-    name: rubocop & stree
+    name: Lint
     steps:
       - uses: actions/checkout@v3
-      - name: Checkout And Build
+      - uses: actions/setup-node@v3
+      - name: Install redoc-cli
+        run: npm install @redocly/cli -g
+      - name: Check OpenAPI
+        run: cd openapi && redocly lint openapi.yaml
+      - name: Up docker
         run: cd gem && docker compose up -d ruby-rust
-      - name: Run rubocop
+      - name: Check rubocop
         run: cd gem && docker compose exec ruby-rust /bin/bash -c 'bundle install && bundle exec rake rubocop'
-      - name: Run syntax tree check
+      - name: Check syntax tree
         run: cd gem && docker compose exec ruby-rust /bin/bash -c 'bundle install && bundle exec rake stree:check'
   test-ruby:
     runs-on: ubuntu-latest
@@ -31,7 +35,7 @@ jobs:
           - '3.2.2'
     steps:
       - uses: actions/checkout@v3
-      - name: Checkout And Build
+      - name: Up docker
         run: cd gem && RUBY_VERSION=${{ matrix.ruby }} docker compose up -d ruby-rust
       - name: Run Tests
         run: cd gem && docker compose exec ruby-rust /bin/bash -c 'bundle install && bundle exec rake compile && bundle exec appraisal install && bundle exec appraisal rake spec'
@@ -40,7 +44,7 @@ jobs:
     name: Rust
     steps:
       - uses: actions/checkout@v3
-      - name: Checkout And Build
+      - name: Up docker
         run: cd gem && docker compose up -d ruby-rust
       - name: Run Tests
         run: cd gem && docker compose exec ruby-rust /bin/bash -c 'cargo test --all'
