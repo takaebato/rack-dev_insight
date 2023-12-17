@@ -37,6 +37,18 @@ It is intended for <b>development use only</b>.
 
 ## Installation
 
+### Install Rust
+
+Need to install Rust since this gem uses Rust extension.
+
+For macOS, Linux, or another Unix-like OS:
+
+```
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+For Windows, See [rust-lang.org](https://forge.rust-lang.org/infra/other-installation-methods.html#other-ways-to-install-rustup).
+
 ### For Rails applications
 
 Add the following lines to your application's Gemfile:
