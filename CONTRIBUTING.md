@@ -62,8 +62,9 @@ After fork and clone this repository, you can start development by following the
 #### Use dummy rails application for fullstack development
 
 1. Run `bundle exec rake dummy_app:rails:setup` to setup dummy rails application.
-2. Go to `http://localhost:3000` and initiate requests.
-3. To reflect file changes, run `docker compose restart dummy-app-rails`.
+2. User resource is created by scaffold, so you can access `http://localhost:3000/users` to initiate requests.
+3. To reflect file changes of the gem, run `docker compose restart dummy-app-rails`.
+4. Code snippets for making various HTTP requests and SQL queries are available in `gem/tasks/dummy_app/template_files/snippet.rb`.
 
 ## How to Submit a Contribution
 
