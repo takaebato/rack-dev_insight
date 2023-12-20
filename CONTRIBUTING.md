@@ -26,8 +26,9 @@ After fork and clone this repository, you can start development by following the
 #### Linting
 
 1. Run `docker compose exec ruby-rust bundle exec rake fix` to run rubocop and syntax tree format.
-2. Run `docker compose exec ruby-rust cargo fix` to fix rust compiler warnings.
+2. Run `docker compose exec ruby-rust cargo fix --allow-no-vcs` to fix rust compiler warnings.
 3. Run `docker compose exec ruby-rust cargo fmt` to format rust code.
+4. Run `docker compose exec ruby-rust cargo clippy --fix --allow-no-vcs` to run clippy.
 
 ### Chrome Extension
 

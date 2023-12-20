@@ -23,6 +23,8 @@ jobs:
         run: cd gem && docker compose exec ruby-rust /bin/bash -c 'bundle install && bundle exec rake rubocop'
       - name: Check syntax tree
         run: cd gem && docker compose exec ruby-rust /bin/bash -c 'bundle install && bundle exec rake stree:check'
+      - name: Check Rust
+        run: cd gem && docker compose exec ruby-rust /bin/bash -c 'cargo clippy'
   test-ruby:
     runs-on: ubuntu-latest
     name: Ruby-${{ matrix.ruby }}

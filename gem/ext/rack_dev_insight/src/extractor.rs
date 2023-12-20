@@ -47,15 +47,12 @@ impl Visitor for CrudTableExtractor {
     type Break = ();
 
     fn pre_visit_table_factor(&mut self, table_factor: &TableFactor) -> ControlFlow<Self::Break> {
-        match table_factor {
-            Table { name, alias, .. } => {
-                self.read_tables.push(name.0[0].value.clone());
-                if let Some(alias) = alias {
-                    self.aliases
-                        .insert(alias.name.value.clone(), name.0[0].value.clone());
-                }
+        if let Table { name, alias, .. } = table_factor {
+            self.read_tables.push(name.0[0].value.clone());
+            if let Some(alias) = alias {
+                self.aliases
+                    .insert(alias.name.value.clone(), name.0[0].value.clone());
             }
-            _ => {}
         }
         ControlFlow::Continue(())
     }
@@ -195,7 +192,7 @@ mod tests {
                     update_tables: vec![],
                     delete_tables: vec![],
                 }),
-                Err(error) => assert!(false, "Should not have errored. Error: {}", error)
+                Err(error) => unreachable!("Should not have errored. Error: {}", error)
             }
         }).unwrap()
     }
@@ -224,7 +221,7 @@ mod tests {
                         delete_tables: vec![],
                     }
                 ),
-                Err(error) => assert!(false, "Should not have errored. Error: {}", error),
+                Err(error) => unreachable!("Should not have errored. Error: {}", error),
             }
         })
         .unwrap()
@@ -255,7 +252,7 @@ mod tests {
                         delete_tables: vec![],
                     }
                 ),
-                Err(error) => assert!(false, "Should not have errored. Error: {}", error),
+                Err(error) => unreachable!("Should not have errored. Error: {}", error),
             }
         })
         .unwrap()
@@ -285,7 +282,7 @@ mod tests {
                         delete_tables: vec![],
                     }
                 ),
-                Err(error) => assert!(false, "Should not have errored. Error: {}", error),
+                Err(error) => unreachable!("Should not have errored. Error: {}", error),
             }
         })
         .unwrap()
@@ -315,7 +312,7 @@ mod tests {
                         delete_tables: vec!["t1".to_string(), "t2".to_string()],
                     }
                 ),
-                Err(error) => assert!(false, "Should not have errored. Error: {}", error),
+                Err(error) => unreachable!("Should not have errored. Error: {}", error),
             }
         })
         .unwrap()
@@ -336,7 +333,7 @@ mod tests {
                         delete_tables: vec!["t4".to_string()],
                     }
                 ),
-                Err(error) => assert!(false, "Should not have errored. Error: {}", error),
+                Err(error) => unreachable!("Should not have errored. Error: {}", error),
             }
         })
             .unwrap()
@@ -348,7 +345,7 @@ mod tests {
             let ruby = Ruby::get().unwrap();
             let sql = "SELECT a FROM t1 WHERE b = 1 WHERE c in (2, 3";
             match CrudTableExtractor::extract(&ruby, String::from("mysql"), sql.into()) {
-                Ok(_) => assert!(false, "Should have errored"),
+                Ok(_) => unreachable!("Should have errored"),
                 Err(error) => assert!(error.is_kind_of(ruby.get_inner(&PARSER_ERROR))),
             }
         })
