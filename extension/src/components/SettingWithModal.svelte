@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { Input, Label, Modal, Select, Helper } from 'flowbite-svelte';
   import Setting from './svgs/Setting.svelte';
 

@@ -17,6 +17,7 @@ export const fetchResult = async (request: chrome.devtools.network.Request) => {
   }
 };
 
+// For debugging. Need to run mock server.
 export const fetchResultDebug = async (_request: chrome.devtools.network.Request) => {
   const MOCK_SERVER_ORIGIN = 'http://localhost:8081';
   const api = new Api({ baseUrl: MOCK_SERVER_ORIGIN });

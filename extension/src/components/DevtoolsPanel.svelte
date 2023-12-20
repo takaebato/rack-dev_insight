@@ -13,7 +13,7 @@
   import SettingWithModal from './SettingWithModal.svelte';
 
   const DEFAULT_REQUEST_PANE_SIZE = 35;
-  let detailPanePercent = 100 - DEFAULT_REQUEST_PANE_SIZE;
+  let sqlApiPanePercent = 100 - DEFAULT_REQUEST_PANE_SIZE;
   const RECORDING_BAR_HEIGHT = '(1.6rem + 1px)';
   const PANE_HEIGHT = `calc(100vh - ${RECORDING_BAR_HEIGHT})`;
   const LAYOUT_SWITCH_PIXEL = 1000;
@@ -21,22 +21,22 @@
   const TAB_ITEM_HEIGHT = '3.2rem';
   const TAB_ITEM_WITH_SUB_HEIGHT = '5.9rem';
   const PANE_SPLITTER_HEIGHT = '8px';
-  let detailPaneHeight = `calc(${PANE_HEIGHT} * ${detailPanePercent} * 0.01)`;
-  $: detailPaneHeight = `calc(${PANE_HEIGHT} * ${detailPanePercent} * 0.01)`;
-  let apiPanesHeight = `calc(${detailPaneHeight} - ${TAB_ITEM_HEIGHT} - ${PANE_SPLITTER_HEIGHT})`;
-  let sqlSubPanesHeight = `calc(${detailPaneHeight} - ${TAB_ITEM_WITH_SUB_HEIGHT} - ${PANE_SPLITTER_HEIGHT})`;
+  let sqlApiPaneHeight = `calc(${PANE_HEIGHT} * ${sqlApiPanePercent} * 0.01)`;
+  $: sqlApiPaneHeight = `calc(${PANE_HEIGHT} * ${sqlApiPanePercent} * 0.01)`;
+  let apiPanesHeight = `calc(${sqlApiPaneHeight} - ${TAB_ITEM_HEIGHT} - ${PANE_SPLITTER_HEIGHT})`;
+  let sqlSubPanesHeight = `calc(${sqlApiPaneHeight} - ${TAB_ITEM_WITH_SUB_HEIGHT} - ${PANE_SPLITTER_HEIGHT})`;
   $: {
     if (isNarrowViewport) {
-      apiPanesHeight = `calc(${detailPaneHeight} - ${TAB_ITEM_HEIGHT} - ${PANE_SPLITTER_HEIGHT})`;
-      sqlSubPanesHeight = `calc(${detailPaneHeight} - ${TAB_ITEM_WITH_SUB_HEIGHT} - ${PANE_SPLITTER_HEIGHT})`;
+      apiPanesHeight = `calc(${sqlApiPaneHeight} - ${TAB_ITEM_HEIGHT} - ${PANE_SPLITTER_HEIGHT})`;
+      sqlSubPanesHeight = `calc(${sqlApiPaneHeight} - ${TAB_ITEM_WITH_SUB_HEIGHT} - ${PANE_SPLITTER_HEIGHT})`;
     } else {
       apiPanesHeight = `calc(${PANE_HEIGHT} - ${TAB_ITEM_HEIGHT})`;
       sqlSubPanesHeight = `calc(${PANE_HEIGHT} - ${TAB_ITEM_WITH_SUB_HEIGHT})`;
     }
   }
   const handleWindowResize = () => (isNarrowViewport = window.innerWidth <= LAYOUT_SWITCH_PIXEL);
-  const DETAIL_PANE_NUMBER = 1;
-  const handlePanesResize = (event: CustomEvent) => (detailPanePercent = event.detail[DETAIL_PANE_NUMBER].size);
+  const SQL_API_PANE_NUMBER = 1; // 0 is request pane, 1 is SQL/API pane
+  const handlePanesResize = (event: CustomEvent) => (sqlApiPanePercent = event.detail[SQL_API_PANE_NUMBER].size);
 
   let results: RackDevInsightResultSchema[] = [];
 
@@ -53,6 +53,8 @@
     openApiRow = -1;
   };
 
+  // Number of items to show in API tab.
+  // Currently, Request Header, Request Body, Response Header, Response Body, and Backtrace.
   const API_DETAILS_COUNT = 5;
   const openApiDetails: boolean[] = new Array(API_DETAILS_COUNT).fill(true);
   const selectApiRow = (idx: number) => (openApiRow = idx);
@@ -68,11 +70,12 @@
     openApiRow = -1;
   };
 
-  let scrollContainer;
+  // Auto scroll to bottom only when the scroll is at the bottom on request pane.
+  let scrollContainer: HTMLDivElement;
   let atBottomOnRequestPane = true;
   const checkScrollOnRequestPane = () => {
     atBottomOnRequestPane =
-      Math.abs(scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight) < 1;
+      Math.abs(scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight) < 3;
   };
   const scrollToBottomOnRequestPane = () => {
     scrollContainer.scrollTop = scrollContainer.scrollHeight;
