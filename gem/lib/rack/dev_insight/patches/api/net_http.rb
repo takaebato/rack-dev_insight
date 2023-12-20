@@ -5,7 +5,7 @@ if defined?(Net) && defined?(Net::HTTP)
     class HTTP
       module RackDevInsight
         def request(request, *args, &block)
-          Rack::DevInsight::ApiRecorder.new.record(request: request) { super }
+          Rack::DevInsight::ApiRecorder.new.record(net_http: self, request: request) { super }
         end
       end
 

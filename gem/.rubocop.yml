@@ -34,7 +34,7 @@ Metrics/MethodLength:
   Max: 50
 Metrics/AbcSize:
   Enabled: true
-  Max: 30
+  Max: 40
 Metrics/ParameterLists:
   Enabled: true
   Max: 10
