@@ -3,9 +3,9 @@
   import CrudTabItem from './sql/CrudTabItem.svelte';
   import NormalizedTabItem from './sql/NormalizedTabItem.svelte';
   import AllTabItem from './sql/AllTabItem.svelte';
-  import type { SqlSchema } from '../api/Api';
+  import type { SqlSchema, QuerySchema } from '../api/Api';
   import type { OpenRowsType, SortType } from '../types';
-  import { buildRows, buildSort } from '../utils/sort';
+  import { buildRows, buildSort, compFunc } from '../utils/sort';
   import ErroredTabItem from './sql/ErroredTabItem.svelte';
 
   export let sql: SqlSchema | undefined;
@@ -13,10 +13,14 @@
   export let openCrudRows: OpenRowsType;
   export let openNormalizedRows: OpenRowsType;
 
+  let queries: QuerySchema[] = [];
   let crudSort: SortType = { key: 'id', direction: 1 };
   let normalizedSort: SortType = { key: 'id', direction: 1 };
   let allSort: SortType = { key: 'id', direction: 1 };
   let erroredSort: SortType = { key: 'id', direction: 1 };
+  $: {
+    queries = sql !== undefined ? sql.queries.sort(compFunc(allSort)) : [];
+  }
 
   const setOpenCrudRows =
     (id: number) =>
@@ -47,18 +51,27 @@
 
 <TabItem open title="SQL" class="[&>button]:!p-3">
   <Tabs contentClass="bg-white rounded-lg dark:bg-gray-800 mt-2">
-    <CrudTabItem {sql} {sqlSubPanesHeight} {openCrudRows} {setOpenCrudRows} {crudSort} {setCrudSort} />
+    <CrudTabItem
+      {queries}
+      crudAggregations={sql !== undefined ? sql.crudAggregations : []}
+      {sqlSubPanesHeight}
+      {openCrudRows}
+      {setOpenCrudRows}
+      {crudSort}
+      {setCrudSort}
+    />
     <NormalizedTabItem
-      {sql}
+      {queries}
+      normalizedAggregations={sql !== undefined ? sql.normalizedAggregations : []}
       {sqlSubPanesHeight}
       {openNormalizedRows}
       {setOpenNormalizedRows}
       {normalizedSort}
       {setNormalizedSort}
     />
-    <AllTabItem {sql} {sqlSubPanesHeight} {allSort} {setAllSort} />
-    {#if sql !== undefined && sql.erroredQueries.length > 0}
-      <ErroredTabItem {sql} {sqlSubPanesHeight} {erroredSort} {setErroredSort} />
+    <AllTabItem {queries} {sqlSubPanesHeight} {setAllSort} />
+    {#if sql !== undefined && sql.erroredQueries !== undefined && sql.erroredQueries.length > 0}
+      <ErroredTabItem erroredQueries={sql.erroredQueries} {sqlSubPanesHeight} {erroredSort} {setErroredSort} />
     {/if}
   </Tabs>
 </TabItem>

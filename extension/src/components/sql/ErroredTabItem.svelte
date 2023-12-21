@@ -1,14 +1,15 @@
 <script lang="ts">
   import { TabItem, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell } from 'flowbite-svelte';
-  import type { SqlSchema } from '../../api/Api';
+  import type { ErroredQuerySchema } from '../../api/Api';
   import type { SortType } from '../../types';
   import { compFunc } from '../../utils/sort';
   import TraceInfo from '../TraceInfo.svelte';
 
-  export let sql: SqlSchema;
+  export let erroredQueries: ErroredQuerySchema[];
   export let sqlSubPanesHeight: string;
   export let erroredSort: SortType;
   export let setErroredSort: (key: string) => void;
+  $: erroredQueries = erroredQueries.sort(compFunc(erroredSort));
 </script>
 
 <TabItem title="ERRORED" class="[&>button]:!p-3">
@@ -21,7 +22,7 @@
         <TableHeadCell class="w-1/12" on:click={() => setErroredSort('duration')}>Dur.</TableHeadCell>
       </TableHead>
       <TableBody>
-        {#each sql.erroredQueries.sort(compFunc(erroredSort)) as errored}
+        {#each erroredQueries as errored}
           <TableBodyRow>
             <TableBodyCell class="whitespace-normal break-words">{errored.message}</TableBodyCell>
             <TableBodyCell class="whitespace-normal break-words">{errored.statement}</TableBodyCell>
