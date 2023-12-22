@@ -3,7 +3,7 @@
 module Rack
   class DevInsight
     class MemoryStore
-      MAX_REAP_TIME = 2
+      MAX_REAP_SEC = 2
 
       def initialize
         @lock = Mutex.new
@@ -34,7 +34,7 @@ module Rack
       end
 
       def within_reap_time?(start_time)
-        Process.clock_gettime(Process::CLOCK_MONOTONIC) - start_time < MAX_REAP_TIME
+        Process.clock_gettime(Process::CLOCK_MONOTONIC) - start_time < MAX_REAP_SEC
       end
 
       def bytesize(data)

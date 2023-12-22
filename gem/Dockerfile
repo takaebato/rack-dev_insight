@@ -12,8 +12,9 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > ${RUST_HOME}/rus
     && ${RUST_HOME}/rustup.sh -y
 ENV PATH $PATH:$CARGO_HOME/bin
 
+# Install Clang
 RUN apt update
-RUN apt install libclang-dev -y
+RUN apt install llvm-dev libclang-dev clang -y
 
 RUN gem update --system
 WORKDIR /app

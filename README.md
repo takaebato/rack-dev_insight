@@ -13,7 +13,7 @@ It is intended for <b>development use only</b>.
 - Record HTTP request / response
   - Supports requests using [net-http](https://github.com/ruby/net-http) gem
 
-### Chrome extension
+### [Chrome extension](https://chromewebstore.google.com/detail/rack-dev-insight/blpooeljpmpagkbfflnfnjgelafpfeid)
 
 - Display recorded data in Devtools panel.
   - SQL queries
@@ -29,6 +29,7 @@ It is intended for <b>development use only</b>.
     - Backtrace
 
 ![rack_dev_insight_devtools_panel_1](https://github.com/takaebato/rack-dev_insight/assets/62829037/e0e13a8d-9954-46ec-98ae-8ee653f32778)
+More screenshots are available at [Chrome Web Store](https://chromewebstore.google.com/detail/rack-dev-insight/blpooeljpmpagkbfflnfnjgelafpfeid).
 
 ## Status
 
@@ -37,17 +38,29 @@ It is intended for <b>development use only</b>.
 
 ## Installation
 
-### Install Rust
+### Requirements to compile Rust extension
 
-Need to install Rust since this gem uses Rust extension.
+#### Install Rust
 
 For macOS, Linux, or another Unix-like OS:
 
-```
+```sh
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
-For Windows, See [rust-lang.org](https://forge.rust-lang.org/infra/other-installation-methods.html#other-ways-to-install-rustup).
+For Windows, see [rust-lang.org](https://forge.rust-lang.org/infra/other-installation-methods.html#other-ways-to-install-rustup).
+
+#### Install Clang
+
+Clang is required because of the following dependency flow: [magnus](https://github.com/matsadler/magnus) (for Ruby bindings for Rust) -> [rb-sys](https://github.com/oxidize-rb/rb-sys) -> [bindgen](https://github.com/rust-lang/rust-bindgen) (requires Clang ≥ 5.0).
+
+For example, Debian-based Linux distributions:
+
+```sh
+apt install llvm-dev libclang-dev clang
+```
+
+For other OS, see [instruction in bindgen](https://rust-lang.github.io/rust-bindgen/requirements.html).
 
 ### For Rails applications
 
@@ -74,7 +87,7 @@ Rack::DevInsight::SqlNotifications.subscribe('new_sql_event_name')
 Only one SQL dialect is supported at a time, determined by the database client gems (i.e. [mysql2](https://github.com/brianmario/mysql2), [pg](https://github.com/ged/ruby-pg) or [sqlite3](https://github.com/sparklemotion/sqlite3-ruby)) listed in the Gemfile.
 If multiple clients are present, it defaults to mysql2, pg, then sqlite3 in order.
 To use multiple dialects simultaneously, [SQL patch option](https://github.com/takaebato/rack-dev_insight#1-enable-sql-patch-option) can be used.
-When this option is enabled, railtie does not subscribe sql events to prevent duplicate recording.
+When this option is enabled, railtie does not subscribe to SQL events in order to avoid duplicate recordings.
 
 ### For other Rack applications
 
@@ -146,7 +159,7 @@ end
 
 ### Install Chrome extension
 
-Install the extension from [Chrome Web Store](https://chrome.google.com/webstore/detail/rack-dev_insight/).
+Install the extension from [Chrome Web Store](https://chromewebstore.google.com/detail/rack-dev-insight/blpooeljpmpagkbfflnfnjgelafpfeid).
 
 ## Usage
 
@@ -182,7 +195,7 @@ Available options are described below:
 
 ## Contributing
 
-See [CONTRIBUTING.md](https://github.com/takaebato/rack-dev_insight/blob/master/CONTRIBUTING.md)
+Contributions are highly welcomed and appreciated! For more details, please refer to [CONTRIBUTING.md](https://github.com/takaebato/rack-dev_insight/blob/master/CONTRIBUTING.md)
 
 ## Thanks
 

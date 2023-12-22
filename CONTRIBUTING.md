@@ -69,6 +69,6 @@ After fork and clone this repository, you can start development by following the
 ## How to Submit a Contribution
 
 1. Create a new branch for your contribution.
-2. Make your changes and commit them with clear, descriptive commit messages.
+2. Make your changes and commit them with descriptive commit messages.
 3. Push your changes to your fork and submit a pull request to the main repository.
 4. Describe your changes in detail in the pull request description.

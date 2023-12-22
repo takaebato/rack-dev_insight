@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Rack Dev Insight",
-  "version": "0.1",
+  "version": "0.2",
   "description": "Extension for rack-dev_insight gem",
   "author": "takahiro.ebato@gmail.com",
   "action": {
