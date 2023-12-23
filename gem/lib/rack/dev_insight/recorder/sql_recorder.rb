@@ -18,7 +18,6 @@ module Rack
 
       def record(dialect:, statement:, binds: [], duration: 0.0)
         SqlDialects.validate!(dialect, ArgumentError)
-
         return if Context.current.nil?
 
         Context.current.result.add_sql(

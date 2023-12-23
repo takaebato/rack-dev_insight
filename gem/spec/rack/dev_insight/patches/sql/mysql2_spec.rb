@@ -9,14 +9,12 @@ RSpec.describe 'Patch mysql2' do
   before { Rack::DevInsight::Context.create_current(SecureRandom.uuid) }
 
   it 'patches mysql2' do
-    load 'rack/dev_insight/patches/sql/mysql2.rb'
     expect(Mysql2::Client.ancestors.include?(Mysql2::Client::RackDevInsight)).to eq(true)
     expect(Mysql2::Statement.ancestors.include?(Mysql2::Statement::RackDevInsight)).to eq(true)
   end
 
   context 'single statement' do
     it 'records single statement' do
-      load 'rack/dev_insight/patches/sql/mysql2.rb'
       c = mysql_client
       c.query('INSERT INTO users (name, email) VALUES ("foo", "bar@example.com")')
       res = c.query('SELECT * FROM users WHERE id = 1')
@@ -29,7 +27,6 @@ RSpec.describe 'Patch mysql2' do
 
   context 'prepared statements' do
     it 'records prepared statements' do
-      load 'rack/dev_insight/patches/sql/mysql2.rb'
       c = mysql_client
       statement1 = c.prepare('INSERT INTO users (name, email) VALUES (?, ?)')
       statement1.execute('foo', 'bar@example.com')
@@ -44,7 +41,6 @@ RSpec.describe 'Patch mysql2' do
 
   context 'multi statements' do
     it 'records multi statements' do
-      load 'rack/dev_insight/patches/sql/mysql2.rb'
       c = mysql_client(flags: Mysql2::Client::MULTI_STATEMENTS)
       res = c.query('INSERT INTO users (name, email) VALUES ("foo", "bar@example.com"); SELECT * FROM users')
       expect(res).to be_nil

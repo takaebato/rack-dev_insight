@@ -7,11 +7,12 @@ require 'committee'
 require 'rspec-parameterized'
 require 'dotenv'
 require 'simplecov'
-SimpleCov.start do
-  add_filter '/spec'
-  # Patches tests cannot be profiled correctly because patch files are loaded multiple times in spec.
-  add_group 'Patches', 'rack/dev_insight/patches'
-end
+SimpleCov.start { add_filter '/spec' }
+
+require 'mysql2'
+require 'pg'
+require 'net/http'
+require 'rack/dev_insight/enable_sql_patch' # SQL patches are enabled by default in tests
 
 require 'rack/dev_insight'
 require 'db_helper'

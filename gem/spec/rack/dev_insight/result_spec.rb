@@ -60,6 +60,19 @@ RSpec.describe Rack::DevInsight::Result do
       ],
       duration: 10.0,
     )
+    result.add_sql(
+      dialect: 'mysql',
+      statement: 'INSERT INTO users (name) VALUES', # invalid sql
+      binds: '',
+      backtrace: [
+        Rack::DevInsight::Result.build_backtrace_item(
+          'app/controllers/user_controller.rb:1:in `index`',
+          'app/controllers/user_controller.rb',
+          1,
+        ),
+      ],
+      duration: 10.0,
+    )
     result.add_api(
       method: 'GET',
       url: 'http://testhost:80/users',
@@ -81,8 +94,10 @@ RSpec.describe Rack::DevInsight::Result do
 
   it 'constructs result' do
     res = result.attributes
+    expect(res[:sql][:queries].count).to eq(5)
     expect(res[:sql][:crud_aggregations].count).to eq(3)
     expect(res[:sql][:normalized_aggregations].count).to eq(3)
+    expect(res[:sql][:errored_queries].count).to eq(1)
     expect(res[:apis].count).to eq(1)
   end
 end

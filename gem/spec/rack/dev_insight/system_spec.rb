@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'rack/test'
-require 'rack'
-require 'mysql2'
-require 'pg'
-require 'net/http'
 
 RSpec.describe Rack::DevInsight do
   include Rack::Test::Methods
@@ -19,10 +14,6 @@ RSpec.describe Rack::DevInsight do
       .new do
         use Rack::DevInsight
         run lambda { |_env|
-              load 'rack/dev_insight/patches/api/net_http.rb'
-              load 'rack/dev_insight/patches/sql/mysql2.rb'
-              load 'rack/dev_insight/patches/sql/pg.rb'
-
               c = mysql_client
               c.query("INSERT INTO users (name, email) VALUES ('foo1', 'bar1@example.com')")
               conn = postgres_client

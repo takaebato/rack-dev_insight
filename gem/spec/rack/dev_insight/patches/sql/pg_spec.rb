@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'pg'
 
 RSpec.describe 'Patch pg' do
   setup_postgresql
@@ -24,7 +23,6 @@ RSpec.describe 'Patch pg' do
   before { Rack::DevInsight::Context.create_current(SecureRandom.uuid) }
 
   it 'patches pg' do
-    load 'rack/dev_insight/patches/sql/pg.rb'
     expect(PG::Connection.ancestors.include?(PG::Connection::RackDevInsight)).to eq(true)
   end
 
@@ -32,7 +30,6 @@ RSpec.describe 'Patch pg' do
     context 'sync command' do
       shared_examples 'sync_command' do |method_name|
         it 'records statement' do
-          load 'rack/dev_insight/patches/sql/pg.rb'
           conn = postgres_client
           conn.public_send(method_name, "INSERT INTO users (name, email) VALUES ('foo', 'bar@example.com')")
           res = conn.public_send(method_name, 'SELECT * FROM users')
@@ -59,7 +56,6 @@ RSpec.describe 'Patch pg' do
     context 'async command' do
       context '#send_query' do
         it 'records statement' do
-          load 'rack/dev_insight/patches/sql/pg.rb'
           conn = postgres_client
           conn.send_query("INSERT INTO users (name, email) VALUES ('foo', 'bar@example.com')")
           get_results_of_async_queries(conn)
@@ -79,7 +75,6 @@ RSpec.describe 'Patch pg' do
     context 'sync command' do
       shared_examples 'sync_command_with_params' do |method_name|
         it 'records statement' do
-          load 'rack/dev_insight/patches/sql/pg.rb'
           conn = postgres_client
           conn.public_send(method_name, 'INSERT INTO users (name, email) VALUES ($1, $2)', %w[foo bar@example.com])
           res = conn.public_send(method_name, 'SELECT * FROM users WHERE name = $1', %w[foo])
@@ -106,7 +101,6 @@ RSpec.describe 'Patch pg' do
     context 'async command' do
       context '#send_query_params' do
         it 'records statement' do
-          load 'rack/dev_insight/patches/sql/pg.rb'
           conn = postgres_client
           conn.send_query_params('INSERT INTO users (name, email) VALUES ($1, $2)', %w[foo bar@example.com])
           get_results_of_async_queries(conn)
@@ -125,7 +119,6 @@ RSpec.describe 'Patch pg' do
   context 'prepared statements' do
     shared_examples 'prepared_statement' do |prepare_method, exec_method, is_prepared_async, is_exec_async|
       it 'records statement' do
-        load 'rack/dev_insight/patches/sql/pg.rb'
         conn = postgres_client
         conn.public_send(prepare_method, 'insert1', 'INSERT INTO users (name, email) VALUES ($1, $2)')
         get_results_of_async_queries(conn) if is_prepared_async
@@ -173,7 +166,6 @@ RSpec.describe 'Patch pg' do
 
   context 'multi statements' do
     it 'records multi statements' do
-      load 'rack/dev_insight/patches/sql/pg.rb'
       conn = postgres_client
       res =
         conn.exec(
