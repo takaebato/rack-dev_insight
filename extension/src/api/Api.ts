@@ -9,6 +9,7 @@
  * ---------------------------------------------------------------
  */
 
+/** Result of analyzed request */
 export interface RackDevInsightResultSchema {
   /**
    * Result id
@@ -29,15 +30,17 @@ export interface RackDevInsightResultSchema {
    * @format float
    */
   duration: number;
+  /** Sql queries */
   sql: SqlSchema;
   /** Api requests and responses */
   apis: ApiSchema[];
 }
 
+/** Sql queries */
 export interface SqlSchema {
   crudAggregations: CrudAggregationSchema[];
   normalizedAggregations: NormalizedAggregationSchema[];
-  erroredQueries?: ErroredQuerySchema[];
+  erroredQueries: ErroredQuerySchema[];
   queries: QuerySchema[];
 }
 
@@ -126,6 +129,11 @@ export interface QuerySchema {
 /** Api request and response */
 export interface ApiSchema {
   /**
+   * Api id
+   * @format int32
+   */
+  id: number;
+  /**
    * Http status code
    * @format int32
    */
@@ -159,6 +167,7 @@ export interface HeaderSchema {
   value: string;
 }
 
+/** Trace info */
 export interface TraceInfoSchema {
   /** Original trace info */
   original: string;
@@ -171,6 +180,7 @@ export interface TraceInfoSchema {
   line: number;
 }
 
+/** Error */
 export interface ErrorSchema {
   /**
    * Http status code
@@ -398,11 +408,11 @@ export class HttpClient<SecurityDataType = unknown> {
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
   rackDevInsightResults = {
     /**
-     * @description Multiple status values can be provided with comma separated strings
+     * @description Get result by uuid
      *
      * @tags Result
      * @name GetRackDevInsightResult
-     * @summary Fetches a rack dev insight result by UUID
+     * @summary Get rack dev insight result
      * @request GET:/rack-dev-insight-results/{uuid}
      */
     getRackDevInsightResult: (uuid: string, params: RequestParams = {}) =>

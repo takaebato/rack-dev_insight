@@ -67,7 +67,9 @@ paths:
 components:
   schemas:
     RackDevInsightResult:
+      description: Result of analyzed request
       type: object
+      additionalProperties: false
       required:
         - id
         - status
@@ -103,8 +105,9 @@ components:
           items:
             $ref: '#/components/schemas/Api'
     Sql:
-      type: object
       description: Sql queries
+      type: object
+      additionalProperties: false
       required:
         - crudAggregations
         - normalizedAggregations
@@ -130,6 +133,7 @@ components:
     CrudAggregation:
       description: Aggregation of queries in terms of CRUD type and table
       type: object
+      additionalProperties: false
       required:
         - id
         - type
@@ -169,6 +173,7 @@ components:
     NormalizedAggregation:
       description: Aggregation of queries in terms of normalized sql statement
       type: object
+      additionalProperties: false
       required:
         - id
         - statement
@@ -198,6 +203,7 @@ components:
     ErroredQuery:
       description: Query errored on parsing
       type: object
+      additionalProperties: false
       required:
         - id
         - message
@@ -227,6 +233,7 @@ components:
     Query:
       description: Single sql query
       type: object
+      additionalProperties: false
       required:
         - id
         - statement
@@ -256,7 +263,9 @@ components:
     Api:
       description: Api request and response
       type: object
+      additionalProperties: false
       required:
+        - id
         - status
         - method
         - url
@@ -267,6 +276,10 @@ components:
         - responseBody
         - backtrace
       properties:
+        id:
+          description: Api id
+          type: integer
+          format: int32
         status:
           description: Http status code
           type: integer
@@ -306,6 +319,7 @@ components:
     Header:
       description: Http header
       type: object
+      additionalProperties: false
       required:
         - field
         - value
@@ -317,7 +331,9 @@ components:
           description: Header value
           type: string
     TraceInfo:
+      description: Trace info
       type: object
+      additionalProperties: false
       required:
         - original
         - path
@@ -334,7 +350,9 @@ components:
           type: integer
           format: int32
     Error:
+      description: Error
       type: object
+      additionalProperties: false
       required:
         - status
         - message
