@@ -11,7 +11,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 magnus = { version = "0.6.2" } # add features = ["embed"] when cargo build
-sqlparser = { version = "0.40.0", features = ["visitor"] }
+sqlparser = { version = "0.41.0", features = ["visitor"] }
 tap = { version = "1.0.1" }
 indoc = { version = "2" }
 
