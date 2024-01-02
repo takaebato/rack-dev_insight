@@ -22,7 +22,26 @@ require 'rb_sys/extensiontask'
 
 task build: :compile
 
-RbSys::ExtensionTask.new('rack_dev_insight') { |ext| ext.lib_dir = 'lib/rack/dev_insight' }
+CROSS_PLATFORMS = %w[
+  arm-linux
+  aarch64-linux
+  arm64-darwin
+  x64-mingw-ucrt
+  x64-mingw32
+  x86_64-darwin
+  x86_64-linux
+  x86_64-linux-musl
+].freeze
+
+GEMSPEC = Gem::Specification.load('rack-dev_insight.gemspec')
+
+RbSys::ExtensionTask.new('rack_dev_insight', GEMSPEC) do |ext|
+  ext.lib_dir = 'lib/rack/dev_insight'
+  ext.source_pattern = '*.{rs,toml,lock,rb}'
+  ext.cross_compile = true
+  ext.cross_platform = CROSS_PLATFORMS
+  ext.config_script = 'extconf.rb'
+end
 
 task default: %i[compile spec]
 task fix: %i[rubocop:autocorrect_all stree:write]
