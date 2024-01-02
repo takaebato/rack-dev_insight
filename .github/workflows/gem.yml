@@ -1,7 +1,7 @@
 name: Cross Gem
+
 on:
   push:
-    branches: [ "master", "test-cross-compile" ]
     tags:
       - "v*"
 
