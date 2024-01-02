@@ -38,30 +38,6 @@ More screenshots are available at [Chrome Web Store](https://chromewebstore.goog
 
 ## Installation
 
-### Requirements to compile Rust extension
-
-#### Install Rust
-
-For macOS, Linux, or another Unix-like OS:
-
-```sh
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-```
-
-For Windows, see [rust-lang.org](https://forge.rust-lang.org/infra/other-installation-methods.html#other-ways-to-install-rustup).
-
-#### Install Clang
-
-Clang is required because of the following dependency flow: [magnus](https://github.com/matsadler/magnus) (for Ruby bindings for Rust) -> [rb-sys](https://github.com/oxidize-rb/rb-sys) -> [bindgen](https://github.com/rust-lang/rust-bindgen) (requires Clang ≥ 5.0).
-
-For example, Debian-based Linux distributions:
-
-```sh
-apt install llvm-dev libclang-dev clang
-```
-
-For other OS, see [instruction in bindgen](https://rust-lang.github.io/rust-bindgen/requirements.html).
-
 ### For Rails applications
 
 Add the following lines to your application's Gemfile:
