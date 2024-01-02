@@ -12,16 +12,14 @@ Gem::Specification.new do |spec|
   spec.homepage = 'https://github.com/takaebato/rack-dev_insight'
   spec.license = 'MIT'
   spec.required_ruby_version = '>= 3.0.2'
+  # https://github.com/rubygems/rubygems/pull/5852#issuecomment-1231118509
+  spec.required_rubygems_version = '>= 3.3.22'
   spec.metadata = {
     'source_code_uri' => 'https://github.com/takaebato/rack-dev_insight',
     'changelog_uri' => 'https://github.com/takaebato/rack-dev_insight/blob/master/CHANGELOG.md',
     'rubygems_mfa_required' => 'true'
   }
-  spec.files = Dir.chdir(__dir__) do
-    `git ls-files -z`.split("\x0").reject do |f|
-      (File.expand_path(f) == __FILE__) || f.start_with?(*%w[bin/ test/ spec/ features/ .git .circleci appveyor])
-    end
-  end
+  spec.files = Dir['lib/**/*.rb', 'ext/**/*.{rs,toml,lock,rb}']
   spec.require_paths = ['lib']
   spec.extensions = ['ext/rack_dev_insight/Cargo.toml']
 
