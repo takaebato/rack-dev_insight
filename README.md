@@ -38,6 +38,59 @@ More screenshots are available at [Chrome Web Store](https://chromewebstore.goog
 
 ## Installation
 
+### Select option to setup the Rust extension
+
+There are two options to setup the Rust extension. We recommend to install precompiled gems (Option 1) if available for your platform.
+
+#### Option 1: By installing precompiled gems
+
+Precompiled gems are available for the following platforms:
+
+```
+arm-linux
+aarch64-linux
+arm64-darwin
+x64-mingw-ucrt
+x64-mingw32
+x86_64-darwin
+x86_64-linux
+x86_64-linux-musl
+```
+
+In order to install precompiled gems, [add your platform](https://bundler.io/v2.5/man/bundle-lock.1.html#SUPPORTING-OTHER-PLATFORMS) to the gem lockfile. For example, for x86_64-linux:
+
+```
+bundle lock --add-platform x86_64-linux
+```
+
+Make sure that `force_ruby_platform` is not set to true in the bundle config.
+
+#### Option 2: By building on your machine
+
+If precompiled gems are not available for your platform, you can build from source. This requires Rust and Clang to be installed.
+
+##### Install Rust
+
+For macOS, Linux, or another Unix-like OS:
+
+```sh
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+For Windows, see [rust-lang.org](https://forge.rust-lang.org/infra/other-installation-methods.html#other-ways-to-install-rustup).
+
+##### Install Clang
+
+Clang is required in [bindgen](https://github.com/rust-lang/rust-bindgen).
+
+For example, for Debian-based Linux distributions:
+
+```sh
+apt install llvm-dev libclang-dev clang
+```
+
+For other OS, see [instruction in bindgen](https://rust-lang.github.io/rust-bindgen/requirements.html).
+
 ### For Rails applications
 
 Add the following lines to your application's Gemfile:
