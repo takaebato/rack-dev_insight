@@ -19,9 +19,12 @@ Gem::Specification.new do |spec|
     'changelog_uri' => 'https://github.com/takaebato/rack-dev_insight/blob/master/CHANGELOG.md',
     'rubygems_mfa_required' => 'true'
   }
-  spec.files = Dir['lib/**/*.rb', 'ext/**/*.{rs,toml,lock,rb}', 'Cargo.toml', 'Cargo.lock']
+  spec.files = Dir['{lib,ext}/**/*', 'Cargo.*']
+  spec.files.reject! { |f| File.directory?(f) }
+  spec.files.reject! { |f| f =~ /\.(dll|so|dylib|lib|bundle)\Z/ }
   spec.require_paths = ['lib']
-  spec.extensions = ['ext/rack_dev_insight/Cargo.toml']
+  spec.extensions = ['ext/rack_dev_insight/extconf.rb']
 
   spec.add_dependency 'rack'
+  spec.add_dependency 'rb_sys', '~> 0.9.85'
 end
