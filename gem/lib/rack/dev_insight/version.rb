@@ -2,6 +2,6 @@
 
 module Rack
   class DevInsight
-    VERSION = '0.2.1'
+    VERSION = '0.2.2.alpha.1'
   end
 end
