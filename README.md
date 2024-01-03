@@ -38,11 +38,11 @@ More screenshots are available at [Chrome Web Store](https://chromewebstore.goog
 
 ## Installation
 
-### Select option to setup the Rust extension
+### Select option to setup the Rust extension and meet the requirements
 
 There are two options to setup the Rust extension. We recommend to install precompiled gems (Option 1) if available for your platform.
 
-#### Option 1: By installing precompiled gems
+#### Option 1: Setup by installing precompiled gems
 
 Precompiled gems are available for the following platforms:
 
@@ -65,7 +65,7 @@ bundle lock --add-platform x86_64-linux
 
 Make sure that `force_ruby_platform` is not set to true in the bundle config.
 
-#### Option 2: By building on your machine
+#### Option 2: Setup by building on your machine
 
 If precompiled gems are not available for your platform, you can build from source. This requires Rust and Clang to be installed.
 
