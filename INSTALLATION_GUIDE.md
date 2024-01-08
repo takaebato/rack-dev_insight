@@ -27,7 +27,8 @@ bundle lock --add-platform x86_64-linux
 ```
 
 2. Ensure force_ruby_platform is not set to true in the bundle config.
-   For more details, visit [Bundler's documentation]((https://bundler.io/v2.5/man/bundle-lock.1.html#SUPPORTING-OTHER-PLATFORMS)).
+
+For more details, visit [Bundler's documentation](https://bundler.io/v2.5/man/bundle-lock.1.html#SUPPORTING-OTHER-PLATFORMS).
 
 ### Option 2: Build on Your Machine
 
@@ -55,5 +56,8 @@ apt install llvm-dev libclang-dev clang
 
 For other OS, see [instruction in bindgen](https://rust-lang.github.io/rust-bindgen/requirements.html).
 
+## Need Help?
+
 If you encounter any troubles during the installation or have any questions, please feel free to reach out.  
-You can open an issue here on GitHub or contact us directly. We welcome your feedback and are happy to assist!
+You can open an issue here on GitHub or contact us directly.
+We welcome your feedback and are happy to assist!

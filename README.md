@@ -40,13 +40,15 @@ More screenshots are available at [Chrome Web Store](https://chromewebstore.goog
 
 ### Prerequisites
 
-Confirm that your platform is listed in your `Gemfile.lock`. For instance, run the following command to add x86_64-linux:
+Confirm that your platform is listed in your `Gemfile.lock`.
+
+For instance, run the following command to add x86_64-linux:
 
 ```
 bundle lock --add-platform x86_64-linux
 ```
 
-This step is crucial for successfully installing the native binaries specific to your platform.
+This step is crucial for successfully installing the platform-specific native binaries.
 If you encounter any difficulties or need to confirm platform support, please refer to [INSTALLATION_GUIDE.md](https://github.com/takaebato/rack-dev_insight/blob/master/INSTALLATION_GUIDE.md) for more details.
 
 ### For Rails applications
