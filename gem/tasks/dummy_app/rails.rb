@@ -21,7 +21,8 @@ namespace :dummy_app do
       remove_and_add_gems(database)
       compile_gem
       up_docker
-      generate_scaffold
+      generate_scaffold_of_user
+      add_debugs_controller
       migrate_reset
       restart_docker
     end

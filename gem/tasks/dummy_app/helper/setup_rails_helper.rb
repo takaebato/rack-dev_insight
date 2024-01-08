@@ -39,7 +39,7 @@ module SetupRailsHelper
       bundle install && \
       #{remove_db_gems_command} \
       #{add_db_gems_command(database)} \
-      (bundle show net-http || bundle add net-http); \
+      bundle add net-http; \
       (bundle show rack-dev_insight || bundle add rack-dev_insight --path /gem);'
     COMMAND
   end
@@ -78,13 +78,25 @@ module SetupRailsHelper
     system('docker compose up -d dummy-app-rails')
   end
 
-  def generate_scaffold
-    puts '== Generate scaffold =='
+  def generate_scaffold_of_user
+    puts '== Generate scaffold of user =='
     system(<<~COMMAND)
       docker compose exec dummy-app-rails /bin/bash -c '\
       bundle install && \
       bundle exec rails generate scaffold User name:string;'
     COMMAND
+  end
+
+  def add_debugs_controller
+    puts '== Add debugs controller =='
+    system(<<~COMMAND)
+      docker compose exec dummy-app-rails /bin/bash -c '\
+      bundle install && \
+      bundle exec rails generate resource debugs'
+    COMMAND
+    system(
+      'cp -f tasks/dummy_app/template_files/debugs_controller.rb tmp/dummy_app/rails/app/controllers/debugs_controller.rb',
+    )
   end
 
   def migrate_reset
