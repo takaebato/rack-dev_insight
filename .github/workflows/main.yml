@@ -43,7 +43,7 @@ jobs:
       - name: Up docker
         run: cd gem && RUBY_VERSION=${{ matrix.ruby }} docker compose up -d ruby
       - name: Run Tests
-        run: cd gem && docker compose exec ruby /bin/bash -c 'bundle install && bundle exec rake compile && bundle exec appraisal install && bundle exec appraisal rake spec'
+        run: cd gem && docker compose exec ruby /bin/bash -c 'bundle install && bundle exec appraisal install && bundle exec appraisal rake spec'
   test-rust:
     runs-on: ubuntu-latest
     name: Rust
