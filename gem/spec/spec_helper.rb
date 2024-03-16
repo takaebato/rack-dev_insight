@@ -18,7 +18,7 @@ require 'rack/dev_insight'
 require 'db_helper'
 
 # Load `.env.test.local` or `.env.test.docker`
-Dotenv.load('.env.test.docker')
+Dotenv.load('.env.test.local')
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

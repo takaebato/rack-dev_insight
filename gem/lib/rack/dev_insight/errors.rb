@@ -5,9 +5,5 @@ module Rack
     # Definitions must be synced with ext/rack_dev_insight/src/errors.rs
     class Error < StandardError
     end
-    class ExtError < Error
-    end
-    class ParserError < ExtError
-    end
   end
 end

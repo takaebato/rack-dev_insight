@@ -146,7 +146,7 @@ RSpec.describe Rack::DevInsight::Extractor::CrudTables do
         context 'UPDATE JOIN' do
           let(:statement) { 'UPDATE t1 JOIN t2 ON t1.a = t2.a SET t1.b = 1 WHERE t2.b = 1' }
 
-          it_behaves_like :extracts_tables, create: [], read: ['t2'], update: ['t1'], delete: []
+          it_behaves_like :extracts_tables, create: [], read: [], update: %w[t1 t2], delete: []
         end
 
         context 'UPDATE with ALIAS' do
@@ -154,7 +154,7 @@ RSpec.describe Rack::DevInsight::Extractor::CrudTables do
             'UPDATE t1 AS t1_alias JOIN t2 AS t2_alias ON t1_alias.a = t2_alias.a SET t1_alias.b = 1 WHERE t2_alias.b = 1'
           end
 
-          it_behaves_like :extracts_tables, create: [], read: ['t2'], update: ['t1'], delete: []
+          it_behaves_like :extracts_tables, create: [], read: [], update: %w[t1 t2], delete: []
         end
       end
 
@@ -170,13 +170,13 @@ RSpec.describe Rack::DevInsight::Extractor::CrudTables do
             'DELETE t1_alias FROM t1 AS t1_alias JOIN t2 AS t2_alias ON t1_alias.a = t2_alias.a WHERE t2_alias.b = 1'
           end
 
-          it_behaves_like :extracts_tables, create: [], read: ['t2'], update: [], delete: ['t1']
+          it_behaves_like :extracts_tables, create: [], read: %w[t1 t2], update: [], delete: ['t1']
         end
 
         context 'DELETE multiple tables with JOIN' do
           let(:statement) { 'DELETE t1, t2 FROM t1 INNER JOIN t2 INNER JOIN t3 WHERE t1.a = t2.a AND t2.a = t3.a' }
 
-          it_behaves_like :extracts_tables, create: [], read: ['t3'], update: [], delete: %w[t1 t2]
+          it_behaves_like :extracts_tables, create: [], read: %w[t1 t2 t3], update: [], delete: %w[t1 t2]
         end
 
         context 'DELETE multiple tables with USING' do
@@ -184,7 +184,7 @@ RSpec.describe Rack::DevInsight::Extractor::CrudTables do
             'DELETE FROM t1, t2 USING t1 INNER JOIN t2 INNER JOIN t3 WHERE t1.a = t2.a AND t2.a = t3.a'
           end
 
-          it_behaves_like :extracts_tables, create: [], read: ['t3'], update: [], delete: %w[t1 t2]
+          it_behaves_like :extracts_tables, create: [], read: %w[t1 t2 t3], update: [], delete: %w[t1 t2]
         end
       end
     end

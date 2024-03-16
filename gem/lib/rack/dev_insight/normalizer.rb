@@ -5,7 +5,7 @@ module Rack
     module Normalizer
       class << self
         def normalize(dialect_name, statement)
-          _normalize(dialect_name, statement)
+          SqlInsight.normalize(dialect_name, statement)
         end
       end
     end

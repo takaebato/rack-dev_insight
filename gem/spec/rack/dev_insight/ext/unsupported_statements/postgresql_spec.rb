@@ -11,7 +11,7 @@ RSpec.describe 'List unsupported statements' do
 
   shared_examples :not_parseable do
     it 'raises parser error' do
-      expect { subject }.to raise_error(Rack::DevInsight::ParserError)
+      expect { subject }.to raise_error(SqlInsight::ParserError)
     end
   end
 

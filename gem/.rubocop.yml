@@ -38,3 +38,9 @@ Metrics/AbcSize:
 Metrics/ParameterLists:
   Enabled: true
   Max: 10
+Metrics/CyclomaticComplexity:
+  Enabled: true
+  Max: 10
+Metrics/PerceivedComplexity:
+  Enabled: true
+  Max: 10
