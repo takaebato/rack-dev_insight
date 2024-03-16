@@ -18,13 +18,15 @@ jobs:
       - name: Check OpenAPI
         run: cd openapi && redocly lint openapi.yaml
       - name: Up docker
-        run: cd gem && docker compose up -d ruby-rust
+        run: cd gem && docker compose up -d ruby
+      - name: bundle install
+        run: cd gem && docker compose exec ruby /bin/bash -c 'bundle install'
       - name: Check rubocop
-        run: cd gem && docker compose exec ruby-rust /bin/bash -c 'bundle install && bundle exec rake rubocop'
+        run: cd gem && docker compose exec ruby /bin/bash -c 'bundle exec rake rubocop'
       - name: Check syntax tree
-        run: cd gem && docker compose exec ruby-rust /bin/bash -c 'bundle install && bundle exec rake stree:check'
+        run: cd gem && docker compose exec ruby /bin/bash -c 'bundle exec rake stree:check'
       - name: Check Rust
-        run: cd gem && docker compose exec ruby-rust /bin/bash -c 'cargo clippy'
+        run: cd gem && docker compose exec ruby /bin/bash -c 'cargo clippy'
   test-ruby:
     runs-on: ubuntu-latest
     name: Ruby-${{ matrix.ruby }}
@@ -39,15 +41,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Up docker
-        run: cd gem && RUBY_VERSION=${{ matrix.ruby }} docker compose up -d ruby-rust
+        run: cd gem && RUBY_VERSION=${{ matrix.ruby }} docker compose up -d ruby
       - name: Run Tests
-        run: cd gem && docker compose exec ruby-rust /bin/bash -c 'bundle install && bundle exec rake compile && bundle exec appraisal install && bundle exec appraisal rake spec'
+        run: cd gem && docker compose exec ruby /bin/bash -c 'bundle install && bundle exec rake compile && bundle exec appraisal install && bundle exec appraisal rake spec'
   test-rust:
     runs-on: ubuntu-latest
     name: Rust
     steps:
       - uses: actions/checkout@v3
       - name: Up docker
-        run: cd gem && docker compose up -d ruby-rust
+        run: cd gem && docker compose up -d ruby
       - name: Run Tests
-        run: cd gem && docker compose exec ruby-rust /bin/bash -c 'cargo test --all'
+        run: cd gem && docker compose exec ruby /bin/bash -c 'cargo test --all'
