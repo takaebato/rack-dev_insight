@@ -14,7 +14,6 @@
 *.a
 mkmf.log
 target/
-Gemfile.lock
 gemfiles/*.lock
 .idea
 
