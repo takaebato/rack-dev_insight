@@ -17,7 +17,7 @@ module Rack
 
             crud_tables.each do |type, tables|
               tables.each do |table|
-                key = "#{type}_#{table.downcase}"
+                key = "#{type}_#{table}"
                 data = @cached_data[key] ||= CrudAggregation.new(@id += 1, type, table, 0, 0, [])
                 data.count += 1
                 data.duration += duration

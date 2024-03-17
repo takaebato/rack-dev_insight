@@ -10,10 +10,10 @@ module Rack
             results = { 'CREATE' => [], 'READ' => [], 'UPDATE' => [], 'DELETE' => [] }
 
             crud_tables.each do |crud_table|
-              results['CREATE'].concat(crud_table.create_tables.map(&:name).map(&:to_s))
-              results['READ'].concat(crud_table.read_tables.map(&:name).map(&:to_s))
-              results['UPDATE'].concat(crud_table.update_tables.map(&:name).map(&:to_s))
-              results['DELETE'].concat(crud_table.delete_tables.map(&:name).map(&:to_s))
+              results['CREATE'].concat(crud_table.create_tables.map(&:name).map(&:value))
+              results['READ'].concat(crud_table.read_tables.map(&:name).map(&:value))
+              results['UPDATE'].concat(crud_table.update_tables.map(&:name).map(&:value))
+              results['DELETE'].concat(crud_table.delete_tables.map(&:name).map(&:value))
             end
 
             results

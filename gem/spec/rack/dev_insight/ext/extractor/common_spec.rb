@@ -25,6 +25,18 @@ RSpec.describe Rack::DevInsight::Extractor::CrudTables do
           it_behaves_like :extracts_tables, create: [], read: ['t1'], update: [], delete: []
         end
 
+        context 'SELECT with quoted identifier' do
+          let(:statement) { 'SELECT a FROM `t1`' }
+
+          it_behaves_like :extracts_tables, create: [], read: ['t1'], update: [], delete: []
+        end
+
+        context 'SELECT with uppercase identifier' do
+          let(:statement) { 'SELECT a FROM `T1`' }
+
+          it_behaves_like :extracts_tables, create: [], read: ['T1'], update: [], delete: []
+        end
+
         context 'ALIAS' do
           let(:statement) { 'SELECT a FROM t1 AS t1_alias' }
 
