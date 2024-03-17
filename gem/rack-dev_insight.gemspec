@@ -24,6 +24,5 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'rack'
-  spec.add_dependency 'rb_sys', '~> 0.9.85'
   spec.add_dependency 'sql_insight', '~> 0.1.0'
 end
