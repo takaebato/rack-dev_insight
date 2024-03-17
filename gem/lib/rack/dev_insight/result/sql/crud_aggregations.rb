@@ -13,11 +13,11 @@ module Rack
           end
 
           def add(dialect_name, statement, duration, query_id)
-            crud_tables = Extractor::CrudTables.extract(dialect_name, statement)
+            crud_tables = Extractor.extract_crud_tables(dialect_name, statement)
 
             crud_tables.each do |type, tables|
               tables.each do |table|
-                key = "#{type}_#{table.downcase}"
+                key = "#{type}_#{table}"
                 data = @cached_data[key] ||= CrudAggregation.new(@id += 1, type, table, 0, 0, [])
                 data.count += 1
                 data.duration += duration

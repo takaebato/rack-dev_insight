@@ -7,14 +7,13 @@
 /pkg/
 /spec/reports/
 /tmp/
+/vendor
 *.bundle
 *.so
 *.o
 *.a
 mkmf.log
 target/
-Gemfile.lock
-gemfiles/*.lock
 .idea
 
 # rspec failure tracking

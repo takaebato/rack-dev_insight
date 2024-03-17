@@ -15,7 +15,7 @@ module Rack
           @queries.add(statement, binds, backtrace, duration)
           @crud_aggregations.add(dialect, statement, duration, @queries.id)
           @normalized_aggregations.add(dialect, statement, duration, @queries.id)
-        rescue ExtError => e
+        rescue SqlInsight::Error => e
           @errored_queries.add(@queries.id, e.message, statement, backtrace, duration)
         end
 

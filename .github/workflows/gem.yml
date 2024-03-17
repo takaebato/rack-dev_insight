@@ -1,4 +1,4 @@
-name: Cross Gem
+name: Publish gem
 
 on:
   push:
@@ -6,61 +6,13 @@ on:
       - "v*"
 
 jobs:
-  ci-data:
+  publish:
     runs-on: ubuntu-latest
-    outputs:
-      result: ${{ steps.fetch.outputs.result }}
     steps:
-      # This compiles for all supported Ruby cross-compilation platforms.
-      - id: fetch
-        uses: oxidize-rb/actions/fetch-ci-data@main
-        with:
-          supported-ruby-platforms: |
-            exclude: []
-
-  cross_gems:
-    name: Cross compile gems
-    needs: ci-data
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby-platform: ${{ fromJSON(needs.ci-data.outputs.result).supported-ruby-platforms }}
-    environment: "deploy"
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.2"
-          bundler-cache: true
-          working-directory: gem
-      # mysql and pg are unnecessary for cross-compilation and they cause errors when installing on rb-sys-dock.
-      - name: Remove mysql
-        working-directory: gem
-        run: bundle remove mysql2
-      - name: Remove pg
-        working-directory: gem
-        run: bundle remove pg
-
-      - uses: oxidize-rb/actions/cross-gem@v1
-        id: cross-gem
-        with:
-          platform: ${{ matrix.ruby-platform }}
-          working-directory: gem
-          ruby-versions: 3.0,3.1,3.2,3.3
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: cross-gem-${{ matrix.ruby-platform }}
-          path: gem/pkg/
-          if-no-files-found: error
-          retention-days: 1
-
-      - name: Display structure of created files
-        run: ls -R gem/pkg/
-      - name: Release gem
+      - uses: actions/checkout@v4
+      - name: publish gem
         if: startsWith(github.ref, 'refs/tags/v')
-        working-directory: gem/pkg/
+        working-directory: gem/
         env:
           GEM_API_KEY: ${{secrets.GEM_API_KEY}}
         run: |
@@ -68,6 +20,7 @@ jobs:
           touch $HOME/.gem/credentials
           chmod 0600 $HOME/.gem/credentials
           printf -- "---\n:rubygems_api_key: ${GEM_API_KEY}\n" > $HOME/.gem/credentials
+          gem build rack-dev_insight.gemspec
           for i in *.gem; do
             if [ -f "$i" ]
             then

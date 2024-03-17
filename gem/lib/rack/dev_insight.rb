@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 require 'securerandom'
-require_relative 'dev_insight/ext/extractor'
-require_relative 'dev_insight/ext/normalizer'
+require 'sql_insight'
 require_relative 'dev_insight/recorder/api_recorder'
 require_relative 'dev_insight/recorder/request_recorder'
 require_relative 'dev_insight/recorder/sql_recorder'
@@ -19,17 +18,10 @@ require_relative 'dev_insight/utils/camelizer'
 require_relative 'dev_insight/config'
 require_relative 'dev_insight/context'
 require_relative 'dev_insight/errors'
+require_relative 'dev_insight/extractor'
+require_relative 'dev_insight/normalizer'
 require_relative 'dev_insight/sql_dialects'
 require_relative 'dev_insight/version'
-
-# https://github.com/rake-compiler/rake-compiler/blob/master/README.md
-# Technique to lookup the fat binaries first, and then lookup the gems compiled by the end user.
-begin
-  RUBY_VERSION =~ /(\d+\.\d+)/
-  require_relative "dev_insight/#{Regexp.last_match(1)}/rack_dev_insight"
-rescue LoadError
-  require_relative 'dev_insight/rack_dev_insight'
-end
 # Railtie
 require_relative 'dev_insight/railtie' if defined?(Rails)
 # Patches
