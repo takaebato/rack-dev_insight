@@ -1,7 +1,6 @@
 # Rack::DevInsight
 
-Rack::DevInsight is a rack middleware for recording and analyzing SQL queries and HTTP request / response data.
-A Chrome extension is needed to display the recorded data in Devtools panel.  
+Rack::DevInsight is an observability tool for Rack applications, analyzing SQL and HTTP with a Chrome extension as a dashboard. \
 It is intended for <b>development use only</b>.
 
 ## Features
@@ -21,10 +20,8 @@ It is intended for <b>development use only</b>.
     - Queries grouped by normalized statement, with total query count and duration
     - All queries, with duration and backtrace
   - HTTP request / response
-    - Request headers
-    - Request body
-    - Response headers
-    - Response body
+    - Request headers and body
+    - Response headers and body
     - Duration
     - Backtrace
 
@@ -40,16 +37,21 @@ More screenshots are available at [Chrome Web Store](https://chromewebstore.goog
 
 ### Prerequisites
 
-Confirm that your platform is listed in your `Gemfile.lock`.
-
-For instance, run the following command to add x86_64-linux:
+This gem depends on the [sql-insight-rb](https://github.com/takaebato/sql-insight-rb) which includes a Rust extension. \
+We recommend using the precompiled gems provided by `sql-insight-rb`. Available platforms are as follows:
 
 ```
-bundle lock --add-platform x86_64-linux
+arm-linux
+aarch64-linux
+arm64-darwin
+x64-mingw-ucrt
+x64-mingw32
+x86_64-darwin
+x86_64-linux
+x86_64-linux-musl
 ```
 
-This step is crucial for successfully installing the platform-specific native binaries.
-If you encounter any difficulties or need to confirm platform support, please refer to [INSTALLATION_GUIDE.md](https://github.com/takaebato/rack-dev_insight/blob/master/INSTALLATION_GUIDE.md) for more details.
+If you face any difficulties, please refer to [INSTALLATION_GUIDE.md](https://github.com/takaebato/sql-insight-rb/blob/master/INSTALLATION_GUIDE.md) for more details.
 
 ### For Rails applications
 
