@@ -3,7 +3,6 @@ PATH
   specs:
     rack-dev_insight (0.2.2)
       rack
-      rb_sys (~> 0.9.85)
       sql_insight (~> 0.1.0)
 
 GEM
@@ -48,7 +47,6 @@ GEM
     rake (13.1.0)
     rake-compiler (1.2.7)
       rake
-    rb_sys (0.9.90)
     regexp_parser (2.9.0)
     rexml (3.2.6)
     rspec (3.13.0)
