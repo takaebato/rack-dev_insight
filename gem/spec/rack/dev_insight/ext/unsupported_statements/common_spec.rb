@@ -7,7 +7,7 @@ RSpec.describe 'List unsupported statements' do
   include ExtractorHelper
 
   # use CrudTables extractor to parse statements
-  subject { Rack::DevInsight::Extractor::CrudTables.extract(dialect, statement) }
+  subject { Rack::DevInsight::Extractor.extract_crud_tables(dialect, statement) }
 
   shared_examples :not_parseable do
     it 'raises parser error' do

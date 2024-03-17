@@ -13,7 +13,7 @@ module Rack
           end
 
           def add(dialect_name, statement, duration, query_id)
-            crud_tables = Extractor::CrudTables.extract(dialect_name, statement)
+            crud_tables = Extractor.extract_crud_tables(dialect_name, statement)
 
             crud_tables.each do |type, tables|
               tables.each do |table|

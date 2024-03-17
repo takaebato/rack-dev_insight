@@ -3,11 +3,11 @@
 require 'spec_helper'
 require 'rack/dev_insight/ext/extractor/extractor_helper'
 
-RSpec.describe Rack::DevInsight::Extractor::CrudTables do
+RSpec.describe Rack::DevInsight::Extractor do
   describe '.extract' do
     include ExtractorHelper
 
-    subject { described_class.extract(dialect, statement) }
+    subject { described_class.extract_crud_tables(dialect, statement) }
 
     where(:dialect) do
       [
