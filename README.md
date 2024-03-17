@@ -1,7 +1,8 @@
 # Rack::DevInsight
 
 
-Rack::DevInsight is a an observability tool for Rack applications, analyzing SQL and HTTP with a Chrome extension as a dashboard.
+Rack::DevInsight is an observability tool for Rack applications, analyzing SQL and HTTP with a Chrome extension as a dashboard.
+
 It is intended for <b>development use only</b>.
 
 ## Features
@@ -39,7 +40,9 @@ More screenshots are available at [Chrome Web Store](https://chromewebstore.goog
 ### Prerequisites
 
 This gem depends on the [sql-insight-rb](https://github.com/takaebato/sql-insight-rb) which includes a Rust extension.
-`sql-insight-rb` provides precompiled gems for multiple platforms, and we recommend using them by adding your platform to your gem lockfile, if available .
+
+`sql-insight-rb` provides precompiled gems for multiple platforms, and we recommend using them by adding your platform to your gem lockfile, if available.
+
 If you encounter any difficulties, please refer to [INSTALLATION_GUIDE.md](https://github.com/takaebato/sql-insight-rb/blob/master/INSTALLATION_GUIDE.md) for more details.
 
 ### For Rails applications
