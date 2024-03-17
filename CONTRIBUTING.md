@@ -14,21 +14,16 @@ After fork and clone this repository, you can start development by following the
 #### Setup
 
 1. Move into the `gem` directory.
-2. Run `docker compose up -d ruby-rust`.
-3. Run `docker compose exec ruby-rust bundle exec rake compile` to compile the Rust extension.
+2. Run `docker compose up -d ruby`.
 
 #### Testing
 
-1. Run `docker compose exec ruby-rust bundle exec appraisal install` to install the dependencies for each appraisal.
-2. Run `docker compose exec ruby-rust bundle exec appraisal rake spec` to run each appraisal.
-3. Run `docker compose exec ruby-rust cargo test` to test rust extension code.
+1. Run `docker compose exec ruby bundle exec appraisal install` to install the dependencies for each appraisal.
+2. Run `docker compose exec ruby bundle exec appraisal rake spec` to run each appraisal.
 
 #### Linting
 
-1. Run `docker compose exec ruby-rust bundle exec rake fix` to run rubocop and syntax tree format.
-2. Run `docker compose exec ruby-rust cargo fix --allow-no-vcs` to fix rust compiler warnings.
-3. Run `docker compose exec ruby-rust cargo fmt` to format rust code.
-4. Run `docker compose exec ruby-rust cargo clippy --fix --allow-no-vcs` to run clippy.
+1. Run `docker compose exec ruby bundle exec rake fix` to run rubocop and syntax tree format.
 
 ### Chrome Extension
 
@@ -65,6 +60,7 @@ After fork and clone this repository, you can start development by following the
 2. User resource is created by scaffold, so you can access `http://localhost:3000/users` to initiate requests.
 3. To reflect file changes of the gem, run `docker compose restart dummy-app-rails`.
 4. Code snippets for making various HTTP requests and SQL queries are available in `gem/tasks/dummy_app/template_files/snippet.rb`.
+5. `http://localhost:3000/debugs` might be useful for checking various SQL queries and API calls.
 
 ## How to Submit a Contribution
 
